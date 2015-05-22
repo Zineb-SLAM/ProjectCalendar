@@ -19,26 +19,18 @@ class TacheEditeur : public QWidget
     Tache& t;
     QVBoxLayout* vertical;
 
-    // premiere couche
+    // premiere couche Bouton Option
     QHBoxLayout* couche1;
     QLabel*id;
     QLabel * idLineEdit;
     QCheckBox* preemtive;
 
-     // deuxieme couche
+     // deuxieme couche: Time table
     QHBoxLayout* couche2;
     QLabel*titre;
     QTextEdit * titreTextEdit;
 
-    // troisieme couche
-    QHBoxLayout* couche3;
-    QLabel* dispo,*echeance,*duree;
-    QDateEdit *dateDispo,*dateEcheance;
-    QSpinBox *dureeH,*dureeM;
 
-    // quatrieme couche
-    QHBoxLayout* couche4;
-    QPushButton *annuler,*save;
 
 public:
     explicit TacheEditeur(Tache& t, QWidget* parent=0);
