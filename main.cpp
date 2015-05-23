@@ -25,12 +25,12 @@ int main(int argc, char *argv[])
      couche.addWidget(&Buton);
      fenetre.setLayout(&couche);
 
-     QString chemin =QFileDialog::getOpenFileName();
+    /*QString chemin =QFileDialog::getOpenFileName();
      TacheManager& m= TacheManager::getInstance();
      m.load(chemin);
     Tache& t= m.getTache(("T1"));
     identificateur.setText(t.getId());
-    titre.setText(t.getTitre());
+    titre.setText(t.getTitre());*/
 
     fenetre.show();
 

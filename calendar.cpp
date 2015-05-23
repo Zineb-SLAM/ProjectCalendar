@@ -1,13 +1,16 @@
 #include "Calendar.h"
 #include "timing.h"
+#include <vector>
 #include <QFile>
 #include <QTextCodec>
 #include <QtXml>
 #include <QMessageBox>
 
-QTextStream& operator<<(QTextStream& f, const Duree & d){ d.afficher(f); return f; }
+/*QTextStream& operator<<(std::ostream& f, const TIME::Duree & d)
+{ d.afficher(f);
+    return f; }
 
-QTextStream& operator>>(QTextStream& flot, Duree& duree){
+QTextStream& operator>>(QTextStream& flot, TIME::Duree& duree){
     unsigned int h,m;
     bool ok=true;
     flot>>h;
@@ -20,7 +23,7 @@ QTextStream& operator>>(QTextStream& flot, Duree& duree){
     else {
         ok=false;
     }
-    if (ok) duree=Duree(h,m);
+    if (ok) duree=TIME::Duree(h,m);
     return flot;
 }
 
@@ -46,56 +49,69 @@ void TacheU::Afficher_Tache () const
 {
     cout<<*this;
     if(this->preemptive) cout<<"Tache preemtive";
-}
+}*/
 
-TacheManager::TacheManager():taches(0),nb(0),nbMax(0){}
-
-void TacheManager::addItem(Tache* t){
-    if (nb==nbMax){
-        Tache** newtab=new Tache*[nbMax+10];
-        for(unsigned int i=0; i<nb; i++) newtab[i]=taches[i];
-        // ou memcpy(newtab,taches,nb*sizeof(Tache*));
-        nbMax+=10;
-        Tache** old=taches;
-        taches=newtab;
-        delete[] old;
+//******************************************************************************************
+bool TacheC::Precedence(const Tache& t)
+{
+    for(unsigned int i=0; i<tachescomp.size();i++)
+    {
+        if (tachescomp[i].getDateEcheance>t.getDateDisponibilite())  return true;
     }
-    taches[nb++]=t;
+    return false;
+
+}
+void TacheC::ajoutTache(const Tache& t)
+{
+    if(Precedence(t)) throw CalendarException "Il faut finir les taches précedentes";
+    tachescomp.push_back(t);
 }
 
-Tache* TacheManager::trouverTache(const QString& id)const{
-    for(unsigned int i=0; i<nb; i++)
-        if (id==taches[i]->getId()) return taches[i];
+//******************************************************************************************
+
+Tache* VPrincipale::trouverTache(const QString& id)const
+{
+    for(tabtaches::const_iterator it= taches.begin(); it!=taches.end();++it)
+            {
+                //if(id==it->getId()) return (it);
+            }
     return 0;
 }
+void VPrincipale::addItem(Tache* t)
+{
+        taches.push_back(t);
+}
 
-Tache& TacheManager::ajouterTache(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt){
+TacheU& VPrincipale::ajouterTacheU(const QString& id, const QString& t, const TIME::Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt){
     if (trouverTache(id)) throw CalendarException("erreur, TacheManager, tache deja existante");
-    Tache* newt=new Tache(id,t,dur,dispo,deadline,preempt);
+    TacheU* newt=new TacheU(id,t,dur,dispo,deadline,preempt);
     addItem(newt);
     return *newt;
 }
 
-Tache& TacheManager::getTache(const QString& id){
+
+
+Tache& VPrincipale::getTache(const QString& id){
     Tache* t=trouverTache(id);
     if (!t) throw CalendarException("erreur, TacheManager, tache inexistante");
     return *t;
 }
 
-const Tache& TacheManager::getTache(const QString& id)const{
-    return const_cast<TacheManager*>(this)->getTache(id);
+const Tache& VPrincipale::getTache(const QString& id)const
+{
+    return const_cast<VPrincipale*>(this)->getTache(id);
 }
 
-TacheManager::~TacheManager(){
+VPrincipale::~VPrincipale(){
     //if (file!="") save(file);
-    for(unsigned int i=0; i<nb; i++) delete taches[i];
-    delete[] taches;
+    for(int i=0;i<taches.size();i++)
+      delete taches[i];
     file="";
 }
 
-void TacheManager::load(const QString& f){
+void VPrincipale::load(const QString& f){
     //qDebug()<<"debut load\n";
-    this->~TacheManager();
+    this->~VPrincipale();
     file=f;
     QFile fin(file);
     // If we can't open it, let's show an error message.
@@ -122,7 +138,7 @@ void TacheManager::load(const QString& f){
                 QString titre;
                 QDate disponibilite;
                 QDate echeance;
-                Duree duree;
+                TIME::Duree duree;
                 bool preemptive;
 
                 QXmlStreamAttributes attributes = xml.attributes();
@@ -174,7 +190,7 @@ void TacheManager::load(const QString& f){
                     xml.readNext();
                 }
                 //qDebug()<<"ajout tache "<<identificateur<<"\n";
-                ajouterTache(identificateur,titre,duree,disponibilite,echeance,preemptive);
+                ajouterTacheU(identificateur,titre,duree,disponibilite,echeance,preemptive);
 
             }
         }
@@ -188,18 +204,18 @@ void TacheManager::load(const QString& f){
     //qDebug()<<"fin load\n";
 }
 
-void  TacheManager::save(const QString& f){
+void  VPrincipale::save(const QString& f){
     file=f;
     QFile newfile( file);
     if (!newfile.open(QIODevice::WriteOnly | QIODevice::Text))
-        throw CalendarException(QString("erreur sauvegarde t�ches : ouverture fichier xml"));
+        throw CalendarException(QString("erreur sauvegarde taches : ouverture fichier xml"));
     QXmlStreamWriter stream(&newfile);
     stream.setAutoFormatting(true);
     stream.writeStartDocument();
     stream.writeStartElement("taches");
-    for(unsigned int i=0; i<nb; i++){
+    for(unsigned int i=0; i<taches.size(); i++){
         stream.writeStartElement("tache");
-        stream.writeAttribute("preemptive", (taches[i]->isPreemptive())?"true":"false");
+        stream.writeAttribute("preemptive", (taches[i]->isPreemptive())?"true":"false");// isPreemtive dans Taches??
         stream.writeTextElement("identificateur",taches[i]->getId());
         stream.writeTextElement("titre",taches[i]->getTitre());
         stream.writeTextElement("disponibilite",taches[i]->getDateDisponibilite().toString(Qt::ISODate));
@@ -218,7 +234,7 @@ void  TacheManager::save(const QString& f){
 TacheManager::Handler TacheManager::handler=TacheManager::Handler();
 
 TacheManager& TacheManager::getInstance(){
-    if (handler.instance==0) handler.instance=new TacheManager;
+    if (handler.instance==0) handler.instance=new TacheManager();
     return *(handler.instance);
 }
 
@@ -228,29 +244,30 @@ void TacheManager::libererInstance(){
 }
 //******************************************************************************************
 
-ProgrammationManager::ProgrammationManager():programmations(0),nb(0),nbMax(0){}
+Programmation::Programmation(const Programmation& e)
+{
+  Programmation* x= this;
+  *x=Programmation(e.getEvent(), e.getDate(), e.getHoraire());
+
+
+}
+ProgrammationManager::ProgrammationManager()
+{
+    progs.reserve(10);
+}
 void ProgrammationManager::addItem(Programmation* t)
 {
-    if (nb==nbMax){
-        Programmation** newtab=new Programmation*[nbMax+10];
-        for(unsigned int i=0; i<nb; i++) newtab[i]=programmations[i];
-        // ou memcpy(newtab,Programmations,nb*sizeof(Programmation*));
-        nbMax+=10;
-        Programmation** old=programmations;
-        programmations=newtab;
-        delete[] old;
-    }
-    programmations[nb++]=t;
+    progs.push_back(t);
 }
 
 Programmation* ProgrammationManager::trouverProgrammation(const Event& e)const{
-    for(unsigned int i=0; i<nb; i++)
-        if (&t==&programmations[i]->getEvent()) return programmations[i];
+    for(unsigned int i=0; i<progs.size(); i++)
+        if (&e==&progs[i]->getEvent()) return progs[i];
     return 0;
 }
 
 void ProgrammationManager::ajouterProgrammation(const Event& e, const QDate& d, const QTime& h){
-    if (trouverProgrammation(t)) throw CalendarException("erreur, ProgrammationManager, Programmation deja existante");
+    if (trouverProgrammation(e)) throw CalendarException("erreur, ProgrammationManager, Programmation deja existante");
     Programmation* newt=new Programmation(e,d,h);
     addItem(newt);
 }
@@ -258,25 +275,23 @@ void ProgrammationManager::ajouterProgrammation(const Event& e, const QDate& d, 
 
 ProgrammationManager::~ProgrammationManager()
 {
-    for(unsigned int i=0; i<nb; i++) delete programmations[i];
-    delete[] programmations;
+    for(unsigned int i=0; i<progs.size(); i++) delete progs[i];
+
 }
 
-ProgrammationManager::ProgrammationManager(const ProgrammationManager& e):nb(e.nb),nbMax(e.nbMax), programmations(new Programmation*[e.nb]){
-    for(unsigned int i=0; i<nb; i++) programmations[i]=new Programmation(*um.programmations[i]);
+ProgrammationManager::ProgrammationManager(const ProgrammationManager& e):progs(progs.reserve(e.progs.size()))
+{
+    for(unsigned int i=0; i<e.progs.size(); i++) progs[i]=new Programmation(e.progs[i]);
 }
 
-ProgrammationManager& ProgrammationManager::operator=(const ProgrammationManager& e){
-    if (this==&um) return *this;
+ProgrammationManager& ProgrammationManager::operator=(const ProgrammationManager& e)
+{
+    if (this==&e) return *this;
     this->~ProgrammationManager();
-    for(unsigned int i=0; i<um.nb; i++) addItem(new Programmation(*e.programmations[i]));
+    for(unsigned int i=0; i<e.progs.size(); i++) addItem(new Programmation(*e.progs[i]));
     return *this;
 }
 
-/*
-    const Tache* tache;
-    Date date;
-    Horaire horaire;
-*/
+
 
 

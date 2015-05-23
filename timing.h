@@ -5,18 +5,18 @@
 #include<iomanip>
 
 namespace TIME {
-    /*! \class TimeException
-            \brief Classe permettant de gérer les exceptions des classes du namespace TIME
-    */
-    class TimeException{
-    public:
-        //! Constructeur à partir d'une string
-        TimeException(const std::string& m):info(m){}
-        const std::string& GetInfo() const { return info; } //<! Retourne l'information stockée dans la classe
-    private:
-        std::string info;
-    };
 
+/*! \class TimeException
+        \brief Classe permettant de gérer les exceptions des classes du namespace TIME
+*/
+class TimeException{
+public:
+    //! Constructeur à partir d'une string
+    TimeException(const std::string& m):info(m){}
+    const std::string& GetInfo() const { return info; } //<! Retourne l'information stockée dans la classe
+private:
+    std::string info;
+};
     /*! \class Date
             \brief Classe permettant de manipuler des dates standards
             L'utilisation de cette classe nécessite des dates valides au sens commun du terme.
