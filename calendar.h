@@ -21,6 +21,7 @@ public:
     QString getInfo() const { return info; }
 };
 
+//******************************************************************************************
 QTextStream& operator<<(QTextStream& f, const Duree& d);
 QTextStream& operator>>(QTextStream&, Duree&); //lecture format hhHmm
 
@@ -33,8 +34,7 @@ private:
     QDate disponibilite;
     QDate echeance;
 protected:
-    Tache(const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadl):titre(t), duree(dur), disponibilite(dispo), echeance(deadl)
-    {
+    Tache(const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadl):titre(t), duree(dur), disponibilite(dispo), echeance(deadl) {
         QUuid u=QUuid::createUuid();
         this->id=u.toString();
     }
@@ -77,8 +77,7 @@ class Activite: public Event
     Duree duree;
     QString lieu;
 public:
-    Activite(const QString& t, const Duree d, const QString& l):id(id), titre(t), duree(d), lieu(l)
-    {
+    Activite(const QString& t, const Duree d, const QString& l):id(id), titre(t), duree(d), lieu(l) {
         QUuid u=QUuid::createUuid();
         this->id=u.toString();
     }
@@ -88,6 +87,7 @@ public:
     const QString& getLieu() const { return lieu; }
     virtual void Afficher_Activite () const =0;
 };
+
 class Rdv : public Activite
 {
     QString personne;
@@ -174,7 +174,7 @@ class VPrincipale // class abstraite pour le tableau de taches
     QString file;
     unsigned int nb;
     unsigned int nbMax;
-  public:
+ public:
     void addItem(Tache* t);
     Tache* trouverTache(const QString& id) const;
     VPrincipale() { taches.reserve(10); }
