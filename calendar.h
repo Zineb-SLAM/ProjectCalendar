@@ -125,7 +125,7 @@ class VPrincipale // class abstraite pour le tableau de taches
     void addItem(Tache* t);
     Tache* trouverTache(const QString& id) const;
     VPrincipale() { taches.reserve(10);}
-     VPrincipale(const QString& f): file(f) { taches.reserve(10);}
+    VPrincipale(const QString& f): file(f) { taches.reserve(10);}
     virtual ~VPrincipale();
     VPrincipale(const VPrincipale& m);
     VPrincipale& operator=(const VPrincipale& m);
