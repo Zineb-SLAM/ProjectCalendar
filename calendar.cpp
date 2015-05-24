@@ -105,13 +105,13 @@ Tache* VPrincipale::trouverTache(const QString& id) const {
     return 0;
 }
 
-TacheU& VPrincipale::ajouterTacheU(const QString& id, const QString& t, const TIME::Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt, bool prog){
+/*TacheU& VPrincipale::ajouterTacheU(const QString& id, const QString& t, const TIME::Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt, bool prog){
     if (trouverTache(id))
         throw CalendarException("erreur, TacheManager, tache deja existante");
     TacheU* newt = new TacheU(id,t,dur,dispo,deadline,preempt, prog);
     addItem(newt);
     return *newt;
-}
+}*/
 
 Tache& VPrincipale::getTache(const QString& id){
     Tache* t=trouverTache(id);
@@ -214,7 +214,7 @@ void VPrincipale::load(const QString& f){
                     xml.readNext();
                 }
                 //qDebug()<<"ajout tache "<<identificateur<<"\n";
-                ajouterTacheU(identificateur,titre,duree,disponibilite,echeance,preemptive);
+                //ajouterTacheU(identificateur,titre,duree,disponibilite,echeance,preemptive);
 
             }
         }
@@ -291,8 +291,9 @@ Programmation* ProgrammationManager::trouverProgrammation(const Event& e)const{
 }
 
 void ProgrammationManager::ajouterProgrammation(const Event& e, const QDate& d, const QTime& h){
-    if (trouverProgrammation(e)) throw CalendarException("erreur, ProgrammationManager, Programmation deja existante");
-    Programmation* newt=new Programmation(e,d,h);
+    if (trouverProgrammation(e))
+        throw CalendarException("erreur, ProgrammationManager, Programmation deja existante");
+    Programmation* newt = new Programmation(e,d,h);
     addItem(newt);
 }
 
