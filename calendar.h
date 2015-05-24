@@ -139,7 +139,8 @@ class VPrincipale // class abstraite pour le tableau de taches
 //******************************************************************************************
 class Projet: public VPrincipale // On herite de l'interface et du comportement
 {
-    QString intitule;
+    QString id;
+    QString titre;
     QDate disponibilite;
     QDate echeance;
     struct Handler
@@ -149,15 +150,16 @@ class Projet: public VPrincipale // On herite de l'interface et du comportement
         ~Handler(){ if (instance) delete instance; } // destructeur appel a la fin du programme
         };
     static Handler handler;
-     Projet(const QString& s,const QDate& disp, const QDate& ech):intitule(s), disponibilite(disp), echeance(ech),VPrincipale(){}
-
+    Projet(const QString& id, const QString& t,const QDate& disp, const QDate& ech):id(id), titre(t), disponibilite(disp), echeance(ech),VPrincipale(){}
 
  public:
 
     static Projet& getInstance();
     static void libererInstance();
-    QDate getdisponibilite() const { return disponibilite; }
-    QDate getecheance() const { return echeance;}
+    const QString& getId() const { return id; }
+    const QString& getTitre() const { return titre; }
+    const QDate& getDisponibilite() const { return disponibilite; }
+    const QDate& getEcheance() const { return echeance; }
     void setdisponbilite(QDate d) {this->disponibilite=d;}
     void setecheance (QDate e) {this->echeance=e;}
     void afficher(QTextStream& f) const
@@ -197,10 +199,12 @@ class TacheManager: public VPrincipale // On herite de l'interface et du comport
     struct Handler
     {
        TacheManager* instance;
-        Handler():instance(0){}
-        ~Handler(){ if (instance) delete instance; } // destructeur appel a la fin du programme
+       Handler():instance(0){}
+       ~Handler(){ if (instance) delete instance; } // destructeur appel a la fin du programme
     };
     static Handler handler;
+    unsigned int nb;
+    unsigned int nbMax;
   public:
     TacheManager():VPrincipale(){}
     TacheManager(const QString& f):VPrincipale(f){}
@@ -215,23 +219,24 @@ class TacheManager: public VPrincipale // On herite de l'interface et du comport
 };
 
 //******************************************************************************************
-class Programmation
-{
-    const Event* events;
+class Programmation {
+    const Event* event;
     QDate date;
     QTime horaire;
 public:
-    Programmation(const Event& e, const QDate& d, const QTime& h):events(&e), date(d), horaire(h){}
+    Programmation(const Event& e, const QDate& d, const QTime& h):event(&e), date(d), horaire(h){}
     Programmation(const Programmation& e);
-    const Event& getEvent() const { return *events; }
-    QDate getDate() const { return date; }
-    QTime getHoraire() const { return horaire; }
+    const Event& getEvent() const { return *event; }
+    const QDate getDate() const { return date; }
+    const QTime getHoraire() const { return horaire; }
 };
 
 class ProgrammationManager
 {
     typedef std::vector<Programmation*> vectProg;
     vectProg progs;
+    unsigned int nb;
+    unsigned int nbMax;
     void addItem(Programmation* t);
     Programmation* trouverProgrammation(const Event& t) const;
 public:
