@@ -52,11 +52,24 @@ void TacheU::Afficher_Tache () const
 }*/
 
 //******************************************************************************************
+void Tache::setDisponibilite(const QDate& d) {
+    if (d > echeance)
+        throw CalendarException("Erreur Tache : date echeance < nouvelle date disponibilite");
+    disponibilite = d;
+}
+
+void Tache::setEcheance(const QDate& e) {
+    if (e < disponibilite)
+        throw CalendarException("erreur Tache : nouvelle date echeance < date disponibilite");
+    echeance = e;
+}
+
+//******************************************************************************************
 bool TacheC::Precedence(const Tache& t)
 {
     for(unsigned int i=0; i<tachescomp.size();i++)
     {
-        if (tachescomp[i].getDateEcheance() > t.getDateDisponibilite())  return true;
+        if (tachescomp[i].getEcheance() > t.getDisponibilite())  return true;
     }
     return false;
 
@@ -204,7 +217,7 @@ void VPrincipale::load(const QString& f){
     //qDebug()<<"fin load\n";
 }
 
-void  VPrincipale::save(const QString& f){
+void VPrincipale::save(const QString& f){
     file=f;
     QFile newfile( file);
     if (!newfile.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -218,8 +231,8 @@ void  VPrincipale::save(const QString& f){
         //stream.writeAttribute("preemptive", (taches[i]->isPreemptive())?"true":"false");// isPreemtive dans Taches??
         stream.writeTextElement("identificateur",taches[i]->getId());
         stream.writeTextElement("titre",taches[i]->getTitre());
-        stream.writeTextElement("disponibilite",taches[i]->getDateDisponibilite().toString(Qt::ISODate));
-        stream.writeTextElement("echeance",taches[i]->getDateEcheance().toString(Qt::ISODate));
+        stream.writeTextElement("disponibilite",taches[i]->getDisponibilite().toString(Qt::ISODate));
+        stream.writeTextElement("echeance",taches[i]->getEcheance().toString(Qt::ISODate));
         QString str;
         str.setNum(taches[i]->getDuree().getDureeEnMinutes());
         stream.writeTextElement("duree",str);

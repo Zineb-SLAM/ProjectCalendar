@@ -1,5 +1,6 @@
 #ifndef CALENDAR_H
 #define CALENDAR_H
+
 #include <QString>
 #include <QDate>
 #include <QTextStream>
@@ -22,9 +23,8 @@ QTextStream& operator<<(QTextStream& f, const Duree & d);
 QTextStream& operator>>(QTextStream&, Duree&); //lecture format hhHmm
 
 //******************************************************************************************
-class Tache
-{
- private:
+class Tache {
+private:
     QString id;
     QString titre;
     Duree duree;
@@ -32,27 +32,22 @@ class Tache
     QDate echeance;
 protected:
     Tache(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadl):
-            id(id),titre(t),duree(dur),disponibilite(dispo),echeance(deadl){}
+            id(id), titre(t), duree(dur), disponibilite(dispo), echeance(deadl) {}
     Tache(const Tache& t);
     Tache& operator=(const Tache&);
     friend class TacheManager;
 public:
     const QString getId() const { return id; }
-    void setId(const QString& str);
+    //pas de setId : l'utilisateur n'a pas le droit de modifier l'id : void setId(const QString& str);
     const QString getTitre() const { return titre; }
-    void setTitre(const QString& str) { titre=str; }
+    void setTitre(const QString& str) { titre = str; }
     const Duree getDuree() const { return duree; }
-    void setDuree(const Duree& d) { duree=d; }
-    const QDate getDateDisponibilite() const { return disponibilite; }
-    const QDate getDateEcheance() const { return echeance; }
-    void setDatesDisponibiliteEcheance(const QDate& disp, const QDate& e)
-    {
-        if (e<disp) throw CalendarException("erreur Tache : date echeance < date disponibilite");
-        disponibilite=disp; echeance=e;
-
-    }
+    void setDuree(const Duree& d) { duree = d; }
+    const QDate getDisponibilite() const { return disponibilite; }
+    const QDate getEcheance() const { return echeance; }
+    void setDisponibilite(const QDate& d);
+    void setEcheance(const QDate& e);
     virtual void Afficher_Tache () const =0;
-
 };
 
 //******************************************************************************************
@@ -82,7 +77,7 @@ class TacheU : private Tache , public Event {
  public:
     TacheU(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadline, bool pre=false, bool prog=false):
         Tache(id,t,dur,dispo,deadline), preemptive(pre), programmee(prog){}
-    TacheU(Tache& t, bool pre=false, bool prog=false):Tache(t.getId(),t.getTitre(),t.getDuree(),t.getDateDisponibilite(),t.getDateEcheance()), preemptive(pre), programmee(prog){}
+    TacheU(Tache& t, bool pre=false, bool prog=false):Tache(t.getId(),t.getTitre(),t.getDuree(),t.getDisponibilite(),t.getEcheance()), preemptive(pre), programmee(prog){}
     const bool isPreemptive() const { return preemptive; }
     const bool isProgrammee() const { return programmee; }
     void setPreemptive() { preemptive=true; }
