@@ -1,16 +1,16 @@
 #ifndef CALENDAR_H
 #define CALENDAR_H
+
 #include <QString>
 #include <QDate>
 #include <QTextStream>
 #include <vector>
-#include<QUuid>
-#include<sstream>
+#include <QUuid>
+#include <sstream>
 #include "timing.h"
+
 using namespace std;
 using namespace TIME;
-
-
 
 //******************************************************************************************
 class CalendarException
@@ -21,7 +21,7 @@ public:
     QString getInfo() const { return info; }
 };
 
-QTextStream& operator<<(QTextStream& f, const Duree & d);
+QTextStream& operator<<(QTextStream& f, const Duree& d);
 QTextStream& operator>>(QTextStream&, Duree&); //lecture format hhHmm
 
 //******************************************************************************************
@@ -32,7 +32,8 @@ private:
     Duree duree;
     QDate disponibilite;
     QDate echeance;
-protected:Tache(const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadl):titre(t), duree(dur), disponibilite(dispo), echeance(deadl)
+protected:
+    Tache(const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadl):titre(t), duree(dur), disponibilite(dispo), echeance(deadl)
     {
         QUuid u=QUuid::createUuid();
         this->id=u.toString();
@@ -44,26 +45,23 @@ public:
     const QString getId() const { return id; }
     //pas de setId : l'utilisateur n'a pas le droit de modifier l'id : void setId(const QString& str);
     const QString getTitre() const { return titre; }
-     void setTitre(const QString& str) { titre = str; }
+    void setTitre(const QString& str) { titre = str; }
     const Duree getDuree() const { return duree; }
     virtual void setDuree(const Duree& d) { duree = d; }
     const QDate getDisponibilite() const { return disponibilite; }
     const QDate getEcheance() const { return echeance; }
-   inline void setDisponibilite(const QDate& d);
-   inline void setEcheance(const QDate& e);
+    inline void setDisponibilite(const QDate& d);
+    inline void setEcheance(const QDate& e);
     virtual std::string toString() const=0;
-    void afficher(std::ostream& f= std::cout) const
-  {
+    /*void afficher(QTextStream& f) const {
             f<<"**Tache** \n";
-            //f<<"Id"<< id <<"Titre "<<titre<<"\n";
-            //f<<"Duree "<< duree<<"Disponibilite "<< disponibilite <<"Echeance "<< echeance<<"\n";
+            f<<"Id"<<id<<" Titre "<<titre<<"\n";
+            f<<"Duree"<<duree<<" Disponibilite "<<disponibilite <<" Echeance "<<echeance<<"\n";
             f<<toString();
-
-        }
-
-
-
+    }*/
 };
+
+QTextStream& operator<<(QTextStream& f, const Tache& t);
 
 //******************************************************************************************
 class Event  // CLASSE ABSTRAITE
@@ -156,7 +154,7 @@ public:
             f<<"**Tache Composite** \n";
             for(vectcomp::const_iterator it= tachescomp.begin(); it!=tachescomp.end();++it)
                     {
-                        (*it)->afficher();
+                        f<<(*it);
                     }
             return f.str();
         }

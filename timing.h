@@ -1,8 +1,9 @@
 #if !defined(CTIME)
 #define CTIME
 
-#include<iostream>
-#include<iomanip>
+#include <iostream>
+#include <iomanip>
+#include <QTextStream>
 
 namespace TIME {
 
@@ -68,7 +69,9 @@ private:
         void setDuree(unsigned int heures, unsigned int minutes) { if (minutes>59) throw TimeException("erreur: initialisation duree invalide"); nb_minutes=heures*60+minutes; }
         unsigned int getDureeEnMinutes() const { return nb_minutes; } //<!Retourne la duree en minutes
         double getDureeEnHeures() const { return double(nb_minutes)/60; } //<!Retourne la duree en heures
-        void afficher(std::ostream& f=std::cout) const { f<<std::setfill('0')<<std::setw(2)<<nb_minutes/60<<"H"<<std::setw(2)<<nb_minutes%60<<std::setfill(' '); } //<!Affiche la duree sous le format hhHmm
+        unsigned int getMinute() const { return nb_minutes%60; }
+        unsigned int getHeure() const { return nb_minutes/60; }
+        void afficher(QTextStream& f) const; //<!Affiche la duree sous le format hhHmm
     private:
         unsigned int nb_minutes;
     };

@@ -2,8 +2,7 @@
 
 using namespace TIME;
 
-/* void Duree::afficher(std::ostream& f) const
-{
+void Duree::afficher(QTextStream& f) const {
     f.setPadChar('0');
     f.setFieldWidth(2);
     f<<nb_minutes/60;
@@ -14,4 +13,3 @@ using namespace TIME;
     f.setFieldWidth(0);
     f.setPadChar(' ');
 }
-*/

@@ -5,10 +5,12 @@
 #include <QTextCodec>
 #include <QtXml>
 #include <QMessageBox>
+#include <QTextStream>
 
-/*QTextStream& operator<<(std::ostream& f, const TIME::Duree & d)
-{ d.afficher(f);
-    return f; }
+QTextStream& operator<<(QTextStream& f, const TIME::Duree& d) {
+    d.afficher(f);
+    return f;
+}
 
 QTextStream& operator>>(QTextStream& flot, TIME::Duree& duree){
     unsigned int h,m;
@@ -27,7 +29,7 @@ QTextStream& operator>>(QTextStream& flot, TIME::Duree& duree){
     return flot;
 }
 
-
+/*
 
 QTextStream& operator<<(QTextStream& fout, const Tache& t){
     fout<<t.getId()<<"\n";
@@ -65,6 +67,15 @@ void Tache::setEcheance(const QDate& e) {
     echeance = e;
 }
 
+QTextStream& operator<<(QTextStream& fout, const Tache& t){
+    fout<<t.getId()<<"\n";
+    fout<<t.getTitre()<<"\n";
+    fout<<t.getDuree()<<"\n";
+    fout<<t.getDisponibilite().toString()<<"\n";
+    fout<<t.getEcheance().toString()<<"\n";
+    return fout;
+}
+
 //******************************************************************************************
 void TacheU::setDuree(const Duree& d) {
     if ((preemptive == false) && (d.getDureeEnHeures() > 12))
@@ -94,12 +105,12 @@ void VPrincipale::addItem(Tache* t) {
         taches.push_back(t);
 }
 
-/*Tache* VPrincipale::trouverTache(const QString& t) const { //plus la peine comme les id sont uniques
+Tache* VPrincipale::trouverTache(const QString& t) const { //plus la peine comme les id sont uniques
     for(tabtaches::const_iterator it= taches.begin(); it!=taches.end();++it) {
         //if(id==it->getId()) return (it);
     }
     return 0;
-}*/
+}
 
 TacheU& VPrincipale::ajouterTacheU(const QString& t, const TIME::Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt, bool prog)
 {
