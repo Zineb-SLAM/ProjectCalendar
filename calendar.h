@@ -42,7 +42,7 @@ public:
     const QString getTitre() const { return titre; }
     void setTitre(const QString& str) { titre = str; }
     const Duree getDuree() const { return duree; }
-    void setDuree(const Duree& d) { duree = d; }
+    virtual void setDuree(const Duree& d) { duree = d; }
     const QDate getDisponibilite() const { return disponibilite; }
     const QDate getEcheance() const { return echeance; }
     void setDisponibilite(const QDate& d);
@@ -52,7 +52,6 @@ public:
 
 //******************************************************************************************
 class Event { // CLASSE ABSTRAITE
-
 public:
 };
 
@@ -71,29 +70,36 @@ public:
 };
 
 //******************************************************************************************
-class TacheU : private Tache , public Event {
+class TacheU : public Tache , public Event {
     bool preemptive;
     bool programmee;
  public:
     TacheU(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadline, bool pre=false, bool prog=false):
-        Tache(id,t,dur,dispo,deadline), preemptive(pre), programmee(prog){}
+        Tache(id,t,dur,dispo,deadline), preemptive(pre), programmee(prog) {
+        if ((preemptive == false) && (getDuree().getDureeEnHeures() > 12))
+                throw CalendarException("Erreur tache unitaire : une tache non preemptive ne peut pas avoir une durée supérieure à 12h");
+    }
     TacheU(Tache& t, bool pre=false, bool prog=false):Tache(t.getId(),t.getTitre(),t.getDuree(),t.getDisponibilite(),t.getEcheance()), preemptive(pre), programmee(prog){}
+    void setDuree(const Duree& d); //redéfinition
     const bool isPreemptive() const { return preemptive; }
     const bool isProgrammee() const { return programmee; }
-    void setPreemptive() { preemptive=true; }
-    void setNonPreemptive() { preemptive=false; }
+    void setPreemptive() { preemptive = true; }
+    void setNonPreemptive();
+    void setProgrammee() { programmee = true; }
+    void setNonProgrammee() { programmee = false; }
     void Afficher_Tache() const { cout<<"Tache Unitaire"; }
 };
 
 class TacheC : public Tache {
-    typedef std::vector<Tache> vectcomp;
+    typedef std::vector<Tache *> vectcomp;
     vectcomp tachescomp;
 public:
     TacheC(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadl): Tache(id,t,dur,dispo,deadl)
     { tachescomp.reserve(10); }
-    bool Precedence(const Tache& t);
-    void ajoutTache(const Tache& t);
+    //bool Precedence(const Tache& t);
+    //void ajoutTache(const Tache& t);
     void Afficher_Tache() const { cout<<"Tache Composite"; }
+    ~TacheC() { tachescomp.clear(); } //clear() vide le contenu du conteneur
 };
 
 QTextStream& operator<<(QTextStream& f, const Tache& t);
@@ -116,15 +122,17 @@ class VPrincipale // class abstraite pour le tableau de taches
     typedef std::vector<Tache*> tabtaches;
     tabtaches taches;
     QString file;
+    unsigned int nb;
+    unsigned int nbMax;
   public:
     void addItem(Tache* t);
     Tache* trouverTache(const QString& id) const;
-    VPrincipale() { taches.reserve(10);}
-    VPrincipale(const QString& f): file(f) { taches.reserve(10);}
+    VPrincipale() { taches.reserve(10); }
+    VPrincipale(const QString& f): file(f) { taches.reserve(10); }
     virtual ~VPrincipale();
     VPrincipale(const VPrincipale& m);
     VPrincipale& operator=(const VPrincipale& m);
-    TacheU& ajouterTacheU(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt=false);
+    TacheU& ajouterTacheU(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt=false, bool prog=false);
     Tache& getTache(const QString& id);
     bool isTacheExistante(const QString& id) const { return trouverTache(id)!=0; }
     const Tache& getTache(const QString& code) const;
@@ -180,7 +188,6 @@ class ProjetManager: public VPrincipale
         ~Handler(){ if (instance) delete instance; } // destructeur appel a la fin du programme
     };
     static Handler handler;
-
 public:
     static ProjetManager& getInstance();
     static void libererInstance();
@@ -201,9 +208,7 @@ class TacheManager: public VPrincipale // On herite de l'interface et du comport
        ~Handler(){ if (instance) delete instance; } // destructeur appel a la fin du programme
     };
     static Handler handler;
-    unsigned int nb;
-    unsigned int nbMax;
-  public:
+public:
     TacheManager():VPrincipale(){}
     TacheManager(const QString& f):VPrincipale(f){}
     static TacheManager& getInstance();
@@ -233,8 +238,6 @@ class ProgrammationManager
 {
     typedef std::vector<Programmation*> vectProg;
     vectProg progs;
-    unsigned int nb;
-    unsigned int nbMax;
     void addItem(Programmation* t);
     Programmation* trouverProgrammation(const Event& t) const;
 public:

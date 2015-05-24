@@ -65,44 +65,53 @@ void Tache::setEcheance(const QDate& e) {
 }
 
 //******************************************************************************************
-bool TacheC::Precedence(const Tache& t)
+void TacheU::setDuree(const Duree& d) {
+    if ((preemptive == false) && (d.getDureeEnHeures() > 12))
+            throw CalendarException("Erreur tache unitaire : une tache non preemptive ne peut pas avoir une durée supérieure à 12h");
+    Tache::setDuree(d);
+}
+
+void TacheU::setNonPreemptive() {
+    if(getDuree().getDureeEnHeures() > 12)
+        throw CalendarException("Erreur tache unitaire : une tache non preemptive ne peut pas avoir une durée supérieure à 12h");
+    preemptive = false;
+}
+
+/*bool TacheC::Precedence(const Tache& t)
 {
     for(unsigned int i=0; i<tachescomp.size();i++)
     {
-        if (tachescomp[i].getEcheance() > t.getDisponibilite())  return true;
+        if (*(tachescomp[i]).getEcheance() > t.getDisponibilite())  return true;
     }
     return false;
 
-}
-void TacheC::ajoutTache(const Tache& t)
+}*/
+
+/*void TacheC::ajoutTache(const Tache& t)
 {
     if(Precedence(t)) throw CalendarException("Il faut finir les taches précedentes");
     tachescomp.push_back(t);
-}
+}*/
 
 //******************************************************************************************
-
-Tache* VPrincipale::trouverTache(const QString& id)const
-{
-    for(tabtaches::const_iterator it= taches.begin(); it!=taches.end();++it)
-            {
-                //if(id==it->getId()) return (it);
-            }
-    return 0;
-}
-void VPrincipale::addItem(Tache* t)
-{
+void VPrincipale::addItem(Tache* t) {
         taches.push_back(t);
 }
 
-TacheU& VPrincipale::ajouterTacheU(const QString& id, const QString& t, const TIME::Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt){
-    if (trouverTache(id)) throw CalendarException("erreur, TacheManager, tache deja existante");
-    TacheU* newt=new TacheU(id,t,dur,dispo,deadline,preempt);
+Tache* VPrincipale::trouverTache(const QString& id) const {
+    for(tabtaches::const_iterator it= taches.begin(); it!=taches.end();++it) {
+        //if(id==it->getId()) return (it);
+    }
+    return 0;
+}
+
+TacheU& VPrincipale::ajouterTacheU(const QString& id, const QString& t, const TIME::Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt, bool prog){
+    if (trouverTache(id))
+        throw CalendarException("erreur, TacheManager, tache deja existante");
+    TacheU* newt = new TacheU(id,t,dur,dispo,deadline,preempt, prog);
     addItem(newt);
     return *newt;
 }
-
-
 
 Tache& VPrincipale::getTache(const QString& id){
     Tache* t=trouverTache(id);
@@ -117,7 +126,7 @@ const Tache& VPrincipale::getTache(const QString& id)const
 
 VPrincipale::~VPrincipale(){
     //if (file!="") save(file);
-    for(int i=0;i<taches.size();i++)
+    for(unsigned int i=0;i<taches.size();i++)
       delete taches[i];
     file="";
 }
@@ -286,22 +295,22 @@ void ProgrammationManager::ajouterProgrammation(const Event& e, const QDate& d, 
 }
 
 
-ProgrammationManager::~ProgrammationManager()
-{
-    for(unsigned int i=0; i<progs.size(); i++) delete progs[i];
-
+ProgrammationManager::~ProgrammationManager() {
+    for(unsigned int i=0; i<progs.size(); i++)
+        delete progs[i];
 }
 
-ProgrammationManager::ProgrammationManager(const ProgrammationManager& e):progs(progs.reserve(e.progs.size()))
-{
-    for(unsigned int i=0; i<e.progs.size(); i++) progs[i]=new Programmation(e.progs[i]);
+ProgrammationManager::ProgrammationManager(const ProgrammationManager& e) {
+    progs.reserve(e.progs.size());
+    for(unsigned int i=0; i<e.progs.size(); i++)
+        progs[i] = new Programmation(*e.progs[i]);
 }
 
-ProgrammationManager& ProgrammationManager::operator=(const ProgrammationManager& e)
-{
+ProgrammationManager& ProgrammationManager::operator=(const ProgrammationManager& e) {
     if (this==&e) return *this;
     this->~ProgrammationManager();
-    for(unsigned int i=0; i<e.progs.size(); i++) addItem(new Programmation(*e.progs[i]));
+    for(unsigned int i=0; i<e.progs.size(); i++)
+        addItem(new Programmation(*e.progs[i]));
     return *this;
 }
 
