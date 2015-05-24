@@ -138,7 +138,7 @@ void VPrincipale::load(const QString& f){
     QFile fin(file);
     // If we can't open it, let's show an error message.
     if (!fin.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        throw CalendarException("Erreur ouverture fichier t�ches");
+        throw CalendarException("Erreur ouverture fichier taches");
     }
     // QXmlStreamReader takes any QIODevice.
     QXmlStreamReader xml(&fin);
@@ -180,13 +180,15 @@ void VPrincipale::load(const QString& f){
                     if(xml.tokenType() == QXmlStreamReader::StartElement) {
                         // We've found identificteur.
                         if(xml.name() == "identificateur") {
-                            xml.readNext(); identificateur=xml.text().toString();
+                            xml.readNext();
+                            identificateur=xml.text().toString();
                             //qDebug()<<"id="<<identificateur<<"\n";
                         }
 
                         // We've found titre.
                         if(xml.name() == "titre") {
-                            xml.readNext(); titre=xml.text().toString();
+                            xml.readNext();
+                            titre=xml.text().toString();
                             //qDebug()<<"titre="<<titre<<"\n";
                         }
                         // We've found disponibilite
@@ -204,7 +206,7 @@ void VPrincipale::load(const QString& f){
                         // We've found duree
                         if(xml.name() == "duree") {
                             xml.readNext();
-                            duree.setDuree(xml.text().toString().toUInt());
+                            duree=xml.text().toString().toUInt();
                             //qDebug()<<"duree="<<duree.getDureeEnMinutes()<<"\n";
                         }
                     }
