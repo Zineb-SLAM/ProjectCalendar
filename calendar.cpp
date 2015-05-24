@@ -316,6 +316,19 @@ ProgrammationManager& ProgrammationManager::operator=(const ProgrammationManager
     return *this;
 }
 
+ProgrammationManager* ProgrammationManager::instanceUnique=0;
 
+ProgrammationManager& ProgrammationManager::getInstance(){
+    if (instanceUnique==0)
+        instanceUnique = new ProgrammationManager;
+    return *instanceUnique;
+}
 
+void ProgrammationManager::libererInstance() {
+    if (instanceUnique != 0) {
+        (*instanceUnique).progs.clear();
+        delete instanceUnique;
+    }
+    instanceUnique=0;
+}
 

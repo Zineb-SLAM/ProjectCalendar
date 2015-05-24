@@ -240,11 +240,14 @@ class ProgrammationManager
     vectProg progs;
     void addItem(Programmation* t);
     Programmation* trouverProgrammation(const Event& t) const;
+    ProgrammationManager(const ProgrammationManager& e);
+    ProgrammationManager& operator=(const ProgrammationManager& e);
+    static ProgrammationManager* instanceUnique;
 public:
     ProgrammationManager();
     ~ProgrammationManager();
-    ProgrammationManager(const ProgrammationManager& e);
-    ProgrammationManager& operator=(const ProgrammationManager& e);
+    ProgrammationManager& getInstance();
+    void libererInstance();
     void ajouterProgrammation(const Event& e, const QDate& d, const QTime& h);
 };
 
