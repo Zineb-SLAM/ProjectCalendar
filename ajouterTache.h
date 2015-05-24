@@ -1,5 +1,6 @@
 #ifndef TACHEEDITEUR_H
 #define TACHEEDITEUR_H
+
 #include <QString>
 #include <QDate>
 #include <QSpinBox>
@@ -40,5 +41,6 @@ public slots:
    void sauverTache();
 
 };
-    #endif // TACHEEDITEUR_H
+
+#endif // TACHEEDITEUR_H
 

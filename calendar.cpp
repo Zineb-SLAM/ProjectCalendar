@@ -56,14 +56,14 @@ bool TacheC::Precedence(const Tache& t)
 {
     for(unsigned int i=0; i<tachescomp.size();i++)
     {
-        if (tachescomp[i].getDateEcheance>t.getDateDisponibilite())  return true;
+        if (tachescomp[i].getDateEcheance() > t.getDateDisponibilite())  return true;
     }
     return false;
 
 }
 void TacheC::ajoutTache(const Tache& t)
 {
-    if(Precedence(t)) throw CalendarException "Il faut finir les taches précedentes";
+    if(Precedence(t)) throw CalendarException("Il faut finir les taches précedentes");
     tachescomp.push_back(t);
 }
 
@@ -215,7 +215,7 @@ void  VPrincipale::save(const QString& f){
     stream.writeStartElement("taches");
     for(unsigned int i=0; i<taches.size(); i++){
         stream.writeStartElement("tache");
-        stream.writeAttribute("preemptive", (taches[i]->isPreemptive())?"true":"false");// isPreemtive dans Taches??
+        //stream.writeAttribute("preemptive", (taches[i]->isPreemptive())?"true":"false");// isPreemtive dans Taches??
         stream.writeTextElement("identificateur",taches[i]->getId());
         stream.writeTextElement("titre",taches[i]->getTitre());
         stream.writeTextElement("disponibilite",taches[i]->getDateDisponibilite().toString(Qt::ISODate));

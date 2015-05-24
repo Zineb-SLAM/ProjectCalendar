@@ -22,6 +22,40 @@ QTextStream& operator<<(QTextStream& f, const Duree & d);
 QTextStream& operator>>(QTextStream&, Duree&); //lecture format hhHmm
 
 //******************************************************************************************
+class Tache
+{
+ private:
+    QString id;
+    QString titre;
+    Duree duree;
+    QDate disponibilite;
+    QDate echeance;
+protected:
+    Tache(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadl):
+            id(id),titre(t),duree(dur),disponibilite(dispo),echeance(deadl){}
+    Tache(const Tache& t);
+    Tache& operator=(const Tache&);
+    friend class TacheManager;
+public:
+    const QString getId() const { return id; }
+    void setId(const QString& str);
+    const QString getTitre() const { return titre; }
+    void setTitre(const QString& str) { titre=str; }
+    const Duree getDuree() const { return duree; }
+    void setDuree(const Duree& d) { duree=d; }
+    const QDate getDateDisponibilite() const { return disponibilite; }
+    const QDate getDateEcheance() const { return echeance; }
+    void setDatesDisponibiliteEcheance(const QDate& disp, const QDate& e)
+    {
+        if (e<disp) throw CalendarException("erreur Tache : date echeance < date disponibilite");
+        disponibilite=disp; echeance=e;
+
+    }
+    virtual void Afficher_Tache () const =0;
+
+};
+
+//******************************************************************************************
 class Event { // CLASSE ABSTRAITE
 
 public:
@@ -33,7 +67,7 @@ class Activite: public Event {
     Duree duree;
     QString lieu;
 public:
-    Activite(const QString& id, const QString& t, const QString d, const QString& l):id(id), titre(t), duree(d), lieu(l) {}
+    Activite(const QString& id, const QString& t, const Duree d, const QString& l):id(id), titre(t), duree(d), lieu(l) {}
     const QString& getId() const { return id; }
     const QString& getTitre() const { return titre; }
     const Duree& getDuree() const { return duree; }
@@ -41,50 +75,7 @@ public:
     virtual void Afficher_Activite () const =0;
 };
 
-class Rdv : public Event {
-public:
-    Rdv(const QString& id, const QString& t, const QString d, const QString& l):Activite(id,t,d,l)
-};
-
-class Reunion : public Event {
-public:
-    Reunion(const QString& id, const QString& t, const QString d, const QString& l):Activite(id,t,d,l)
-};
-
 //******************************************************************************************
-class Tache
-{
- private:
-    QString identificateur;
-    QString titre;
-    Duree duree;
-    QDate disponibilite;
-    QDate echeance;
-protected:
-    Tache(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadl):
-            identificateur(id),titre(t),duree(dur),disponibilite(dispo),echeance(deadl){}
-    Tache(const Tache& t);
-    Tache& operator=(const Tache&);
-    friend class TacheManager;
-public:
-    const QString getId() const { return identificateur; }
-    void setId(const QString& str);
-    const QString getTitre() const { return titre; }
-    void setTitre(const QString& str) { titre=str; }
-    const Duree getDuree() const { return duree; }
-    void setDuree(const Duree& d) { duree=d; }
-    const QDate getDateDisponibilite() const {  return disponibilite; }
-    const QDate getDateEcheance() const {  return echeance; }
-    void setDatesDisponibiliteEcheance(const QDate& disp, const QDate& e)
-    {
-        if (e<disp) throw CalendarException("erreur Tache : date echeance < date disponibilite");
-        disponibilite=disp; echeance=e;
-
-    }
-    virtual void Afficher_Tache () const =0;
-
-};
-
 class TacheU : private Tache , public Event {
     bool preemptive;
     bool programmee;
@@ -111,6 +102,18 @@ public:
 };
 
 QTextStream& operator<<(QTextStream& f, const Tache& t);
+
+//******************************************************************************************
+class Rdv : public Activite {
+    QString personne;
+public:
+    Rdv(const QString& id, const QString& t, const Duree d, const QString& l, const QString& p):Activite(id,t,d,l), personne(p) {}
+};
+
+class Reunion : public Activite {
+public:
+    Reunion(const QString& id, const QString& t, const Duree d, const QString& l):Activite(id,t,d,l) {}
+};
 
 //******************************************************************************************
 class VPrincipale // class abstraite pour le tableau de taches

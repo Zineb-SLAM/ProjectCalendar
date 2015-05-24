@@ -1,5 +1,8 @@
 #include "timing.h"
-void Duree::afficher(QTextStream& f) const
+
+using namespace TIME;
+
+/* void Duree::afficher(std::ostream& f) const
 {
     f.setPadChar('0');
     f.setFieldWidth(2);
@@ -11,3 +14,4 @@ void Duree::afficher(QTextStream& f) const
     f.setFieldWidth(0);
     f.setPadChar(' ');
 }
+*/
