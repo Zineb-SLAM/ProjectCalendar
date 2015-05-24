@@ -33,18 +33,22 @@ class Activite: public Event {
     Duree duree;
     QString lieu;
 public:
+    Activite(const QString& id, const QString& t, const QString d, const QString& l):id(id), titre(t), duree(d), lieu(l) {}
     const QString& getId() const { return id; }
     const QString& getTitre() const { return titre; }
     const Duree& getDuree() const { return duree; }
     const QString& getLieu() const { return lieu; }
+    virtual void Afficher_Activite () const =0;
 };
 
 class Rdv : public Event {
-
+public:
+    Rdv(const QString& id, const QString& t, const QString d, const QString& l):Activite(id,t,d,l)
 };
 
 class Reunion : public Event {
-
+public:
+    Reunion(const QString& id, const QString& t, const QString d, const QString& l):Activite(id,t,d,l)
 };
 
 //******************************************************************************************
@@ -56,20 +60,21 @@ class Tache
     Duree duree;
     QDate disponibilite;
     QDate echeance;
-protected: Tache(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadl, bool preempt=false):
+protected:
+    Tache(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadl):
             identificateur(id),titre(t),duree(dur),disponibilite(dispo),echeance(deadl){}
     Tache(const Tache& t);
     Tache& operator=(const Tache&);
     friend class TacheManager;
 public:
-    QString getId() const { return identificateur; }
+    const QString getId() const { return identificateur; }
     void setId(const QString& str);
-    QString getTitre() const { return titre; }
+    const QString getTitre() const { return titre; }
     void setTitre(const QString& str) { titre=str; }
-    Duree getDuree() const { return duree; }
+    const Duree getDuree() const { return duree; }
     void setDuree(const Duree& d) { duree=d; }
-    QDate getDateDisponibilite() const {  return disponibilite; }
-    QDate getDateEcheance() const {  return echeance; }
+    const QDate getDateDisponibilite() const {  return disponibilite; }
+    const QDate getDateEcheance() const {  return echeance; }
     void setDatesDisponibiliteEcheance(const QDate& disp, const QDate& e)
     {
         if (e<disp) throw CalendarException("erreur Tache : date echeance < date disponibilite");
@@ -80,36 +85,29 @@ public:
 
 };
 
-class TacheU : private Tache , public Event
-{
+class TacheU : private Tache , public Event {
     bool preemptive;
-
+    bool programmee;
  public:
-
-    TacheU(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadline, bool p=false):
-        Tache(id,t,dur,dispo,deadline), preemptive(p){}
-    TacheU(Tache& t, bool p=false):Tache(t.getId(),t.getTitre(),t.getDuree(),t.getDateDisponibilite(),t.getDateEcheance()),preemptive(p){}
-
-    bool isPreemptive() const { return preemptive; }
+    TacheU(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadline, bool pre=false, bool prog=false):
+        Tache(id,t,dur,dispo,deadline), preemptive(pre), programmee(prog){}
+    TacheU(Tache& t, bool pre=false, bool prog=false):Tache(t.getId(),t.getTitre(),t.getDuree(),t.getDateDisponibilite(),t.getDateEcheance()), preemptive(pre), programmee(prog){}
+    const bool isPreemptive() const { return preemptive; }
+    const bool isProgrammee() const { return programmee; }
     void setPreemptive() { preemptive=true; }
     void setNonPreemptive() { preemptive=false; }
-    void Afficher_Tache() const { cout<<"Tache Unitaire";};
-
+    void Afficher_Tache() const { cout<<"Tache Unitaire"; }
 };
 
-class TacheC : public Tache
-{
+class TacheC : public Tache {
     typedef std::vector<Tache> vectcomp;
     vectcomp tachescomp;
-
 public:
     TacheC(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadl): Tache(id,t,dur,dispo,deadl)
-    {tachescomp.reserve(10);}
+    { tachescomp.reserve(10); }
     bool Precedence(const Tache& t);
     void ajoutTache(const Tache& t);
-    void Afficher_Tache() const { cout<<"Tache Composite";}
-
-
+    void Afficher_Tache() const { cout<<"Tache Composite"; }
 };
 
 QTextStream& operator<<(QTextStream& f, const Tache& t);
