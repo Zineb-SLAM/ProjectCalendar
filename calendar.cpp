@@ -222,7 +222,6 @@ void VPrincipale::load(const QString& f){
                 }
                 //qDebug()<<"ajout tache "<<identificateur<<"\n";
                 ajouterTacheU(titre,duree,disponibilite,echeance,preemptive);
-
             }
         }
     }
@@ -297,10 +296,10 @@ Programmation* ProgrammationManager::trouverProgrammation(const Event& e)const{
     return 0;
 }
 
-void ProgrammationManager::ajouterProgrammation(const Event& e, const QDate& d, const QTime& h)
-{
-    if (trouverProgrammation(e)) throw CalendarException("erreur, ProgrammationManager, Programmation deja existante");
-    Programmation* newt=new Programmation(e,d,h);
+void ProgrammationManager::ajouterProgrammation(const Event& e, const QDate& d, const QTime& h){
+    if (trouverProgrammation(e))
+        throw CalendarException("erreur, ProgrammationManager, Programmation deja existante");
+    Programmation* newt = new Programmation(e,d,h);
     addItem(newt);
 }
 
@@ -324,6 +323,19 @@ ProgrammationManager& ProgrammationManager::operator=(const ProgrammationManager
     return *this;
 }
 
+ProgrammationManager* ProgrammationManager::instanceUnique=0;
 
+ProgrammationManager& ProgrammationManager::getInstance(){
+    if (instanceUnique==0)
+        instanceUnique = new ProgrammationManager;
+    return *instanceUnique;
+}
 
+void ProgrammationManager::libererInstance() {
+    if (instanceUnique != 0) {
+        (*instanceUnique).progs.clear();
+        delete instanceUnique;
+    }
+    instanceUnique=0;
+}
 

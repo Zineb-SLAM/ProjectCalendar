@@ -105,13 +105,13 @@ public:
 class TacheU : public Tache , public Event {
     bool preemptive;
     bool programmee;
- public:
-    TacheU(const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadline, bool pre=false, bool prog=false):
-        Tache(t,dur,dispo,deadline), preemptive(pre), programmee(prog) {
+    TacheU(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadline, bool pre=false, bool prog=false):
+        Tache(id,t,dur,dispo,deadline), preemptive(pre), programmee(prog) {
         if ((preemptive == false) && (getDuree().getDureeEnHeures() > 12))
                 throw CalendarException("Erreur tache unitaire : une tache non preemptive ne peut pas avoir une durée supérieure à 12h");
     }
-    TacheU(Tache& t, bool pre=false, bool prog=false):Tache(t.getTitre(),t.getDuree(),t.getDisponibilite(),t.getEcheance()), preemptive(pre), programmee(prog){}
+    TacheU(Tache& t, bool pre=false, bool prog=false):Tache(t.getId(),t.getTitre(),t.getDuree(),t.getDisponibilite(),t.getEcheance()), preemptive(pre), programmee(prog){}
+ public:
     void setDuree(const Duree& d); //redéfinition
     const bool isPreemptive() const { return preemptive; }
     const bool isProgrammee() const { return programmee; }
@@ -143,9 +143,11 @@ class TacheU : public Tache , public Event {
 class TacheC : public Tache {
     typedef std::vector<Tache *> vectcomp;
     vectcomp tachescomp;
-public:
-    TacheC(const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadl): Tache(t,dur,dispo,deadl)
+    TacheC(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadl): Tache(id,t,dur,dispo,deadl)
     { tachescomp.reserve(10); }
+    ~TacheC() { tachescomp.clear(); } //clear() vide le contenu du conteneur
+public:
+
     //bool Precedence(const Tache& t);
     //void ajoutTache(const Tache& t);
     std::string toString() const
@@ -174,7 +176,7 @@ class VPrincipale // class abstraite pour le tableau de taches
     QString file;
     unsigned int nb;
     unsigned int nbMax;
- public:
+public:
     void addItem(Tache* t);
     Tache* trouverTache(const QString& id) const;
     VPrincipale() { taches.reserve(10); }
@@ -195,6 +197,7 @@ class VPrincipale // class abstraite pour le tableau de taches
 //******************************************************************************************
 class Projet: public VPrincipale // On herite de l'interface et du comportement
 {
+    friend class ProjetManager;
     QString id;
     QString titre;
     QDate disponibilite;
@@ -204,16 +207,14 @@ class Projet: public VPrincipale // On herite de l'interface et du comportement
         Projet* instance;
         Handler():instance(0){}
         ~Handler(){ if (instance) delete instance; } // destructeur appel a la fin du programme
-        };
+     };
     static Handler handler;
     Projet(const QString& t,const QDate& disp, const QDate& ech):id(id), titre(t), disponibilite(disp), echeance(ech),VPrincipale()
     {
         QUuid u=QUuid::createUuid();
         this->id=u.toString();
     }
-
  public:
-
     static Projet& getInstance();
     static void libererInstance();
     const QString& getId() const { return id; }
@@ -222,21 +223,15 @@ class Projet: public VPrincipale // On herite de l'interface et du comportement
     const QDate& getEcheance() const { return echeance; }
     void setdisponbilite(QDate d) {this->disponibilite=d;}
     void setecheance (QDate e) {this->echeance=e;}
-    void afficher(QTextStream& f) const
-    {
-
+    void afficher(QTextStream& f) const {
         f<<"****Projet*****";
-
     }
-
 };
 
-class ProjetManager: public VPrincipale
-{
+class ProjetManager: public VPrincipale {
     typedef std::vector<Projet*> TabProjet;
     TabProjet tabprojets;
-    struct Handler
-    {
+    struct Handler {
         ProjetManager* instance;
         Handler():instance(0){}
         ~Handler(){ if (instance) delete instance; } // destructeur appel a la fin du programme
@@ -245,13 +240,11 @@ class ProjetManager: public VPrincipale
 public:
     static ProjetManager& getInstance();
     static void libererInstance();
-    void afficher(QTextStream& f) const
-    {
+    void afficher(QTextStream& f) const {
         f<<"****ProjetManaeger*****";
     }
-
-
-
+    void ajouterProjet(const QString& id, const QString& t,const QDate& disp, const QDate& ech);
+    Projet& getProjet(const QString& id);
 };
 
 //******************************************************************************************
@@ -273,18 +266,20 @@ public:
     {
         f<<"****TacheManager*****";
     }
-
-
+    void ajouterTache(); //à adapter selon TacheU ou TacheC --> design pattern
+    Tache& getTache(const QString& id);
 };
 
 //******************************************************************************************
 class Programmation {
+    friend class ProgrammationManager;
     const Event* event;
     QDate date;
     QTime horaire;
-public:
+    //constructeurs et destructeur en privé car les Programmations sont gérées par ProgrammationManager
     Programmation(const Event& e, const QDate& d, const QTime& h):event(&e), date(d), horaire(h){}
     Programmation(const Programmation& e);
+public:
     const Event& getEvent() const { return *event; }
     const QDate getDate() const { return date; }
     const QTime getHoraire() const { return horaire; }
@@ -294,19 +289,18 @@ class ProgrammationManager
 {
     typedef std::vector<Programmation*> vectProg;
     vectProg progs;
-    ProgrammationManager& operator=(const ProgrammationManager& e);
-     ProgrammationManager(const ProgrammationManager& e);
-
-
-public:
-    ProgrammationManager();
-    void ajouterProgrammation(const Event& e, const QDate& d, const QTime& h);
     void addItem(Programmation* t);
     Programmation* trouverProgrammation(const Event& t) const;
+    ProgrammationManager(const ProgrammationManager& e);
+    ProgrammationManager& operator=(const ProgrammationManager& e);
+    static ProgrammationManager* instanceUnique;
+public:
+    ProgrammationManager();
     ~ProgrammationManager();
-
-
-
+    ProgrammationManager& getInstance();
+    void libererInstance();
+    void ajouterProgrammation(const Event& e, const QDate& d, const QTime& h);
+    Programmation& getProgrammation(const QString& id_evt);
 };
 
 //******************************************************************************************
