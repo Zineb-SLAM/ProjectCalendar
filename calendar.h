@@ -1,6 +1,5 @@
 #ifndef CALENDAR_H
 #define CALENDAR_H
-
 #include <QString>
 #include <QDate>
 #include <QTextStream>
@@ -34,10 +33,11 @@ private:
     QDate disponibilite;
     QDate echeance;
 protected:
-    Tache(const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadl):titre(t), duree(dur), disponibilite(dispo), echeance(deadl) {
+    Tache(const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadl):titre(t), duree(dur), disponibilite(dispo), echeance(deadl)
+    {
         QUuid u=QUuid::createUuid();
         this->id=u.toString();
-    }
+    } // probleme car l'heritage private n'est plus un heritage est un mais en terme de
     Tache(const Tache& t);
     Tache& operator=(const Tache&);
     friend class TacheManager;
@@ -105,13 +105,15 @@ public:
 class TacheU : public Tache , public Event {
     bool preemptive;
     bool programmee;
-    TacheU(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadline, bool pre=false, bool prog=false):
-        Tache(id,t,dur,dispo,deadline), preemptive(pre), programmee(prog) {
+ public:
+    TacheU(const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadline, bool pre=false, bool prog=false):
+        Tache(t,dur,dispo,deadline), preemptive(pre), programmee(prog)
+    {
         if ((preemptive == false) && (getDuree().getDureeEnHeures() > 12))
                 throw CalendarException("Erreur tache unitaire : une tache non preemptive ne peut pas avoir une durée supérieure à 12h");
     }
-    TacheU(Tache& t, bool pre=false, bool prog=false):Tache(t.getId(),t.getTitre(),t.getDuree(),t.getDisponibilite(),t.getEcheance()), preemptive(pre), programmee(prog){}
- public:
+    TacheU(Tache& t, bool pre=false, bool prog=false):Tache(t.getTitre(),t.getDuree(),t.getDisponibilite(),t.getEcheance()), preemptive(pre), programmee(prog){}
+
     void setDuree(const Duree& d); //redéfinition
     const bool isPreemptive() const { return preemptive; }
     const bool isProgrammee() const { return programmee; }
@@ -126,8 +128,10 @@ class TacheU : public Tache , public Event {
         preemptive = false;
     }
 
-    void setProgrammee() { programmee = true; }
-    void setNonProgrammee() { programmee = false; }
+    void setProgrammee();
+                 //{ programmee = true;}
+    void setNonProgrammee()
+                    { programmee = false; }
     std::string toString() const
         {
 
@@ -140,16 +144,22 @@ class TacheU : public Tache , public Event {
 
 };
 
-class TacheC : public Tache {
+template <class T>
+class TacheC : public Tache //clone
+{
     typedef std::vector<Tache *> vectcomp;
     vectcomp tachescomp;
-    TacheC(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadl): Tache(id,t,dur,dispo,deadl)
+    TacheC(const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadl): Tache(t,dur,dispo,deadl)
     { tachescomp.reserve(10); }
-    ~TacheC() { tachescomp.clear(); } //clear() vide le contenu du conteneur
+
 public:
 
     //bool Precedence(const Tache& t);
-    //void ajoutTache(const Tache& t);
+
+    void addTasktoC(const T& t)
+    {
+        tachescomp.push_back(t);
+    }
     std::string toString() const
         {
             std::stringstream f;
@@ -174,8 +184,7 @@ class VPrincipale // class abstraite pour le tableau de taches
     typedef std::vector<Tache*> tabtaches;
     tabtaches taches;
     QString file;
-    unsigned int nb;
-    unsigned int nbMax;
+
 public:
     void addItem(Tache* t);
     Tache* trouverTache(const QString& id) const;
@@ -271,13 +280,14 @@ public:
 };
 
 //******************************************************************************************
-class Programmation {
+class Programmation
+{
     friend class ProgrammationManager;
     const Event* event;
     QDate date;
     QTime horaire;
     //constructeurs et destructeur en privé car les Programmations sont gérées par ProgrammationManager
-    Programmation(const Event& e, const QDate& d, const QTime& h):event(&e), date(d), horaire(h){}
+    Programmation(const Event& e, const QDate& d, const QTime h):event(&e), date(d), horaire(h){}
     Programmation(const Programmation& e);
 public:
     const Event& getEvent() const { return *event; }
@@ -293,7 +303,13 @@ class ProgrammationManager
     Programmation* trouverProgrammation(const Event& t) const;
     ProgrammationManager(const ProgrammationManager& e);
     ProgrammationManager& operator=(const ProgrammationManager& e);
-    static ProgrammationManager* instanceUnique;
+    struct Handler
+    {
+       ProgrammationManager* instance;
+       Handler():instance(0){}
+       ~Handler(){ if (instance) delete instance; } // destructeur appel a la fin du programme
+    };
+    static Handler handler;
 public:
     ProgrammationManager();
     ~ProgrammationManager();

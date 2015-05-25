@@ -16,10 +16,12 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     calendar.cpp \
-    timing.cpp
+    timing.cpp \
+    table.cpp
 
 HEADERS  += mainwindow.h \
     calendar.h \
-    timing.h
+    timing.h \
+    table.h
 
 FORMS    += mainwindow.ui

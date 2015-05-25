@@ -7,10 +7,10 @@
 #include <QMessageBox>
 #include <QTextStream>
 
-QTextStream& operator<<(QTextStream& f, const TIME::Duree& d) {
+/*QTextStream& operator<<(QTextStream& f, const TIME::Duree& d) {
     d.afficher(f);
     return f;
-}
+}*/
 
 QTextStream& operator>>(QTextStream& flot, TIME::Duree& duree){
     unsigned int h,m;
@@ -83,6 +83,19 @@ void TacheU::setDuree(const Duree& d) {
     Tache::setDuree(d);
 }
 
+void TacheU::setProgrammee()
+{ qDebug()<<"Saisissez La Date et Le temps de La programmation \n";
+    unsigned int y,m,d,h,i;
+    qDebug()<<"Saisissez l annee \n" ; std::cin>>y;
+    qDebug()<<"Saisissez le mois \n"; std::cin>>m;
+    qDebug()<<"Saisissez le jour \n"; std::cin>>d;
+    QDate j(d,m,y);
+    qDebug()<<"Saisissez l'heure de l'horaire' \n"; std::cin>>h;
+    qDebug()<<"Saisissez les minutes  de l'horaire\n"; std::cin>>i;
+    QTime t(h,i);
+    programmee = true;
+}
+
 
 /*bool TacheC::Precedence(const Tache& t)
 {
@@ -105,12 +118,12 @@ void VPrincipale::addItem(Tache* t) {
         taches.push_back(t);
 }
 
-Tache* VPrincipale::trouverTache(const QString& t) const { //plus la peine comme les id sont uniques
+/*Tache* VPrincipale::trouverTache(const QString& t) const { //plus la peine comme les id sont uniques--> Les taches ayant les memes titres?
     for(tabtaches::const_iterator it= taches.begin(); it!=taches.end();++it) {
         //if(id==it->getId()) return (it);
     }
     return 0;
-}
+}*/
 
 TacheU& VPrincipale::ajouterTacheU(const QString& t, const TIME::Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt, bool prog)
 {
@@ -274,6 +287,18 @@ void TacheManager::libererInstance(){
 }
 //******************************************************************************************
 
+ProgrammationManager::Handler ProgrammationManager::handler=ProgrammationManager::Handler();
+
+ProgrammationManager& ProgrammationManager::getInstance(){
+    if (handler.instance==0) handler.instance=new ProgrammationManager();
+    return *(handler.instance);
+}
+
+void ProgrammationManager::libererInstance()
+{
+    if (handler.instance!=0) delete handler.instance;
+    handler.instance=0;
+}
 Programmation::Programmation(const Programmation& e)
 {
   Programmation* x= this;
@@ -323,19 +348,6 @@ ProgrammationManager& ProgrammationManager::operator=(const ProgrammationManager
     return *this;
 }
 
-ProgrammationManager* ProgrammationManager::instanceUnique=0;
 
-ProgrammationManager& ProgrammationManager::getInstance(){
-    if (instanceUnique==0)
-        instanceUnique = new ProgrammationManager;
-    return *instanceUnique;
-}
 
-void ProgrammationManager::libererInstance() {
-    if (instanceUnique != 0) {
-        (*instanceUnique).progs.clear();
-        delete instanceUnique;
-    }
-    instanceUnique=0;
-}
 

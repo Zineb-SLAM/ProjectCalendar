@@ -12,3 +12,5 @@ a dÈj‡ un corps dans timing.h
 
 Remarques : 
 * les branches sous git : https://git-scm.herokuapp.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging
+
+J’ai pensé qu’il était plus logique en mettant pour une tache programmée = true de pouvoir saisir sa programmation sauf qu’il y’a un soucis il faut la convertir en tache , et appeler programmation ou programmationManager? 

@@ -7,6 +7,11 @@
 #include <QString>
 #include <QFileDialog>
 #include "calendar.h"
+#include "mainwindow.h"
+#include <QApplication>
+#include <QTableView>
+#include "table.h"
+
 
 int main(int argc, char *argv[])
 {
@@ -25,6 +30,12 @@ int main(int argc, char *argv[])
      couche.addWidget(&titre);
      couche.addWidget(&Buton);
      fenetre.setLayout(&couche);
+
+     QTableView tableView;
+     MyModel myModel(0);
+     tableView.setModel( &myModel );
+     tableView.show();
+
 
     /*QString chemin =QFileDialog::getOpenFileName();
      TacheManager& m= TacheManager::getInstance();
