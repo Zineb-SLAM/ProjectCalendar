@@ -5,6 +5,8 @@
 #include <QDate>
 #include <QTextStream>
 #include <vector>
+#include <QUuid>
+#include <sstream>
 #include "timing.h"
 
 using namespace std;
@@ -19,7 +21,8 @@ public:
     QString getInfo() const { return info; }
 };
 
-QTextStream& operator<<(QTextStream& f, const Duree & d);
+//******************************************************************************************
+QTextStream& operator<<(QTextStream& f, const Duree& d);
 QTextStream& operator>>(QTextStream&, Duree&); //lecture format hhHmm
 
 //******************************************************************************************
@@ -31,8 +34,10 @@ private:
     QDate disponibilite;
     QDate echeance;
 protected:
-    Tache(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadl):
-            id(id), titre(t), duree(dur), disponibilite(dispo), echeance(deadl) {}
+    Tache(const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadl):titre(t), duree(dur), disponibilite(dispo), echeance(deadl) {
+        QUuid u=QUuid::createUuid();
+        this->id=u.toString();
+    }
     Tache(const Tache& t);
     Tache& operator=(const Tache&);
     friend class TacheManager;
@@ -45,29 +50,56 @@ public:
     virtual void setDuree(const Duree& d) { duree = d; }
     const QDate getDisponibilite() const { return disponibilite; }
     const QDate getEcheance() const { return echeance; }
-    void setDisponibilite(const QDate& d);
-    void setEcheance(const QDate& e);
-    virtual void Afficher_Tache() const =0;
+    inline void setDisponibilite(const QDate& d);
+    inline void setEcheance(const QDate& e);
+    virtual std::string toString() const=0;
+    /*void afficher(QTextStream& f) const {
+            f<<"**Tache** \n";
+            f<<"Id"<<id<<" Titre "<<titre<<"\n";
+            f<<"Duree"<<duree<<" Disponibilite "<<disponibilite <<" Echeance "<<echeance<<"\n";
+            f<<toString();
+    }*/
 };
+
+QTextStream& operator<<(QTextStream& f, const Tache& t);
 
 //******************************************************************************************
-class Event { // CLASSE ABSTRAITE
-public:
+class Event  // CLASSE ABSTRAITE
+{
+
+ public:
 };
 
-class Activite: public Event {
+class Activite: public Event
+{
     QString id;
     QString titre;
     Duree duree;
     QString lieu;
 public:
-    Activite(const QString& id, const QString& t, const Duree d, const QString& l):id(id), titre(t), duree(d), lieu(l) {}
+    Activite(const QString& t, const Duree d, const QString& l):id(id), titre(t), duree(d), lieu(l) {
+        QUuid u=QUuid::createUuid();
+        this->id=u.toString();
+    }
     const QString& getId() const { return id; }
     const QString& getTitre() const { return titre; }
     const Duree& getDuree() const { return duree; }
     const QString& getLieu() const { return lieu; }
     virtual void Afficher_Activite () const =0;
 };
+
+class Rdv : public Activite
+{
+    QString personne;
+public:
+    Rdv(const QString& t, const Duree d, const QString& l, const QString& p):Activite(t,d,l), personne(p) {}
+};
+
+class Reunion : public Activite {
+public:
+    Reunion(const QString& t, const Duree d, const QString& l):Activite(t,d,l) {}
+};
+
 
 //******************************************************************************************
 class TacheU : public Tache , public Event {
@@ -83,11 +115,29 @@ class TacheU : public Tache , public Event {
     void setDuree(const Duree& d); //redéfinition
     const bool isPreemptive() const { return preemptive; }
     const bool isProgrammee() const { return programmee; }
-    void setPreemptive() { preemptive = true; }
-    void setNonPreemptive();
+    void setPreemptive()
+    {
+        if(getDuree().getDureeEnHeures() > 12) throw CalendarException ("Duree de la tache inferieur a 12");
+        preemptive = true;
+}
+    void setNonPreemptive() {
+        if(getDuree().getDureeEnHeures() > 12)
+            throw CalendarException("Erreur tache unitaire : une tache non preemptive ne peut pas avoir une durée supérieure à 12h");
+        preemptive = false;
+    }
+
     void setProgrammee() { programmee = true; }
     void setNonProgrammee() { programmee = false; }
-    void Afficher_Tache() const { cout<<"Tache Unitaire"; }
+    std::string toString() const
+        {
+
+            std::stringstream f;
+            f<<"**Tache Unitaire** \n";
+            if(isPreemptive()) f<<"Tache Preemtive \n";
+            if(isProgrammee()) f<<"Tache Programmee \n";
+            return f.str();
+        }
+
 };
 
 class TacheC : public Tache {
@@ -100,22 +150,23 @@ public:
 
     //bool Precedence(const Tache& t);
     //void ajoutTache(const Tache& t);
-    void Afficher_Tache() const { cout<<"Tache Composite"; }
+    std::string toString() const
+        {
+            std::stringstream f;
+            f<<"**Tache Composite** \n";
+            for(vectcomp::const_iterator it= tachescomp.begin(); it!=tachescomp.end();++it)
+                    {
+                        f<<(*it);
+                    }
+            return f.str();
+        }
+    ~TacheC() { tachescomp.clear(); } //clear() vide le contenu du conteneur
 };
 
 QTextStream& operator<<(QTextStream& f, const Tache& t);
 
 //******************************************************************************************
-class Rdv : public Activite {
-    QString personne;
-public:
-    Rdv(const QString& id, const QString& t, const Duree d, const QString& l, const QString& p):Activite(id,t,d,l), personne(p) {}
-};
 
-class Reunion : public Activite {
-public:
-    Reunion(const QString& id, const QString& t, const Duree d, const QString& l):Activite(id,t,d,l) {}
-};
 
 //******************************************************************************************
 class VPrincipale // class abstraite pour le tableau de taches
@@ -133,7 +184,7 @@ public:
     virtual ~VPrincipale();
     VPrincipale(const VPrincipale& m);
     VPrincipale& operator=(const VPrincipale& m);
-    //TacheU& ajouterTacheU(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt=false, bool prog=false);
+    TacheU& ajouterTacheU(const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt=false, bool prog=false);
     Tache& getTache(const QString& id);
     bool isTacheExistante(const QString& id) const { return trouverTache(id)!=0; }
     const Tache& getTache(const QString& code) const;
@@ -158,7 +209,11 @@ class Projet: public VPrincipale // On herite de l'interface et du comportement
         ~Handler(){ if (instance) delete instance; } // destructeur appel a la fin du programme
      };
     static Handler handler;
-    Projet(const QString& id, const QString& t,const QDate& disp, const QDate& ech):id(id), titre(t), disponibilite(disp), echeance(ech),VPrincipale() {}
+    Projet(const QString& t,const QDate& disp, const QDate& ech):id(id), titre(t), disponibilite(disp), echeance(ech),VPrincipale()
+    {
+        QUuid u=QUuid::createUuid();
+        this->id=u.toString();
+    }
  public:
     static Projet& getInstance();
     static void libererInstance();
@@ -209,7 +264,7 @@ public:
     static void libererInstance();
     void afficher(QTextStream& f) const
     {
-        f<<"****TacheManaeger*****";
+        f<<"****TacheManager*****";
     }
     void ajouterTache(); //à adapter selon TacheU ou TacheC --> design pattern
     Tache& getTache(const QString& id);

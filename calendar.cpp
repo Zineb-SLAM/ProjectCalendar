@@ -5,10 +5,12 @@
 #include <QTextCodec>
 #include <QtXml>
 #include <QMessageBox>
+#include <QTextStream>
 
-/*QTextStream& operator<<(std::ostream& f, const TIME::Duree & d)
-{ d.afficher(f);
-    return f; }
+QTextStream& operator<<(QTextStream& f, const TIME::Duree& d) {
+    d.afficher(f);
+    return f;
+}
 
 QTextStream& operator>>(QTextStream& flot, TIME::Duree& duree){
     unsigned int h,m;
@@ -27,7 +29,7 @@ QTextStream& operator>>(QTextStream& flot, TIME::Duree& duree){
     return flot;
 }
 
-
+/*
 
 QTextStream& operator<<(QTextStream& fout, const Tache& t){
     fout<<t.getId()<<"\n";
@@ -51,6 +53,7 @@ void TacheU::Afficher_Tache () const
     if(this->preemptive) cout<<"Tache preemtive";
 }*/
 
+
 //******************************************************************************************
 void Tache::setDisponibilite(const QDate& d) {
     if (d > echeance)
@@ -64,6 +67,15 @@ void Tache::setEcheance(const QDate& e) {
     echeance = e;
 }
 
+QTextStream& operator<<(QTextStream& fout, const Tache& t){
+    fout<<t.getId()<<"\n";
+    fout<<t.getTitre()<<"\n";
+    fout<<t.getDuree()<<"\n";
+    fout<<t.getDisponibilite().toString()<<"\n";
+    fout<<t.getEcheance().toString()<<"\n";
+    return fout;
+}
+
 //******************************************************************************************
 void TacheU::setDuree(const Duree& d) {
     if ((preemptive == false) && (d.getDureeEnHeures() > 12))
@@ -71,11 +83,6 @@ void TacheU::setDuree(const Duree& d) {
     Tache::setDuree(d);
 }
 
-void TacheU::setNonPreemptive() {
-    if(getDuree().getDureeEnHeures() > 12)
-        throw CalendarException("Erreur tache unitaire : une tache non preemptive ne peut pas avoir une durée supérieure à 12h");
-    preemptive = false;
-}
 
 /*bool TacheC::Precedence(const Tache& t)
 {
@@ -98,20 +105,20 @@ void VPrincipale::addItem(Tache* t) {
         taches.push_back(t);
 }
 
-Tache* VPrincipale::trouverTache(const QString& id) const {
+Tache* VPrincipale::trouverTache(const QString& t) const { //plus la peine comme les id sont uniques
     for(tabtaches::const_iterator it= taches.begin(); it!=taches.end();++it) {
         //if(id==it->getId()) return (it);
     }
     return 0;
 }
 
-/*TacheU& VPrincipale::ajouterTacheU(const QString& id, const QString& t, const TIME::Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt, bool prog){
-    if (trouverTache(id))
-        throw CalendarException("erreur, TacheManager, tache deja existante");
-    TacheU* newt = new TacheU(id,t,dur,dispo,deadline,preempt, prog);
+TacheU& VPrincipale::ajouterTacheU(const QString& t, const TIME::Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt, bool prog)
+{
+    //if (trouverTache(t)) throw CalendarException("erreur, TacheManager, tache deja existante");
+    TacheU* newt = new TacheU(t,dur,dispo,deadline,preempt, prog);
     addItem(newt);
     return *newt;
-}*/
+}
 
 Tache& VPrincipale::getTache(const QString& id){
     Tache* t=trouverTache(id);
@@ -214,8 +221,7 @@ void VPrincipale::load(const QString& f){
                     xml.readNext();
                 }
                 //qDebug()<<"ajout tache "<<identificateur<<"\n";
-                //ajouterTacheU(identificateur,titre,duree,disponibilite,echeance,preemptive);
-
+                ajouterTacheU(titre,duree,disponibilite,echeance,preemptive);
             }
         }
     }
