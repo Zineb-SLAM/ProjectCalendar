@@ -3,6 +3,7 @@
 #include <iostream>
 #include <iomanip>
 #include "timing.h"
+#include <QTextStream>
 
 namespace TIME {
     /*! \class TimeException

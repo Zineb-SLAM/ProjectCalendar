@@ -7,10 +7,10 @@
 #include <QMessageBox>
 #include <QTextStream>
 
-/*QTextStream& operator<<(QTextStream& f, const TIME::Duree& d) {
+QTextStream& operator<<(QTextStream& f, const TIME::Duree& d) {
     d.afficher(f);
     return f;
-}*/
+}
 
 QTextStream& operator>>(QTextStream& flot, TIME::Duree& duree){
     unsigned int h,m;
@@ -133,11 +133,11 @@ TacheU& VPrincipale::ajouterTacheU(const QString& t, const TIME::Duree& dur, con
     return *newt;
 }
 
-Tache& VPrincipale::getTache(const QString& id){
+/*Tache& VPrincipale::getTache(const QString& id){
     Tache* t=trouverTache(id);
     if (!t) throw CalendarException("erreur, TacheManager, tache inexistante");
     return *t;
-}
+}*/
 
 const Tache& VPrincipale::getTache(const QString& id)const
 {

@@ -61,8 +61,6 @@ public:
     }*/
 };
 
-QTextStream& operator<<(QTextStream& f, const Tache& t);
-
 //******************************************************************************************
 class Event  // CLASSE ABSTRAITE
 {
@@ -187,15 +185,15 @@ class VPrincipale // class abstraite pour le tableau de taches
 
 public:
     void addItem(Tache* t);
-    Tache* trouverTache(const QString& id) const;
+    //Tache* trouverTache(const QString& id) const;
     VPrincipale() { taches.reserve(10); }
     VPrincipale(const QString& f): file(f) { taches.reserve(10); }
     virtual ~VPrincipale();
     VPrincipale(const VPrincipale& m);
     VPrincipale& operator=(const VPrincipale& m);
     TacheU& ajouterTacheU(const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt=false, bool prog=false);
-    Tache& getTache(const QString& id);
-    bool isTacheExistante(const QString& id) const { return trouverTache(id)!=0; }
+    //Tache& getTache(const QString& id);
+    //bool isTacheExistante(const QString& id) const { return trouverTache(id)!=0; }
     const Tache& getTache(const QString& code) const;
     void load(const QString& f);
     void save(const QString& f);
