@@ -1,17 +1,12 @@
-#ifndef TIMING_h
-#define TIMING_h
 #include <iomanip>
 #include <ctime>
-#include"timing.h"
+#include "timing.h"
+#include <QTextStream>
+
 using namespace TIME;
 
-std::ostream& operator<<(std::ostream& f, const Date& x){ x.afficher(f); return f;}
-std::ostream& operator<<(std::ostream& f, const Duree & d){ d.afficher(f); return f; }
-std::ostream& operator<<(std::ostream& f, const Horaire & h){ h.afficher(f); return f; }
-std::ostream& operator<<(std::ostream& f, const Periode & p){ p.afficher(f); return f; }
-
-
-void Date::setDate(unsigned short int j, unsigned short int m, unsigned int a){
+//******************************************************************************************
+void Date::setDate(unsigned short int j, unsigned short int m, unsigned int a) {
     // initialisation de la date, renvoie vrai si la date est valide
     if (a>=0&&a<=3000) annee=a; else throw TimeException("erreur: annee invalide");
     if (m>=1&&m<=12) mois=m; else throw TimeException("erreur: mois invalide");
@@ -22,7 +17,7 @@ void Date::setDate(unsigned short int j, unsigned short int m, unsigned int a){
     }
 }
 
-void Date::setDateAujourdhui(){
+void Date::setDateAujourdhui() {
     // initialisation de la date avec la date d'aujourd'hui
     time_t rawtime;
     struct tm * timeinfo;
@@ -33,12 +28,25 @@ void Date::setDateAujourdhui(){
     annee=timeinfo->tm_year+1900;
 }
 
-void Date::afficher(std::ostream& f) const{
+void Date::afficher(QTextStream& f) const {
     // affiche le date sous le format JJ/MM/AAAA
-    f<<std::setfill('0')<<std::setw(2)<<jour<<"/"<<std::setw(2)<<mois<<"/"<<annee<<std::setfill(' ');
+    //plus valable : f<<std::setfill('0')<<std::setw(2)<<jour<<"/"<<std::setw(2)<<mois<<"/"<<annee<<std::setfill(' ');
+    f.setPadChar('0');
+    f.setFieldWidth(2);
+    f<<jour;
+    f.setFieldWidth(0);
+    f<<"/";
+    f.setFieldWidth(2);
+    f<<mois;
+    f.setFieldWidth(0);
+    f<<"/";
+    f.setFieldWidth(4);
+    f<<annee;
+    f.setFieldWidth(0);
+    f.setPadChar(' ');
 }
 
-bool Date::operator==(const Date& d) const{
+bool Date::operator==(const Date& d) const {
     if (annee<d.annee) return false;
     if (annee>d.annee) return false;
     if (mois<d.mois) return false;
@@ -48,7 +56,7 @@ bool Date::operator==(const Date& d) const{
     return true;
 }
 
-bool Date::operator<(const Date& d) const{
+bool Date::operator<(const Date& d) const {
     if (annee<d.annee) return true;
     if (annee>d.annee) return false;
     if (mois<d.mois) return true;
@@ -58,14 +66,14 @@ bool Date::operator<(const Date& d) const{
     return false;
 }
 
-int Date::operator-(const Date& d) const{
+int Date::operator-(const Date& d) const {
     int n=(annee-d.annee)*365+(annee-d.annee)/4;
     n+=int((mois-d.mois)*30.5);
     n+=jour-d.jour;
     return n;
 }
 
-Date Date::demain() const{
+Date Date::demain() const {
     Date d=*this;
     d.jour+=1;
     switch(d.mois){
@@ -77,13 +85,72 @@ Date Date::demain() const{
     return d;
 }
 
-Date Date::operator+(unsigned int nb_jours) const{
+Date Date::operator+(unsigned int nb_jours) const {
     Date d=*this;
     while(nb_jours>0) { d=d.demain(); nb_jours--; }
     return d;
 }
 
-bool Horaire::operator<(const Horaire& h) const{
+Date Date::fromString(QString s) {
+    Date d;
+    //conversion QString YYYY-MM-DD en Date
+    return d;
+}
+
+QString Date::toString() {
+    QString s;
+    //conversion Date en QString format YYYY-MM-DD
+    return s;
+}
+
+
+//******************************************************************************************
+void Duree::afficher(QTextStream& f) const {
+    f.setPadChar('0');
+    f.setFieldWidth(2);
+    f<<nb_minutes/60;
+    f.setFieldWidth(0);
+    f<<"H";
+    f.setFieldWidth(2);
+    f<<nb_minutes%60;
+    f.setFieldWidth(0);
+    f.setPadChar(' ');
+}
+
+QTextStream& operator<<(QTextStream& f, const Duree & d){ d.afficher(f); return f; }
+QTextStream& operator>>(QTextStream& flot, Duree& duree){
+    unsigned int h,m;
+    bool ok=true;
+    flot>>h;
+    if (flot.status()!=QTextStream::Ok) ok=false;
+
+    if(flot.read(1)=="H") {
+        flot>>m;
+        if (flot.status()!=QTextStream::Ok) ok=false;
+    }
+    else {
+        ok=false;
+    }
+    if (ok) duree=Duree(h,m);
+    return flot;
+}
+
+
+//******************************************************************************************
+void Horaire::afficher(QTextStream& f) const {
+    //anciennement : f<<std::setfill('0')<<std::setw(2)<<heure<<"H"<<std::setfill('0')<<std::setw(2)<<minute<<std::setfill(' ');
+    f.setPadChar('0');
+    f.setFieldWidth(2);
+    f<<heure;
+    f.setFieldWidth(0);
+    f<<"H";
+    f.setFieldWidth(2);
+    f<<minute;
+    f.setFieldWidth(0);
+    f.setPadChar(' ');
+}
+
+bool Horaire::operator<(const Horaire& h) const {
     if (heure<h.heure) return true;
     if (heure>h.heure) return false;
     if (minute<h.minute) return true;
@@ -91,6 +158,7 @@ bool Horaire::operator<(const Horaire& h) const{
     return true;
 }
 
+//******************************************************************************************
 Periode::Periode(unsigned int j, unsigned int m, unsigned int a):
            nb_jours(j), nb_mois(m), nb_annees(a) {
     if (j>364) throw TimeException("erreur: initialisation periode invalide");
@@ -98,11 +166,17 @@ Periode::Periode(unsigned int j, unsigned int m, unsigned int a):
 }
 
 
-std::ostream& operator<<(std::ostream& f, const Intervalle& x){ x.afficher(f); return f;}
-
-
-Intervalle::Intervalle(const Date & d, const Date & f):debut(d),fin(f){
+//******************************************************************************************
+Intervalle::Intervalle(const Date & d, const Date & f):debut(d),fin(f) {
     if (fin<debut) throw TimeException("Erreur dans la creation d'un intervalle: fin<debut");
+}
+
+void Intervalle::afficher(QTextStream& f) const {
+    f<<"[";
+    getDebut().afficher(f);
+    f<<" ; ";
+    getFin().afficher(f);
+    f<<"]";
 }
 
 bool Intervalle::operator&&(const Intervalle & v) const {
@@ -122,59 +196,6 @@ Intervalle Intervalle::operator+(const Intervalle & i) const {
     }else throw TimeException("Ne peut pas faire l'union de 2 intervalles (ils ne se touchent pas...");
 }
 
-void Intervalle::afficher(std::ostream& f) const {
-    f<<"["<<debut<<" ; "<<fin<<"]";
-}
+QTextStream& operator<<(QTextStream& f, const Intervalle& x){ x.afficher(f); return f;}
 
-std::istream& operator>>(std::istream& flot, TIME::Date& date){
-    unsigned int short j,m,a;
-    bool ok=true;
-    flot>>j;
-    if (flot) while (flot.peek()==' ') flot.ignore(); // passe les espaces
-    else ok=false;
 
-    if (!flot) ok=false;
-
-    if(flot.peek()=='/') {
-        flot.ignore();
-        flot>>m;
-        if (!flot) ok=false;
-    }
-    else {
-        ok=false;
-    }
-    if(flot.peek()=='/') {
-        flot.ignore();
-        flot>>a;
-        if (!flot) ok=false;
-    }
-    else {
-        ok=false;
-    }
-
-    if (ok) date=Date(j,m,a); else flot.clear(std::ios::failbit);
-    return flot;
-}
-
-std::istream& operator>>(std::istream& flot, TIME::Duree& duree){
-    unsigned int h,m;
-    bool ok=true;
-    flot>>h;
-    if (flot) while (flot.peek()==' ') flot.ignore(); // passe les espaces
-    else ok=false;
-
-    if (!flot) ok=false;
-
-    if(flot.peek()=='H') {
-        flot.ignore();
-        flot>>m;
-        if (!flot) ok=false;
-    }
-    else {
-        ok=false;
-    }
-    if (ok) duree=Duree(h,m); else flot.clear(std::ios::failbit);
-    return flot;
-}
-
-#endif

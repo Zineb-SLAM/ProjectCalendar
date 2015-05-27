@@ -7,72 +7,37 @@
 #include <QMessageBox>
 #include <QTextStream>
 
-QTextStream& operator<<(QTextStream& f, const TIME::Duree& d) {
-    d.afficher(f);
-    return f;
-}
-
-QTextStream& operator>>(QTextStream& flot, TIME::Duree& duree){
-    unsigned int h,m;
-    bool ok=true;
-    flot>>h;
-    if (flot.status()!=QTextStream::Ok) ok=false;
-
-    if(flot.read(1)=="H") {
-        flot>>m;
-        if (flot.status()!=QTextStream::Ok) ok=false;
-    }
-    else {
-        ok=false;
-    }
-    if (ok) duree=TIME::Duree(h,m);
-    return flot;
-}
-
-/*
-
-QTextStream& operator<<(QTextStream& fout, const Tache& t){
-    fout<<t.getId()<<"\n";
-    fout<<t.getTitre()<<"\n";
-    fout<<t.getDuree()<<"\n";
-    fout<<t.getDateDisponibilite().toString()<<"\n";
-    fout<<t.getDateEcheance().toString()<<"\n";
-    return fout;
-}
-
-QTextStream& operator<<(QDataStream& f, const Programmation& p);
-
-void Tache::setId(const QString& str){
-  if (TacheManager::getInstance().isTacheExistante((str))) throw CalendarException("erreur TacheManager : tache id d�j� existante");
-  identificateur=str;
-}
-
-void TacheU::Afficher_Tache () const
-{
-    cout<<*this;
-    if(this->preemptive) cout<<"Tache preemtive";
-}*/
-
+using namespace TIME;
 
 //******************************************************************************************
-void Tache::setDisponibilite(const QDate& d) {
-    if (d > echeance)
+void Tache::setDisponibilite(const Date& d) {
+    if (echeance < d)
         throw CalendarException("Erreur Tache : date echeance < nouvelle date disponibilite");
     disponibilite = d;
 }
 
-void Tache::setEcheance(const QDate& e) {
+void Tache::setEcheance(const Date& e) {
     if (e < disponibilite)
         throw CalendarException("erreur Tache : nouvelle date echeance < date disponibilite");
     echeance = e;
 }
 
+/* on a choisi pour l'instant de le faire avec un QUid
+ ---- ne pas supprimer (au cas où on en aurait besoin plus tard ----
+ void Tache::setId(const QString& str){
+  if (TacheManager::getInstance().isTacheExistante((str))) throw CalendarException("erreur TacheManager : tache id déjà existante");
+  identificateur=str;
+}
+*/
+
 QTextStream& operator<<(QTextStream& fout, const Tache& t){
     fout<<t.getId()<<"\n";
     fout<<t.getTitre()<<"\n";
     fout<<t.getDuree()<<"\n";
-    fout<<t.getDisponibilite().toString()<<"\n";
-    fout<<t.getEcheance().toString()<<"\n";
+    t.getDisponibilite().afficher(fout);
+    fout<<"\n";
+    t.getEcheance().afficher(fout);
+    fout<<"\n";
     return fout;
 }
 
@@ -83,18 +48,18 @@ void TacheU::setDuree(const Duree& d) {
     Tache::setDuree(d);
 }
 
-void TacheU::setProgrammee()
-{ qDebug()<<"Saisissez La Date et Le temps de La programmation \n";
+/*void TacheU::setProgrammee() {
+    qDebug()<<"Saisissez La Date et Le temps de La programmation \n";
     unsigned int y,m,d,h,i;
     qDebug()<<"Saisissez l annee \n" ; std::cin>>y;
     qDebug()<<"Saisissez le mois \n"; std::cin>>m;
     qDebug()<<"Saisissez le jour \n"; std::cin>>d;
-    QDate j(d,m,y);
+    Date j(d,m,y);
     qDebug()<<"Saisissez l'heure de l'horaire' \n"; std::cin>>h;
     qDebug()<<"Saisissez les minutes  de l'horaire\n"; std::cin>>i;
     QTime t(h,i);
     programmee = true;
-}
+}*/
 
 
 /*bool TacheC::Precedence(const Tache& t)
@@ -125,7 +90,14 @@ void VPrincipale::addItem(Tache* t) {
     return 0;
 }*/
 
-TacheU& VPrincipale::ajouterTacheU(const QString& t, const TIME::Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt, bool prog)
+VPrincipale::~VPrincipale(){
+    //if (file!="") save(file);
+    for(unsigned int i=0;i<taches.size();i++)
+      delete taches[i];
+    file="";
+}
+
+TacheU& VPrincipale::ajouterTacheU(const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, bool preempt, bool prog)
 {
     //if (trouverTache(t)) throw CalendarException("erreur, TacheManager, tache deja existante");
     TacheU* newt = new TacheU(t,dur,dispo,deadline,preempt, prog);
@@ -142,13 +114,6 @@ TacheU& VPrincipale::ajouterTacheU(const QString& t, const TIME::Duree& dur, con
 const Tache& VPrincipale::getTache(const QString& id)const
 {
     return const_cast<VPrincipale*>(this)->getTache(id);
-}
-
-VPrincipale::~VPrincipale(){
-    //if (file!="") save(file);
-    for(unsigned int i=0;i<taches.size();i++)
-      delete taches[i];
-    file="";
 }
 
 void VPrincipale::load(const QString& f){
@@ -178,9 +143,9 @@ void VPrincipale::load(const QString& f){
                 qDebug()<<"new tache\n";
                 QString identificateur;
                 QString titre;
-                QDate disponibilite;
-                QDate echeance;
-                TIME::Duree duree;
+                Date disponibilite;
+                Date echeance;
+                Duree duree;
                 bool preemptive;
 
                 QXmlStreamAttributes attributes = xml.attributes();
@@ -214,13 +179,13 @@ void VPrincipale::load(const QString& f){
                         // We've found disponibilite
                         if(xml.name() == "disponibilite") {
                             xml.readNext();
-                            disponibilite=QDate::fromString(xml.text().toString(),Qt::ISODate);
+                            disponibilite=Date::fromString(xml.text().toString());
                             //qDebug()<<"disp="<<disponibilite.toString()<<"\n";
                         }
                         // We've found echeance
                         if(xml.name() == "echeance") {
                             xml.readNext();
-                            echeance=QDate::fromString(xml.text().toString(),Qt::ISODate);
+                            echeance=Date::fromString(xml.text().toString());
                             //qDebug()<<"echeance="<<echeance.toString()<<"\n";
                         }
                         // We've found duree
@@ -261,8 +226,8 @@ void VPrincipale::save(const QString& f){
         //stream.writeAttribute("preemptive", (taches[i]->isPreemptive())?"true":"false");// isPreemtive dans Taches??
         stream.writeTextElement("identificateur",taches[i]->getId());
         stream.writeTextElement("titre",taches[i]->getTitre());
-        stream.writeTextElement("disponibilite",taches[i]->getDisponibilite().toString(Qt::ISODate));
-        stream.writeTextElement("echeance",taches[i]->getEcheance().toString(Qt::ISODate));
+        stream.writeTextElement("disponibilite",taches[i]->getDisponibilite().toString());
+        stream.writeTextElement("echeance",taches[i]->getEcheance().toString());
         QString str;
         str.setNum(taches[i]->getDuree().getDureeEnMinutes());
         stream.writeTextElement("duree",str);
@@ -273,7 +238,7 @@ void VPrincipale::save(const QString& f){
     newfile.close();
 }
 
-
+//******************************************************************************************
 TacheManager::Handler TacheManager::handler=TacheManager::Handler();
 
 TacheManager& TacheManager::getInstance(){
@@ -286,52 +251,20 @@ void TacheManager::libererInstance(){
     handler.instance=0;
 }
 //******************************************************************************************
-
-ProgrammationManager::Handler ProgrammationManager::handler=ProgrammationManager::Handler();
-
-ProgrammationManager& ProgrammationManager::getInstance(){
-    if (handler.instance==0) handler.instance=new ProgrammationManager();
-    return *(handler.instance);
+Programmation::Programmation(const Programmation& e) {
+    Programmation* x = this;
+    *x = Programmation(e.event, e.date, e.horaire);
 }
 
-void ProgrammationManager::libererInstance()
-{
-    if (handler.instance!=0) delete handler.instance;
-    handler.instance=0;
-}
-Programmation::Programmation(const Programmation& e)
-{
-  Programmation* x= this;
-  *x=Programmation(e.getEvent(), e.getDate(), e.getHoraire());
-
-
-}
-ProgrammationManager::ProgrammationManager()
-{
-    progs.reserve(10);
-}
-void ProgrammationManager::addItem(Programmation* t)
-{
+//******************************************************************************************
+void ProgrammationManager::addItem(Programmation* t) {
     progs.push_back(t);
 }
 
-Programmation* ProgrammationManager::trouverProgrammation(const Event& e)const{
+Programmation* ProgrammationManager::trouverProgrammation(const Event& e) const {
     for(unsigned int i=0; i<progs.size(); i++)
         if (&e==&progs[i]->getEvent()) return progs[i];
     return 0;
-}
-
-void ProgrammationManager::ajouterProgrammation(const Event& e, const QDate& d, const QTime& h){
-    if (trouverProgrammation(e))
-        throw CalendarException("erreur, ProgrammationManager, Programmation deja existante");
-    Programmation* newt = new Programmation(e,d,h);
-    addItem(newt);
-}
-
-
-ProgrammationManager::~ProgrammationManager() {
-    for(unsigned int i=0; i<progs.size(); i++)
-        delete progs[i];
 }
 
 ProgrammationManager::ProgrammationManager(const ProgrammationManager& e) {
@@ -348,6 +281,30 @@ ProgrammationManager& ProgrammationManager::operator=(const ProgrammationManager
     return *this;
 }
 
+ProgrammationManager::Handler ProgrammationManager::handler=ProgrammationManager::Handler();
 
+ProgrammationManager::ProgrammationManager() {
+    progs.reserve(10);
+}
 
+ProgrammationManager::~ProgrammationManager() {
+    for(unsigned int i=0; i<progs.size(); i++)
+        delete progs[i];
+}
 
+ProgrammationManager& ProgrammationManager::getInstance() {
+    if (handler.instance==0) handler.instance=new ProgrammationManager();
+    return *(handler.instance);
+}
+
+void ProgrammationManager::libererInstance() {
+    if (handler.instance!=0) delete handler.instance;
+    handler.instance=0;
+}
+
+void ProgrammationManager::ajouterProgrammation(const Event& e, const Date& d, const Horaire& h) {
+    if (trouverProgrammation(e))
+        throw CalendarException("erreur, ProgrammationManager, Programmation deja existante");
+    Programmation* newt = new Programmation(e,d,h);
+    addItem(newt);
+}

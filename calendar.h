@@ -1,7 +1,6 @@
 #ifndef CALENDAR_H
 #define CALENDAR_H
 #include <QString>
-#include <QDate>
 #include <QTextStream>
 #include <vector>
 #include <QUuid>
@@ -12,35 +11,26 @@ using namespace std;
 using namespace TIME;
 
 //******************************************************************************************
-class CalendarException
-{
+class CalendarException {
     QString info;
 public:
-    CalendarException(const QString& message):info(message){}
+    CalendarException(const QString& message) : info(message) {}
     QString getInfo() const { return info; }
 };
 
 //******************************************************************************************
-QTextStream& operator<<(QTextStream& f, const Duree& d);
-QTextStream& operator>>(QTextStream&, Duree&); //lecture format hhHmm
-
-//******************************************************************************************
 class Tache {
-private:
+    friend class TacheManager;
     QString id;
     QString titre;
     Duree duree;
-    QDate disponibilite;
-    QDate echeance;
+    Date disponibilite;
+    Date echeance;
+    Tache(const Tache& t); //pas implémentée
+    Tache& operator=(const Tache&); //pas implémentée
 protected:
-    Tache(const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadl):titre(t), duree(dur), disponibilite(dispo), echeance(deadl)
-    {
-        QUuid u=QUuid::createUuid();
-        this->id=u.toString();
-    } // probleme car l'heritage private n'est plus un heritage est un mais en terme de
-    Tache(const Tache& t);
-    Tache& operator=(const Tache&);
-    friend class TacheManager;
+    Tache(const QString& t, const Duree& dur, const Date& dispo, const Date& deadl):titre(t),duree(dur),disponibilite(dispo),echeance(deadl)
+    { QUuid u=QUuid::createUuid(); this->id=u.toString(); } // probleme car l'heritage private n'est plus un heritage est un mais en terme de
 public:
     const QString getId() const { return id; }
     //pas de setId : l'utilisateur n'a pas le droit de modifier l'id : void setId(const QString& str);
@@ -48,18 +38,14 @@ public:
     void setTitre(const QString& str) { titre = str; }
     const Duree getDuree() const { return duree; }
     virtual void setDuree(const Duree& d) { duree = d; }
-    const QDate getDisponibilite() const { return disponibilite; }
-    const QDate getEcheance() const { return echeance; }
-    inline void setDisponibilite(const QDate& d);
-    inline void setEcheance(const QDate& e);
-    virtual std::string toString() const=0;
-    /*void afficher(QTextStream& f) const {
-            f<<"**Tache** \n";
-            f<<"Id"<<id<<" Titre "<<titre<<"\n";
-            f<<"Duree"<<duree<<" Disponibilite "<<disponibilite <<" Echeance "<<echeance<<"\n";
-            f<<toString();
-    }*/
+    const Date getDisponibilite() const { return disponibilite; }
+    const Date getEcheance() const { return echeance; }
+    inline void setDisponibilite(const Date& d);
+    inline void setEcheance(const Date& e);
+    virtual QString toString() const=0;
 };
+
+QTextStream& operator<<(QTextStream& fout, const Tache& t);
 
 //******************************************************************************************
 class Event  // CLASSE ABSTRAITE
@@ -68,17 +54,14 @@ class Event  // CLASSE ABSTRAITE
  public:
 };
 
-class Activite: public Event
-{
+class Activite: public Event {
     QString id;
     QString titre;
     Duree duree;
     QString lieu;
 public:
     Activite(const QString& t, const Duree d, const QString& l):id(id), titre(t), duree(d), lieu(l) {
-        QUuid u=QUuid::createUuid();
-        this->id=u.toString();
-    }
+        QUuid u=QUuid::createUuid(); this->id=u.toString(); }
     const QString& getId() const { return id; }
     const QString& getTitre() const { return titre; }
     const Duree& getDuree() const { return duree; }
@@ -86,8 +69,7 @@ public:
     virtual void Afficher_Activite () const =0;
 };
 
-class Rdv : public Activite
-{
+class Rdv : public Activite {
     QString personne;
 public:
     Rdv(const QString& t, const Duree d, const QString& l, const QString& p):Activite(t,d,l), personne(p) {}
@@ -104,42 +86,36 @@ class TacheU : public Tache , public Event {
     bool preemptive;
     bool programmee;
  public:
-    TacheU(const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadline, bool pre=false, bool prog=false):
+    TacheU(const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, bool pre=false, bool prog=false):
         Tache(t,dur,dispo,deadline), preemptive(pre), programmee(prog)
     {
         if ((preemptive == false) && (getDuree().getDureeEnHeures() > 12))
                 throw CalendarException("Erreur tache unitaire : une tache non preemptive ne peut pas avoir une durée supérieure à 12h");
     }
     TacheU(Tache& t, bool pre=false, bool prog=false):Tache(t.getTitre(),t.getDuree(),t.getDisponibilite(),t.getEcheance()), preemptive(pre), programmee(prog){}
-
     void setDuree(const Duree& d); //redéfinition
     const bool isPreemptive() const { return preemptive; }
     const bool isProgrammee() const { return programmee; }
-    void setPreemptive()
-    {
-        if(getDuree().getDureeEnHeures() > 12) throw CalendarException ("Duree de la tache inferieur a 12");
+    void setPreemptive() {
+        if(getDuree().getDureeEnHeures() > 12)
+            throw CalendarException ("Duree de la tache inferieur a 12");
         preemptive = true;
-}
+    }
     void setNonPreemptive() {
         if(getDuree().getDureeEnHeures() > 12)
             throw CalendarException("Erreur tache unitaire : une tache non preemptive ne peut pas avoir une durée supérieure à 12h");
         preemptive = false;
     }
-
-    void setProgrammee();
-                 //{ programmee = true;}
-    void setNonProgrammee()
-                    { programmee = false; }
-    std::string toString() const
-        {
-
-            std::stringstream f;
-            f<<"**Tache Unitaire** \n";
-            if(isPreemptive()) f<<"Tache Preemtive \n";
-            if(isProgrammee()) f<<"Tache Programmee \n";
-            return f.str();
-        }
-
+    void setProgrammee() { programmee = true; }
+    void setNonProgrammee() { programmee = false; }
+    QString toString() const {
+        QTextStream f;
+        f<<"**Tache Unitaire** \n";
+        if(isPreemptive()) f<<"Tache Preemtive \n";
+        if(isProgrammee()) f<<"Tache Programmee \n";
+        QString s;
+        f >> s;
+    }
 };
 
 template <class T>
@@ -147,51 +123,38 @@ class TacheC : public Tache //clone
 {
     typedef std::vector<Tache *> vectcomp;
     vectcomp tachescomp;
-    TacheC(const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadl): Tache(t,dur,dispo,deadl)
+    TacheC(const QString& t, const Duree& dur, const Date& dispo, const Date& deadl): Tache(t,dur,dispo,deadl)
     { tachescomp.reserve(10); }
-
 public:
-
     //bool Precedence(const Tache& t);
-
-    void addTasktoC(const T& t)
-    {
+    void addTasktoC(const T& t) {
         tachescomp.push_back(t);
     }
-    std::string toString() const
-        {
-            std::stringstream f;
-            f<<"**Tache Composite** \n";
-            for(vectcomp::const_iterator it= tachescomp.begin(); it!=tachescomp.end();++it)
-                    {
-                        f<<(*it);
-                    }
-            return f.str();
+    QString toString() const {
+        QTextStream f;
+        f<<"**Tache Composite** \n";
+        for(vectcomp::const_iterator it= tachescomp.begin(); it!=tachescomp.end();++it) {
+            f<<(*it);
         }
+        return f.str();
+    }
     ~TacheC() { tachescomp.clear(); } //clear() vide le contenu du conteneur
 };
 
-QTextStream& operator<<(QTextStream& f, const Tache& t);
-
 //******************************************************************************************
-
-
-//******************************************************************************************
-class VPrincipale // class abstraite pour le tableau de taches
-{
+class VPrincipale { // class abstraite pour le tableau de taches
     typedef std::vector<Tache*> tabtaches;
     tabtaches taches;
     QString file;
-
 public:
     void addItem(Tache* t);
     //Tache* trouverTache(const QString& id) const;
     VPrincipale() { taches.reserve(10); }
     VPrincipale(const QString& f): file(f) { taches.reserve(10); }
     virtual ~VPrincipale();
-    VPrincipale(const VPrincipale& m);
-    VPrincipale& operator=(const VPrincipale& m);
-    TacheU& ajouterTacheU(const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt=false, bool prog=false);
+    //VPrincipale(const VPrincipale& m);
+    //VPrincipale& operator=(const VPrincipale& m);
+    TacheU& ajouterTacheU(const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, bool preempt=false, bool prog=false);
     //Tache& getTache(const QString& id);
     //bool isTacheExistante(const QString& id) const { return trouverTache(id)!=0; }
     const Tache& getTache(const QString& code) const;
@@ -207,8 +170,8 @@ class Projet: public VPrincipale // On herite de l'interface et du comportement
     friend class ProjetManager;
     QString id;
     QString titre;
-    QDate disponibilite;
-    QDate echeance;
+    Date disponibilite;
+    Date echeance;
     struct Handler
      {
         Projet* instance;
@@ -216,24 +179,22 @@ class Projet: public VPrincipale // On herite de l'interface et du comportement
         ~Handler(){ if (instance) delete instance; } // destructeur appel a la fin du programme
      };
     static Handler handler;
-    Projet(const QString& t,const QDate& disp, const QDate& ech):id(id), titre(t), disponibilite(disp), echeance(ech),VPrincipale()
-    {
-        QUuid u=QUuid::createUuid();
-        this->id=u.toString();
-    }
- public:
-    static Projet& getInstance();
-    static void libererInstance();
+    Projet(const QString& t,const Date& disp, const Date& ech):id(id), titre(t), disponibilite(disp), echeance(ech),VPrincipale()
+    { QUuid u=QUuid::createUuid(); this->id=u.toString(); }
+public:
+    //static Projet& getInstance();
+    //static void libererInstance();
     const QString& getId() const { return id; }
     const QString& getTitre() const { return titre; }
-    const QDate& getDisponibilite() const { return disponibilite; }
-    const QDate& getEcheance() const { return echeance; }
-    void setdisponbilite(QDate d) {this->disponibilite=d;}
-    void setecheance (QDate e) {this->echeance=e;}
+    const Date& getDisponibilite() const { return disponibilite; }
+    const Date& getEcheance() const { return echeance; }
+    void setDisponbilite(Date d) { this->disponibilite=d; }
+    void setEcheance (Date e) { this->echeance=e; }
     void afficher(QTextStream& f) const {
         f<<"****Projet*****";
     }
 };
+
 
 class ProjetManager: public VPrincipale {
     typedef std::vector<Projet*> TabProjet;
@@ -245,18 +206,17 @@ class ProjetManager: public VPrincipale {
     };
     static Handler handler;
 public:
-    static ProjetManager& getInstance();
-    static void libererInstance();
+    //static ProjetManager& getInstance();
+    //static void libererInstance();
     void afficher(QTextStream& f) const {
         f<<"****ProjetManaeger*****";
     }
-    void ajouterProjet(const QString& id, const QString& t,const QDate& disp, const QDate& ech);
-    Projet& getProjet(const QString& id);
+    //void ajouterProjet(const QString& id, const QString& t,const Date& disp, const Date& ech);
+    //Projet& getProjet(const QString& id);
 };
 
 //******************************************************************************************
-class TacheManager: public VPrincipale // On herite de l'interface et du comportement
-{
+class TacheManager: public VPrincipale { // On herite de l'interface et du comportement
     struct Handler
     {
        TacheManager* instance;
@@ -273,8 +233,8 @@ public:
     {
         f<<"****TacheManager*****";
     }
-    void ajouterTache(); //à adapter selon TacheU ou TacheC --> design pattern
-    Tache& getTache(const QString& id);
+    //void ajouterTache(); //à adapter selon TacheU ou TacheC --> design pattern
+    //Tache& getTache(const QString& id);
 };
 
 //******************************************************************************************
@@ -282,19 +242,18 @@ class Programmation
 {
     friend class ProgrammationManager;
     const Event* event;
-    QDate date;
-    QTime horaire;
+    Date date;
+    Horaire horaire;
     //constructeurs et destructeur en privé car les Programmations sont gérées par ProgrammationManager
-    Programmation(const Event& e, const QDate& d, const QTime h):event(&e), date(d), horaire(h){}
+    Programmation(const Event& e, const Date& d, const Horaire& h):event(&e), date(d), horaire(h){}
     Programmation(const Programmation& e);
 public:
     const Event& getEvent() const { return *event; }
-    const QDate getDate() const { return date; }
-    const QTime getHoraire() const { return horaire; }
+    const Date& getDate() const { return date; }
+    const Horaire& getHoraire() const { return horaire; }
 };
 
-class ProgrammationManager
-{
+class ProgrammationManager {
     typedef std::vector<Programmation*> vectProg;
     vectProg progs;
     void addItem(Programmation* t);
@@ -313,8 +272,8 @@ public:
     ~ProgrammationManager();
     ProgrammationManager& getInstance();
     void libererInstance();
-    void ajouterProgrammation(const Event& e, const QDate& d, const QTime& h);
-    Programmation& getProgrammation(const QString& id_evt);
+    void ajouterProgrammation(const Event& e, const Date& d, const QTime& h);
+    //Programmation& getProgrammation(const QString& id_evt);
 };
 
 //******************************************************************************************
