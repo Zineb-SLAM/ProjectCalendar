@@ -2,7 +2,6 @@
 #define CTIME
 #include <iostream>
 #include <iomanip>
-#include "timing.h"
 #include <QTextStream>
 #include <QString>
 

@@ -11,8 +11,14 @@
 #include <QApplication>
 #include <QTableView>
 #include "table.h"
+#include "calendar.h"
+#include "evenement.h"
+#include "programmation.h"
+#include "projet.h"
+#include "tache.h"
+#include "timing.h"
 
-
+/*
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
@@ -46,5 +52,6 @@ int main(int argc, char *argv[])
 
     fenetre.show();
 
-return app.exec();
+    return app.exec();
 }
+*/

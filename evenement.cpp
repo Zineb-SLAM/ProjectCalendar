@@ -8,7 +8,3 @@
 #include <QTextStream>
 
 using namespace TIME;
-
-
-
-
