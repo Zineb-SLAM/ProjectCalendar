@@ -13,7 +13,12 @@ using namespace TIME;
 
 class Event  // CLASSE ABSTRAITE
 {
+    bool programmee;
+    void setProgrammee() { programmee = true; }
+    void setNonProgrammee() { programmee = false; }
 public:
+    const bool isProgrammee() const { return programmee; }
+    Event(const bool& p=false):programmee(p) {}
 };
 
 class Activite: public Event

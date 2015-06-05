@@ -58,24 +58,20 @@ class TacheU : public Tache , public Event {
     friend class TacheManager;
     //attributs
     bool preemptive;
-    bool programmee;
     //méthodes
-    void setProgrammee() { programmee = true; }
-    void setNonProgrammee() { programmee = false; }
     void setDuree(const Duree& d); //redéfinition
     void setPreemptive() { preemptive = true;}
     inline void setNonPreemptive();
-    TacheU(const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, bool pre=false, bool prog=false):
-        Tache(t,dur,dispo,deadline), preemptive(pre), programmee(prog)
+    TacheU(const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, const bool& pre=false, const bool& prog=false):
+        Tache(t,dur,dispo,deadline), Event(prog), preemptive(pre)
     {
         if ((preemptive == false) && (getDuree().getDureeEnHeures() > 12))
                 throw CalendarException("Erreur tache unitaire : une tache non preemptive ne peut pas avoir une durée supérieure à 12h");
     }
-    TacheU (Tache& t, bool pre=false, bool prog=false):
-        Tache(t.getTitre(),t.getDuree(),t.getDisponibilite(),t.getEcheance()), preemptive(pre), programmee(prog){}
+    TacheU(const Tache& t, const bool& pre=false, const bool& prog=false):
+        Tache(t.getTitre(),t.getDuree(),t.getDisponibilite(),t.getEcheance()), Event(prog), preemptive(pre) {}
 public:
     const bool isPreemptive() const { return preemptive; }
-    const bool isProgrammee() const { return programmee; }
     QString toString() const;
 };
 
@@ -124,7 +120,7 @@ class TacheManager {
 public:
     static TacheManager& getInstance();
     static void libererInstance();
-    TacheU& ajouterTacheU(const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, bool preempt, bool prog);
+    TacheU& ajouterTacheU(const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, const bool& preempt=false, const bool& prog=false);
     TacheC& ajouterTacheC(const QString& t, const Duree& dur, const Date& dispo, const Date& deadl);
     template <class T> void ajouterTacheATacheC(const TacheC& tacheC, const T& tacheAjout) {
             tacheC.addTasktoC(tacheAjout);

@@ -147,6 +147,7 @@ Projet& ProjetManager::getProjet(const QString& id) {
 }
 
 void ProjetManager::ajouterTacheAProjet(Projet& p, Tache* t) {
+    //vérifier les échances des taches avant d'ajouter au projet
     p.addTache(t);
 }
 
