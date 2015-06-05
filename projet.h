@@ -6,7 +6,6 @@
 #include <vector>
 #include <QUuid>
 #include <sstream>
-#include "timing.h"
 #include "calendar.h"
 #include "tache.h"
 

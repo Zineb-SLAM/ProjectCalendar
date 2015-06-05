@@ -5,7 +5,6 @@
 #include <QMessageBox>
 #include <QTextStream>
 #include "Calendar.h"
-#include "timing.h"
 #include "projet.h"
 
 using namespace TIME;

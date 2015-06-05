@@ -6,7 +6,6 @@
 #include <vector>
 #include <QUuid>
 #include <sstream>
-#include "timing.h"
 #include "calendar.h"
 #include "evenement.h"
 #include "tache.h"
@@ -16,6 +15,7 @@ using namespace TIME;
 
 class Programmation
 {
+    friend class ProgrammationManager;
     const Event* event;
     Date date;
     Horaire horaire;

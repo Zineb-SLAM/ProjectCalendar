@@ -1,5 +1,6 @@
-#if !defined(CTIME)
-#define CTIME
+#ifndef TIMING_H
+#define TIMING_H
+
 #include <iostream>
 #include <iomanip>
 #include <QTextStream>
@@ -78,7 +79,8 @@ namespace TIME {
         void afficher(QTextStream& f) const; //<!Affiche la duree sous le format hhHmm
     };
 
-    QTextStream& operator<<(QTextStream& f, const Duree & d);
+
+    QTextStream& operator<<(QTextStream& f, const Duree& d);
     QTextStream& operator>>(QTextStream& flot, Duree& duree); //lecture format hhHmm
 
 //******************************************************************************************
@@ -151,5 +153,5 @@ namespace TIME {
 
 }
 
-#endif
+#endif // TIMING_H
 

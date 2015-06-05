@@ -4,8 +4,7 @@
 #include <QtXml>
 #include <QMessageBox>
 #include <QTextStream>
-#include "Calendar.h"
-#include "timing.h"
+#include "calendar.h"
 #include "tache.h"
 
 using namespace TIME;
@@ -86,7 +85,7 @@ TacheManager::Handler TacheManager::handler=TacheManager::Handler();
 
 TacheManager& TacheManager::getInstance(){
     if (handler.instance==0)
-        handler.instance=new TacheManager();
+        handler.instance=new TacheManager;
     return *(handler.instance);
 }
 
@@ -102,7 +101,7 @@ TacheU& TacheManager::ajouterTacheU(const QString& t, const Duree& dur, const Da
     return *newt;
 }
 
-TacheC& ajouterTacheC(const QString& t, const Duree& dur, const Date& dispo, const Date& deadl) {
+TacheC& TacheManager::ajouterTacheC(const QString& t, const Duree& dur, const Date& dispo, const Date& deadl) {
     TacheC* newt = new TacheC(t,dur,dispo,deadl);
     addItem(newt);
     return *newt;
@@ -240,14 +239,14 @@ void TacheManager::save(const QString& f){
 }
 
 Tache& TacheManager::getTache(const QString& id){
-    tabtaches::const_iteraot it = taches.begin();
-    while(it!=taches.end() && it->getId() != id) {
+    tabtaches::iterator it = taches.begin();
+    while(it!=taches.end() && (*it)->getId() != id) {
         it++;
     }
     if(it!=taches.end()) {
-        return *it;
+        **it;
     }
-    throw CalendarException "Tache inconnue";
+    throw CalendarException("Tache inconnue");
 }
 
 //******************************************************************************************

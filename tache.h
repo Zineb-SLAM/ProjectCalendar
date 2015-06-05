@@ -6,7 +6,6 @@
 #include <vector>
 #include <QUuid>
 #include <sstream>
-#include "timing.h"
 #include "calendar.h"
 #include "evenement.h"
 
@@ -32,8 +31,8 @@ class Tache {
     void setTitre(const QString& str) { titre = str; }
     inline void setDisponibilite(const Date& d);
     inline void setEcheance(const Date& e);
-    virtual void setDuree(const Duree& d) { duree = d; }
 protected:
+    virtual void setDuree(const Duree& d) { duree = d; }
     Tache(const QString& t, const Duree& dur, const Date& dispo, const Date& deadl):titre(t),duree(dur),disponibilite(dispo),echeance(deadl)
     { QUuid u=QUuid::createUuid(); this->id=u.toString(); } // probleme car l'heritage private n'est plus un heritage est un mais en terme de
 public:
@@ -114,16 +113,14 @@ class TacheManager {
     QString file;
     static Handler handler;
     //méthodes
-    TacheManager();
+    TacheManager() { taches.reserve(10); }
+    ~TacheManager() { taches.clear(); };
     TacheManager(const TacheManager& m);
     TacheManager& operator=(const TacheManager& m);
+    template <class T> void addItem(T* t) { taches.push_back(t); }
 public:
     static TacheManager& getInstance();
     static void libererInstance();
-    template <class T> void addItem(T* t) //à adapter selon TacheU ou TacheC --> design pattern
-    {
-       taches.push_back(t);
-    }
     TacheU& ajouterTacheU(const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, bool preempt, bool prog);
     TacheC& ajouterTacheC(const QString& t, const Duree& dur, const Date& dispo, const Date& deadl);
     template <class T> void ajouterTacheATacheC(const TacheC& tacheC, const T& tacheAjout) {
