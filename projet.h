@@ -37,6 +37,7 @@ class Projet {
     Projet(const Projet& m);
     Projet& operator=(const Projet& m);
     ~Projet();
+    void addTache(Tache* t) { tachesprojet.push_back(t); }
 public:
     static Projet& getInstance();
     static void libererInstance();
@@ -47,7 +48,6 @@ public:
     void setDisponbilite(Date d) { this->disponibilite=d; }
     void setEcheance (Date e) { this->echeance=e; }
     const Tache& getTache(const QString& code) const;
-    template <class T> void addTache(T* t) { tachesprojet.push_back(t); }
     void load(const QString& f);
     void save(const QString& f);
     void afficher(QTextStream& f) const {f<<"****Projet*****";}
@@ -55,7 +55,9 @@ public:
 
 //******************************************************************************************
 class ProjetManager{
-    //>>>>>>> Stashed changes
+    /*! \class ProjetManager
+            \brief Classe permettant de créer, modifier et détruire des projets
+    */
     typedef std::vector<Projet*> TabProjet;
     TabProjet tabprojets;
     QString file;
@@ -67,18 +69,17 @@ class ProjetManager{
     static Handler handler;
     ProjetManager(const ProjetManager& m);
     ProjetManager& operator=(const ProjetManager& m);
-
-public:
     ProjetManager() { tabprojets.reserve(10);}
+    void addProjet(Projet* p);
+public:
     static ProjetManager& getInstance();
     static void libererInstance();
-    void ajouterProjet(const QString& t,const Date& disp, const Date& ech); // cree le projet et le renvoie a addprojet pour l'ajouter
-    void addprojet(Projet* p);
-    void afficher(QTextStream& f) const { f<<"****ProjetManaeger*****";}
+    void creerProjet(const QString& t,const Date& disp, const Date& ech); // crée le projet et le renvoie à addprojet pour l'ajouter
+    void afficher(QTextStream& f) const { f<<"****ProjetManager*****";}
     void load(const QString& f);
     void save(const QString& f);
-
-    //Projet& getProjet(const QString& id);
+    Projet& getProjet(const QString& id);
+    void ajouterTacheAProjet(Projet& p, Tache* t);
 };
 
 //******************************************************************************************

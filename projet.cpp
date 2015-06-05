@@ -9,6 +9,8 @@
 
 using namespace TIME;
 
+//******************************************************************************************
+
 ProjetManager::Handler ProjetManager::handler=ProjetManager::Handler();
 
 ProjetManager& ProjetManager::getInstance() {
@@ -21,12 +23,12 @@ void ProjetManager::libererInstance() {
     handler.instance=0;
 }
 
-void ProjetManager::ajouterProjet(const QString& t,const Date& disp, const Date& ech) // cree le projet et le renvoie a addprojet pour l'ajouter
+void ProjetManager::creerProjet(const QString& t,const Date& disp, const Date& ech) // cree le projet et le renvoie a addprojet pour l'ajouter
 {
      Projet* newp=new Projet(t,disp,ech);
-     addprojet(newp);
+     addProjet(newp);
 }
-void ProjetManager::addprojet(Projet* p)
+void ProjetManager::addProjet(Projet* p)
 {
     tabprojets.push_back(p);
 }
@@ -93,7 +95,7 @@ void ProjetManager::load(const QString& f)
                     xml.readNext();
                 }
                 //qDebug()<<"ajout tache "<<identificateur<<"\n";
-                ajouterProjet(titre,disponibilite,echeance);
+                creerProjet(titre,disponibilite,echeance);
 
             {
             }
@@ -109,8 +111,7 @@ void ProjetManager::load(const QString& f)
     }
 }
 
-void ProjetManager::save(const QString& f)
-{
+void ProjetManager::save(const QString& f) {
     file=f;
     QFile newfile( file);
     if (!newfile.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -132,6 +133,21 @@ void ProjetManager::save(const QString& f)
     stream.writeEndElement();
     stream.writeEndDocument();
     newfile.close();
+}
+
+Projet& ProjetManager::getProjet(const QString& id) {
+    TabProjet::iterator it = tabprojets.begin();
+    while(it!=tabprojets.end() && (*it)->getId() != id) {
+        it++;
+    }
+    if(it!=tabprojets.end()) {
+        return **it;
+    }
+    throw CalendarException("Projet inconnu");
+}
+
+void ProjetManager::ajouterTacheAProjet(Projet& p, Tache* t) {
+    p.addTache(t);
 }
 
 

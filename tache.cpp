@@ -250,7 +250,7 @@ Tache& TacheManager::getTache(const QString& id){
         it++;
     }
     if(it!=taches.end()) {
-        **it;
+        return **it;
     }
     throw CalendarException("Tache inconnue");
 }
