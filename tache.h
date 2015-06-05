@@ -13,9 +13,12 @@
 using namespace std;
 using namespace TIME;
 
-class Tache
-{
+class Tache {
+    /*! \class Tache
+            \brief Classe permettant de manipuler des tâches
+    */
     friend class TacheManager;
+    //attributs
     QString id;
     QString titre;
     Duree duree;
@@ -23,21 +26,23 @@ class Tache
     Date echeance;
     Tache(const Tache& t); //pas implémentée
     Tache& operator=(const Tache&); //pas implémentée
+    //méthodes
+    //les méthodes set sont privées car c'est TacheManager qui gère les Tache
+    void setId(const QString& str);
+    void setTitre(const QString& str) { titre = str; }
+    inline void setDisponibilite(const Date& d);
+    inline void setEcheance(const Date& e);
+    virtual void setDuree(const Duree& d) { duree = d; } // Pourquoi virtual?
 protected:
     Tache(const QString& t, const Duree& dur, const Date& dispo, const Date& deadl):titre(t),duree(dur),disponibilite(dispo),echeance(deadl)
     { QUuid u=QUuid::createUuid(); this->id=u.toString(); } // probleme car l'heritage private n'est plus un heritage est un mais en terme de
 public:
     const QString getId() const { return id; }
-    //pas de setId : l'utilisateur n'a pas le droit de modifier l'id : void setId(const QString& str);
     const QString getTitre() const { return titre; }
-    void setTitre(const QString& str) { titre = str; }
     const Duree getDuree() const { return duree; }
-    virtual void setDuree(const Duree& d) { duree = d; } // Pourquoi virtual?
     const Date getDisponibilite() const { return disponibilite; }
     const Date getEcheance() const { return echeance; }
-    inline void setDisponibilite(const Date& d);
-    inline void setEcheance(const Date& e);
-    virtual std::string toString() const=0;
+    virtual QString toString() const=0;
 };
 
 QTextStream& operator<<(QTextStream& fout, const Tache& t);
@@ -88,14 +93,16 @@ class TacheU : public Tache , public Event
 
 
 
-    std::string toString() const
+    QString toString() const
         {
 
-            std::stringstream f;
+            QTextStream f;
+            QString str;
             f<<"**Tache Unitaire** \n";
             if(isPreemptive()) f<<"Tache Preemtive \n";
             if(isProgrammee()) f<<"Tache Programmee \n";
-            return f.str();
+            f>>str;
+            return str;
         }
 
 };
@@ -114,14 +121,16 @@ public:
     {
         tachescomp.push_back(t);
     }
-    std::string toString() const {
-        std::stringstream f;
+    QString toString() const {
+        QTextStream f;
+        QString str;
         f<<"**Tache Composite** \n";
         for(vectcomp::const_iterator it= tachescomp.begin(); it!=tachescomp.end();++it)
         {
             f<<(*it);
         }
-        return f.str();
+        f>>str;
+        return str;
     }
     ~TacheC() { tachescomp.clear(); } //clear() vide le contenu du conteneur
 };
