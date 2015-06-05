@@ -1,11 +1,12 @@
-#include "Calendar.h"
-#include "timing.h"
 #include <vector>
 #include <QFile>
 #include <QTextCodec>
 #include <QtXml>
 #include <QMessageBox>
 #include <QTextStream>
+#include "Calendar.h"
+#include "timing.h"
+#include "tache.h"
 
 using namespace TIME;
 
@@ -66,6 +67,8 @@ QString TacheU::toString() const {
         return str;
 }
 
+//******************************************************************************************
+
 QString TacheC::toString() const {
     QTextStream f;
     QString str;
@@ -82,14 +85,29 @@ QString TacheC::toString() const {
 TacheManager::Handler TacheManager::handler=TacheManager::Handler();
 
 TacheManager& TacheManager::getInstance(){
-    if (handler.instance==0) handler.instance=new TacheManager();
+    if (handler.instance==0)
+        handler.instance=new TacheManager();
     return *(handler.instance);
 }
 
 void TacheManager::libererInstance(){
-    if (handler.instance!=0) delete handler.instance;
+    if (handler.instance!=0)
+        delete handler.instance;
     handler.instance=0;
 }
+
+TacheU& TacheManager::ajouterTacheU(const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, bool preempt, bool prog){
+    TacheU* newt = new TacheU(t,dur,dispo,deadline,preempt, prog);
+    addItem(newt);
+    return *newt;
+}
+
+TacheC& ajouterTacheC(const QString& t, const Duree& dur, const Date& dispo, const Date& deadl) {
+    TacheC* newt = new TacheC(t,dur,dispo,deadl);
+    addItem(newt);
+    return *newt;
+}
+
 void TacheManager::load(const QString& f)
 {
     //qDebug()<<"debut load\n";
@@ -221,6 +239,15 @@ void TacheManager::save(const QString& f){
     newfile.close();
 }
 
-
+Tache& TacheManager::getTache(const QString& id){
+    tabtaches::const_iteraot it = taches.begin();
+    while(it!=taches.end() && it->getId() != id) {
+        it++;
+    }
+    if(it!=taches.end()) {
+        return *it;
+    }
+    throw CalendarException "Tache inconnue";
+}
 
 //******************************************************************************************

@@ -1,7 +1,7 @@
 #include <iomanip>
 #include <ctime>
-#include "timing.h"
 #include <QTextStream>
+#include "timing.h"
 
 using namespace TIME;
 

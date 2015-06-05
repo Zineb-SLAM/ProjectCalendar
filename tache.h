@@ -33,6 +33,7 @@ class Tache {
     inline void setDisponibilite(const Date& d);
     inline void setEcheance(const Date& e);
     virtual void setDuree(const Duree& d) { duree = d; }
+protected:
     Tache(const QString& t, const Duree& dur, const Date& dispo, const Date& deadl):titre(t),duree(dur),disponibilite(dispo),echeance(deadl)
     { QUuid u=QUuid::createUuid(); this->id=u.toString(); } // probleme car l'heritage private n'est plus un heritage est un mais en terme de
 public:
@@ -90,8 +91,8 @@ class TacheC : public Tache {
     ~TacheC() { tachescomp.clear(); } //clear() vide le contenu du conteneur
     TacheC(const QString& t, const Duree& dur, const Date& dispo, const Date& deadl): Tache(t,dur,dispo,deadl)
     { tachescomp.reserve(10); }
-public:
     template <class T> void addTasktoC(const T& t) { tachescomp.push_back(t); }
+public:
     QString toString() const;
 };
 
@@ -102,47 +103,36 @@ class TacheManager {
             \brief Classe permettant de créer, modifier et détruire des tâches
     */
     typedef std::vector<Tache*> tabtaches;
-    //attributs
-    tabtaches taches;
-    QString file;
     struct Handler
     {
        TacheManager* instance;
        Handler():instance(0){}
        ~Handler(){ if (instance) delete instance; } // destructeur appel a la fin du programme
     };
+    //attributs
+    tabtaches taches;
+    QString file;
     static Handler handler;
     //méthodes
+    TacheManager();
     TacheManager(const TacheManager& m);
     TacheManager& operator=(const TacheManager& m);
 public:
-    TacheManager();
     static TacheManager& getInstance();
     static void libererInstance();
-    TacheU& ajouterTacheU(const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, bool preempt, bool prog)
+    template <class T> void addItem(T* t) //à adapter selon TacheU ou TacheC --> design pattern
     {
-        TacheU* newt = new TacheU(t,dur,dispo,deadline,preempt, prog);
-        addItem(newt);
-        return *newt;
+       taches.push_back(t);
     }
-     template <class T> void addItem(T* t) //à adapter selon TacheU ou TacheC --> design pattern
-    {
-        taches.push_back(t);
+    TacheU& ajouterTacheU(const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, bool preempt, bool prog);
+    TacheC& ajouterTacheC(const QString& t, const Duree& dur, const Date& dispo, const Date& deadl);
+    template <class T> void ajouterTacheATacheC(const TacheC& tacheC, const T& tacheAjout) {
+            tacheC.addTasktoC(tacheAjout);
     }
     void load(const QString& f);
     void save(const QString& f);
-     void afficher(QTextStream& f) const { f<<"****TacheManager*****";}
-
-    Tache& getTache(const QString& id)
-    {
-       /*for(tabtaches::const_iterator it= taches.begin(); it!=taches.end();++it)
-        {
-                 if(it->getId()==id)
-                     return *it; //drowbacks
-         }*/
-
-
-    }
+    void afficher(QTextStream& f) const { f<<"****TacheManager*****"; }
+    Tache& getTache(const QString& id);
 };
 
 //******************************************************************************************

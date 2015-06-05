@@ -1,11 +1,12 @@
-#include "Calendar.h"
-#include "timing.h"
 #include <vector>
 #include <QFile>
 #include <QTextCodec>
 #include <QtXml>
 #include <QMessageBox>
 #include <QTextStream>
+#include "Calendar.h"
+#include "timing.h"
+#include "projet.h"
 
 using namespace TIME;
 
