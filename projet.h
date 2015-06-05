@@ -12,27 +12,31 @@
 using namespace std;
 using namespace TIME;
 
-class Projet
-{
+class Projet {
+    /*! \class Projet
+            \brief Classe permettant de manipuler des projets
+    */
     friend class ProjetManager;
     typedef std::vector<Tache*> tabtaches;
-    tabtaches tachesprojet;
+    struct Handler
+    {
+        Projet* instance;
+        Handler():instance(0){}
+        ~Handler(){ if (instance) delete instance; } // destructeur appel a la fin du programme
+    };
+    //attributs
+    tabtaches tachesprojet; //ensemble des tâches
     QString id;
     QString titre;
     Date disponibilite;
     Date echeance;
-    struct Handler
-     {
-        Projet* instance;
-        Handler():instance(0){}
-        ~Handler(){ if (instance) delete instance; } // destructeur appel a la fin du programme
-     };
     static Handler handler;
+    //méthodes
     Projet(const QString& t,const Date& disp, const Date& ech):titre(t), disponibilite(disp), echeance(ech)
-    { QUuid u=QUuid::createUuid(); this->id=u.toString(); }
+    { QUuid u=QUuid::createUuid(); this->id=u.toString(); tachesprojet.reserve(10); }
     Projet(const Projet& m);
     Projet& operator=(const Projet& m);
-     ~Projet();
+    ~Projet();
 public:
     static Projet& getInstance();
     static void libererInstance();
@@ -43,14 +47,10 @@ public:
     void setDisponbilite(Date d) { this->disponibilite=d; }
     void setEcheance (Date e) { this->echeance=e; }
     const Tache& getTache(const QString& code) const;
-    template <class T> void addTache(T* t)
-    {
-       tachesprojet.push_back(t);
-    }
+    template <class T> void addTache(T* t) { tachesprojet.push_back(t); }
     void load(const QString& f);
     void save(const QString& f);
-     void afficher(QTextStream& f) const {f<<"****Projet*****";}
-
+    void afficher(QTextStream& f) const {f<<"****Projet*****";}
 };
 
 //******************************************************************************************

@@ -23,14 +23,17 @@ class Tache {
     Duree duree;
     Date disponibilite;
     Date echeance;
+    Tache** precedence; //tableau des tâches précédentes
+    //méthodes
     Tache(const Tache& t); //pas implémentée
     Tache& operator=(const Tache&); //pas implémentée
-    //méthodes
     //les méthodes set sont privées car c'est TacheManager qui gère les Tache
     void setId(const QString& str);
     void setTitre(const QString& str) { titre = str; }
     inline void setDisponibilite(const Date& d);
     inline void setEcheance(const Date& e);
+    void ajouterPrecedence(const Tache& t);
+    void supprimerPrecedence(const QString& id);
 protected:
     virtual void setDuree(const Duree& d) { duree = d; }
     Tache(const QString& t, const Duree& dur, const Date& dispo, const Date& deadl):titre(t),duree(dur),disponibilite(dispo),echeance(deadl)
@@ -130,6 +133,7 @@ public:
     void save(const QString& f);
     void afficher(QTextStream& f) const { f<<"****TacheManager*****"; }
     Tache& getTache(const QString& id);
+    void ajouterPrecedenceTache(const Tache& tAjout, const Tache& tPrecedente);
 };
 
 //******************************************************************************************

@@ -40,7 +40,13 @@ void Tache::setEcheance(const Date& e) {
 }
 */
 
+void Tache::ajouterPrecedence(const Tache& t) {
+    //à compléter
+}
 
+void Tache::supprimerPrecedence(const QString& id) {
+    //à compléter
+}
 
 //******************************************************************************************
 
@@ -248,5 +254,10 @@ Tache& TacheManager::getTache(const QString& id){
     }
     throw CalendarException("Tache inconnue");
 }
+
+void TacheManager::ajouterPrecedenceTache(const Tache& tAjout, const Tache& tPrecedente) {
+    //à compléter
+}
+
 
 //******************************************************************************************

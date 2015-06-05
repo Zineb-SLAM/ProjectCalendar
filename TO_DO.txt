@@ -1,0 +1,6 @@
+A faire : 
+* lors de l'ajout dans des VECTOR, vérifier que la taille est assez grande, sinon agrandir
+* compléter les fonctions :
+	° ajouterPrecedenceTache
+	° ajouterPrecedence
+	° supprimerPrecedence
