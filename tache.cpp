@@ -50,6 +50,35 @@ void TacheU::setDuree(const Duree& d) {
     Tache::setDuree(d);
 }
 
+void TacheU::setNonPreemptive() {
+        if(getDuree().getDureeEnHeures() > 12)
+            throw CalendarException("Erreur tache unitaire : une tache non preemptive ne peut pas avoir une durée supérieure à 12h");
+        preemptive = false;
+}
+
+QString TacheU::toString() const {
+        QTextStream f;
+        QString str;
+        f<<"**Tache Unitaire** \n";
+        if(isPreemptive()) f<<"Tache Preemtive \n";
+        if(isProgrammee()) f<<"Tache Programmee \n";
+        f>>str;
+        return str;
+}
+
+QString TacheC::toString() const {
+    QTextStream f;
+    QString str;
+    f<<"**Tache Composite** \n";
+    for(vectcomp::const_iterator it= tachescomp.begin(); it!=tachescomp.end();++it) {
+        f<<(*it);
+    }
+    f>>str;
+    return str;
+}
+
+//******************************************************************************************
+
 TacheManager::Handler TacheManager::handler=TacheManager::Handler();
 
 TacheManager& TacheManager::getInstance(){
