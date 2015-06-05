@@ -6,11 +6,6 @@
 #include <QUuid>
 #include <sstream>
 #include "timing.h"
-#include "evenement.h"
-#include "programmation.h"
-#include "projet.h"
-#include "tache.h"
-#include "timing.h"
 
 using namespace std;
 using namespace TIME;

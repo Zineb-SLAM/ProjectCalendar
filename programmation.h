@@ -9,16 +9,13 @@
 #include "timing.h"
 #include "calendar.h"
 #include "evenement.h"
-#include "projet.h"
 #include "tache.h"
-#include "timing.h"
 
 using namespace std;
 using namespace TIME;
 
 class Programmation
 {
-    friend ProgrammationManager;
     const Event* event;
     Date date;
     Horaire horaire;

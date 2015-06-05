@@ -8,10 +8,7 @@
 #include <sstream>
 #include "timing.h"
 #include "calendar.h"
-#include "evenement.h"
-#include "programmation.h"
 #include "tache.h"
-#include "timing.h"
 
 using namespace std;
 using namespace TIME;
