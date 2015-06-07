@@ -38,9 +38,9 @@ class ProgrammationManager
     ProgrammationManager& operator=(const ProgrammationManager& e);
     struct Handler
     {
-       ProgrammationManager* instance;
-       Handler():instance(0){}
-       ~Handler(){ if (instance) delete instance; } // destructeur appel a la fin du programme
+        ProgrammationManager* instance;
+        Handler():instance(0){}
+        ~Handler(){ if (instance) delete instance; } // destructeur appel a la fin du programme
     };
     static Handler handler;
 public:
@@ -51,6 +51,7 @@ public:
     Programmation* trouverProgrammation(const Event& t) const;
     Programmation& getProg(const QString& id_evt);
     void ajouterProgrammation (const Event& e, const Date& d, const Horaire& h);
+    void ajouterProgrammation (TacheU& t, const Date& d, const Horaire& h);
     void addprog(Programmation* p);
 };
 

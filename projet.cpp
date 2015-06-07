@@ -6,9 +6,26 @@
 #include <QTextStream>
 #include "Calendar.h"
 #include "projet.h"
-
+using namespace std;
 using namespace TIME;
+bool Projet::Taskunavalaible(Tache* t)
+{
+    for(tabtaches::iterator it = tachesprojet.begin(); it != tachesprojet.end(); ++it)
+    {
+        if((*it)->getId()==t->getId()) return true;
+    }
+    return false;
+}
 
+void Projet::removetache(Tache*t)
+{
+    unsigned int i;
+    for (i=0 ; i<tachesprojet.size();i++)
+    {
+        if (tachesprojet[i]->getId() == t->getId()) break;
+    }
+    tachesprojet.erase(tachesprojet.begin()+i);
+}
 //******************************************************************************************
 
 ProjetManager::Handler ProjetManager::handler=ProjetManager::Handler();
@@ -25,13 +42,44 @@ void ProjetManager::libererInstance() {
 
 void ProjetManager::creerProjet(const QString& t,const Date& disp, const Date& ech) // cree le projet et le renvoie a addprojet pour l'ajouter
 {
-     Projet* newp=new Projet(t,disp,ech);
-     addProjet(newp);
+    Projet* newp=new Projet(t,disp,ech);
+    addProjet(newp);
+}
+
+bool ProjetManager::Projetexists(const Projet* const p)
+{
+    for (TabProjet::iterator it = tabprojets.begin(); it!=tabprojets.end(); ++it)
+    if (*it == p) return true;
+    return false;
 }
 void ProjetManager::addProjet(Projet* p)
 {
+    if(Projetexists(p)) throw CalendarException ("Ce projet existe deja");
     tabprojets.push_back(p);
 }
+
+void ProjetManager::ajouterTacheAProjet(Projet& p, Tache* t) {
+    //vérifier les échances des taches avant d'ajouter au projet
+    p.addTache(t);
+}
+
+Projet* ProjetManager::getProjet(const QString& id) {
+    for (TabProjet::iterator it = tabprojets.begin(); it!=tabprojets.end(); ++it)
+    if ((*it)->getId() == id) return *it;
+    return 0;
+}
+
+void ProjetManager::removeProject(Projet* p)
+{
+    unsigned int i;
+    for (i=0 ; i<tabprojets.size();i++)
+    {
+        if (tabprojets[i]->getId() == p->getId()) break;
+        
+    }
+    tabprojets.erase(tabprojets.begin()+i);
+}
+
 void ProjetManager::load(const QString& f)
 {
     //qDebug()<<"debut load\n";
@@ -61,16 +109,16 @@ void ProjetManager::load(const QString& f)
                 QString titre;
                 Date disponibilite;
                 Date echeance;
-
+                
                 QXmlStreamAttributes attributes = xml.attributes();
-
+                
                 xml.readNext();
                 //We're going to loop over the things because the order might change.
                 //We'll continue the loop until we hit an EndElement named tache.
-
+                
                 while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "projet")) {
                     if(xml.tokenType() == QXmlStreamReader::StartElement) {
-
+                        
                         // We've found titre.
                         if(xml.name() == "titre") {
                             xml.readNext();
@@ -89,25 +137,25 @@ void ProjetManager::load(const QString& f)
                             echeance=Date::fromString(xml.text().toString());
                             //qDebug()<<"echeance="<<echeance.toString()<<"\n";
                         }
-
+                        
                     }
                     // ...and next...
                     xml.readNext();
                 }
                 //qDebug()<<"ajout tache "<<identificateur<<"\n";
                 creerProjet(titre,disponibilite,echeance);
-
-            {
+                
+                {
+                }
             }
         }
-    }
-    // Error handling.
-    if(xml.hasError()) {
-        throw CalendarException("Erreur lecteur fichier taches, parser xml");
-    }
-    // Removes any device() or data from the reader * and resets its internal state to the initial state.
-    xml.clear();
-    //qDebug()<<"fin load\n";
+        // Error handling.
+        if(xml.hasError()) {
+            throw CalendarException("Erreur lecteur fichier taches, parser xml");
+        }
+        // Removes any device() or data from the reader * and resets its internal state to the initial state.
+        xml.clear();
+        //qDebug()<<"fin load\n";
     }
 }
 
@@ -115,7 +163,7 @@ void ProjetManager::save(const QString& f) {
     file=f;
     QFile newfile( file);
     if (!newfile.open(QIODevice::WriteOnly | QIODevice::Text))
-        throw CalendarException(QString("erreur sauvegarde projets  : ouverture fichier xml"));
+    throw CalendarException(QString("erreur sauvegarde projets  : ouverture fichier xml"));
     QXmlStreamWriter stream(&newfile);
     stream.setAutoFormatting(true);
     stream.writeStartDocument();
@@ -135,21 +183,7 @@ void ProjetManager::save(const QString& f) {
     newfile.close();
 }
 
-Projet& ProjetManager::getProjet(const QString& id) {
-    TabProjet::iterator it = tabprojets.begin();
-    while(it!=tabprojets.end() && (*it)->getId() != id) {
-        it++;
-    }
-    if(it!=tabprojets.end()) {
-        return **it;
-    }
-    throw CalendarException("Projet inconnu");
-}
 
-void ProjetManager::ajouterTacheAProjet(Projet& p, Tache* t) {
-    //vérifier les échances des taches avant d'ajouter au projet
-    p.addTache(t);
-}
 
 
 //******************************************************************************************

@@ -22,23 +22,23 @@ QTextStream& operator<<(QTextStream& fout, const Tache& t){
 
 void Tache::setDisponibilite(const Date& d) {
     if (echeance < d)
-        throw CalendarException("Erreur Tache : date echeance < nouvelle date disponibilite");
+    throw CalendarException("Erreur Tache : date echeance < nouvelle date disponibilite");
     disponibilite = d;
 }
 
 void Tache::setEcheance(const Date& e) {
     if (e < disponibilite)
-        throw CalendarException("erreur Tache : nouvelle date echeance < date disponibilite");
+    throw CalendarException("erreur Tache : nouvelle date echeance < date disponibilite");
     echeance = e;
 }
 
 /* on a choisi pour l'instant de le faire avec un QUid
  ---- ne pas supprimer (au cas où on en aurait besoin plus tard ----
  void Tache::setId(const QString& str){
-  if (TacheManager::getInstance().isTacheExistante((str))) throw CalendarException("erreur TacheManager : tache id déjà existante");
-  identificateur=str;
-}
-*/
+ if (TacheManager::getInstance().isTacheExistante((str))) throw CalendarException("erreur TacheManager : tache id déjà existante");
+ identificateur=str;
+ }
+ */
 
 void Tache::ajouterPrecedence(const Tache& t) {
     //à compléter
@@ -52,24 +52,24 @@ void Tache::supprimerPrecedence(const QString& id) {
 
 void TacheU::setDuree(const Duree& d) {
     if ((preemptive == false) && (d.getDureeEnHeures() > 12))
-            throw CalendarException("Erreur tache unitaire : une tache non preemptive ne peut pas avoir une durée supérieure à 12h");
+    throw CalendarException("Erreur tache unitaire : une tache non preemptive ne peut pas avoir une durée supérieure à 12h");
     Tache::setDuree(d);
 }
 
 void TacheU::setNonPreemptive() {
-        if(getDuree().getDureeEnHeures() > 12)
-            throw CalendarException("Erreur tache unitaire : une tache non preemptive ne peut pas avoir une durée supérieure à 12h");
-        preemptive = false;
+    if(getDuree().getDureeEnHeures() > 12)
+    throw CalendarException("Erreur tache unitaire : une tache non preemptive ne peut pas avoir une durée supérieure à 12h");
+    preemptive = false;
 }
 
 QString TacheU::toString() const {
-        QTextStream f;
-        QString str;
-        f<<"**Tache Unitaire** \n";
-        if(isPreemptive()) f<<"Tache Preemtive \n";
-        if(isProgrammee()) f<<"Tache Programmee \n";
-        f>>str;
-        return str;
+    QTextStream f;
+    QString str;
+    f<<"**Tache Unitaire** \n";
+    if(isPreemptive()) f<<"Tache Preemtive \n";
+    if(isProgrammee()) f<<"Tache Programmee \n";
+    f>>str;
+    return str;
 }
 
 //******************************************************************************************
@@ -91,13 +91,13 @@ TacheManager::Handler TacheManager::handler=TacheManager::Handler();
 
 TacheManager& TacheManager::getInstance(){
     if (handler.instance==0)
-        handler.instance=new TacheManager;
+    handler.instance=new TacheManager;
     return *(handler.instance);
 }
 
 void TacheManager::libererInstance(){
     if (handler.instance!=0)
-        delete handler.instance;
+    delete handler.instance;
     handler.instance=0;
 }
 
@@ -146,7 +146,7 @@ void TacheManager::load(const QString& f)
                 Duree duree;
                 bool preemptive;
                 bool program;
-
+                
                 QXmlStreamAttributes attributes = xml.attributes();
                 /* Let's check that Task has attribute. */
                 if(attributes.hasAttribute("preemptive")) {
@@ -154,7 +154,7 @@ void TacheManager::load(const QString& f)
                     preemptive=(val == "true" ? true : false);
                 }
                 //qDebug()<<"preemptive="<<preemptive<<"\n";
-
+                
                 QXmlStreamAttributes attributes_b = xml.attributes();
                 /* Let's check that Task has attribute. */
                 if(attributes_b.hasAttribute("programmee")) {
@@ -164,8 +164,8 @@ void TacheManager::load(const QString& f)
                 xml.readNext();
                 //We're going to loop over the things because the order might change.
                 //We'll continue the loop until we hit an EndElement named tache.
-
-
+                
+                
                 while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "tache")) {
                     if(xml.tokenType() == QXmlStreamReader::StartElement) {
                         // We've found identificteur.
@@ -174,7 +174,7 @@ void TacheManager::load(const QString& f)
                             identificateur=xml.text().toString();
                             //qDebug()<<"id="<<identificateur<<"\n";
                         }
-
+                        
                         // We've found titre.
                         if(xml.name() == "titre") {
                             xml.readNext();
@@ -205,7 +205,7 @@ void TacheManager::load(const QString& f)
                 }
                 //qDebug()<<"ajout tache "<<identificateur<<"\n";
                 ajouterTacheU(titre,duree,disponibilite,echeance,preemptive,program);
-
+                
             }
         }
     }
@@ -222,7 +222,7 @@ void TacheManager::save(const QString& f){
     file=f;
     QFile newfile( file);
     if (!newfile.open(QIODevice::WriteOnly | QIODevice::Text))
-        throw CalendarException(QString("erreur sauvegarde taches : ouverture fichier xml"));
+    throw CalendarException(QString("erreur sauvegarde taches : ouverture fichier xml"));
     QXmlStreamWriter stream(&newfile);
     stream.setAutoFormatting(true);
     stream.writeStartDocument();
