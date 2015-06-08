@@ -40,17 +40,18 @@ void ProgrammationManager::ajouterProgrammation (const Event& e, const Date& d, 
     addprog(newt);
 }
 
-void ProgrammationManager::ajouterProgrammation (TacheU& t, const Date& d, const Horaire& h)
+void ProgrammationManager::ajouterProgrammation (TacheU* t, const Date& d, const Horaire& h)
 {
-    if(t.isProgrammee()) throw CalendarException ("Cette Tache est deja Programmee");
-    t.setProgrammee();
+    if(t->isProgrammee()) throw CalendarException ("Cette Tache est deja Programmee");
+    t->setProgrammee();
     
     for(vectProg::iterator it = tabprogs.begin(); it != tabprogs.end(); ++it)
     {
-        if((*it)->getDate()>d || (((*it)->getDate()==d) && (*it)->getHoraire()<h))
-        t.getPrecedence().push_back(it);
-        if(((*it)->getDate()<d || (((*it)->getDate()==d) && (*it)->getHoraire()>h)) && t.cestunetache())
-        it.getPrecedence().push_back(t);
+        if(d<(*it)->getDate() || (((*it)->getDate()==d) && (*it)->getHoraire()<h))  // t.getPrecedence().push_back(it);
+            t->ajouterPrecedence(it);
+
+        if(((*it)->getDate()<d || (((*it)->getDate()==d) && h<(*it)->getHoraire())) && t->cestunetache())  //it.getPrecedence().push_back(t);
+            it->ajouterPrecedence(t);
         
     }
     

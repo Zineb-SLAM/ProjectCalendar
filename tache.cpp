@@ -40,12 +40,29 @@ void Tache::setEcheance(const Date& e) {
  }
  */
 
-void Tache::ajouterPrecedence(const Tache& t) {
-    //à compléter
-}
+void Tache::ajouterPrecedence(const Tache* t )
+{
+    for(vector<Tache*>::const_iterator it =t->precedence.begin(); it!=t->precedence.end(); it++)
+    {
+        if((*it)->getId()==this->id) throw CalendarException("Impossible Cette Tache precede Deja La Tache t ");
+    }
 
-void Tache::supprimerPrecedence(const QString& id) {
-    //à compléter
+    this->precedence.push_back(t); // on met la tache elle meme ou juste une copie de la tache?
+
+}
+void Tache::supprimerPrecedence(const QString& id)
+{
+    for(vector<Tache*>::iterator it =precedence.begin(); it!=precedence.end(); it++)
+    {
+        if((*it)->id==id)
+        {precedence.erase(it);
+         return;
+        }
+    }
+
+     throw CalendarException("Cette Tache n'existe pas");
+
+
 }
 
 //******************************************************************************************
@@ -253,10 +270,6 @@ Tache& TacheManager::getTache(const QString& id){
         return **it;
     }
     throw CalendarException("Tache inconnue");
-}
-
-void TacheManager::ajouterPrecedenceTache(const Tache& tAjout, const Tache& tPrecedente) {
-    //à compléter
 }
 
 

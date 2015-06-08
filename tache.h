@@ -32,7 +32,7 @@ class Tache {
     void setTitre(const QString& str) { titre = str; }
     inline void setDisponibilite(const Date& d);
     inline void setEcheance(const Date& e);
-    void ajouterPrecedence(const Tache& t);
+    void ajouterPrecedence(const Tache* t);
     void supprimerPrecedence(const QString& id);
     virtual ~Tache();
 protected:
@@ -75,8 +75,8 @@ class TacheU : public Tache , public Event {
         if ((preemptive == false) && (getDuree().getDureeEnHeures() > 12))
         throw CalendarException("Erreur tache unitaire : une tache non preemptive ne peut pas avoir une durée supérieure à 12h");
     }
+
     TacheU(const Tache& t, const bool& pre=false, const bool& prog=false):
-    
     Tache(t.getTitre(),t.getDuree(),t.getDisponibilite(),t.getEcheance()), Event(prog), preemptive(pre) {}
 protected:
     void setProgression(unsigned int i)

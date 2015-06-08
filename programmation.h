@@ -51,7 +51,7 @@ public:
     Programmation* trouverProgrammation(const Event& t) const;
     Programmation& getProg(const QString& id_evt);
     void ajouterProgrammation (const Event& e, const Date& d, const Horaire& h);
-    void ajouterProgrammation (TacheU& t, const Date& d, const Horaire& h);
+    void ajouterProgrammation (TacheU* t, const Date& d, const Horaire& h);
     void addprog(Programmation* p);
 };
 

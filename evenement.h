@@ -29,8 +29,10 @@ class Activite: public Event
     Duree duree;
     QString lieu;
 public:
-    Activite(const QString& t, const Duree d, const QString& l):titre(t), duree(d), lieu(l) {
-        QUuid u=QUuid::createUuid(); this->id=u.toString(); }
+    Activite(const QString& t, const Duree d, const QString& l):titre(t), duree(d), lieu(l)
+    {
+        QUuid u=QUuid::createUuid(); this->id=u.toString();
+    }
     const QString& getId() const { return id; }
     const QString& getTitre() const { return titre; }
     void setTitre(const QString& t ) { this->titre=t; }
@@ -47,7 +49,7 @@ class Rdv : public Activite
     QString personne;
 public:
     Rdv(const QString& t, const Duree d, const QString& l, const QString& p):Activite(t,d,l), personne(p) {}
-    bool  cestunetache() const { return false;}
+
 };
 
 class Reunion : public Activite
@@ -55,7 +57,7 @@ class Reunion : public Activite
     QString outils;
 public:
     Reunion(const QString& t, const Duree d, const QString& l, const QString& o):Activite(t,d,l),outils(o){}
-    bool  cestunetache() const { return false;}
+
 };
 
 //******************************************************************************************
