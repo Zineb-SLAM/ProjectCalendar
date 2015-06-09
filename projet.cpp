@@ -10,29 +10,36 @@
 using namespace std;
 using namespace TIME;
 
-bool Projet::Taskunavalaible(Tache* t)
-{
-    for(tabtaches::iterator it = tachesProjet.begin(); it != tachesProjet.end(); ++it)
-    {
-        if((*it)->getId()==t->getId()) return true;
+bool Projet::isTacheDisponible(Tache* t) {
+    for(tabtaches::iterator it = tachesProjet.begin(); it != tachesProjet.end(); ++it) {
+        if((*it)->getId()==t->getId())
+            return true;
     }
     return false;
 }
 
-void Projet::removetache(Tache*t)
-{
+void Projet::removeTache(Tache*t) {
     unsigned int i;
-    for (i=0 ; i<tachesProjet.size();i++)
-    {
-        if (tachesProjet[i]->getId() == t->getId()) break;
+    for (i=0 ; i<tachesProjet.size();i++) {
+        if (tachesProjet[i]->getId() == t->getId())
+            break;
     }
     tachesProjet.erase(tachesProjet.begin()+i);
 }
 
 void Projet::addTache(Tache* t) {
-    if(Taskunavalaible(t))
-    throw CalendarException ("La tache appartient deja au projet");
+    if(isTacheDisponible(t))
+        throw CalendarException ("La tache appartient deja au projet");
     tachesProjet.push_back(t);
+}
+
+const Tache& Projet::getTache(const QString& id) const {
+    tabtaches::const_iterator it = tachesProjet.begin();
+    while (it != tachesProjet.end() && (*it)->getId() != id)
+        it++;
+    if (it != tachesProjet.end())
+        return **it;
+    throw CalendarException("La tache n'appartient pas au projet");
 }
 
 //******************************************************************************************
@@ -51,19 +58,28 @@ void ProjetManager::libererInstance() {
     handler.instance=0;
 }
 
-void ProjetManager::creerProjet(const QString& id, const QString& t, const Date& disp, const Date& ech) // cree le projet et l'ajoute à la liste des projets existants
+bool ProjetManager::ProjetExists(const Projet* const p)
 {
+    for (TabProjet::iterator it = tabprojets.begin(); it!=tabprojets.end(); ++it) {
+        if (*it == p)
+            return true;
+    }
+    return false;
+}
+
+Projet* ProjetManager::getProjet(const QString& id) {
+    for (TabProjet::iterator it = tabprojets.begin(); it!=tabprojets.end(); ++it) {
+        if ((*it)->getId() == id)
+            return *it;
+    }
+    throw CalendarException("Le projet n'existe pas");
+}
+
+void ProjetManager::creerProjet(const QString& id, const QString& t, const Date& disp, const Date& ech) { // crée le projet et l'ajoute à la liste des projets existants
     Projet* newp=new Projet(id,t,disp,ech);
     if(ProjetExists(newp))
         throw CalendarException ("Ce projet existe deja");
     tabprojets.push_back(newp);
-}
-
-bool ProjetManager::ProjetExists(const Projet* const p)
-{
-    for (TabProjet::iterator it = tabprojets.begin(); it!=tabprojets.end(); ++it)
-    if (*it == p) return true;
-    return false;
 }
 
 void ProjetManager::ajouterTacheAProjet(Projet& p, Tache* t) {
@@ -71,25 +87,16 @@ void ProjetManager::ajouterTacheAProjet(Projet& p, Tache* t) {
     p.addTache(t);
 }
 
-Projet* ProjetManager::getProjet(const QString& id) {
-    for (TabProjet::iterator it = tabprojets.begin(); it!=tabprojets.end(); ++it)
-    if ((*it)->getId() == id) return *it;
-    return 0;
-}
-
-void ProjetManager::removeProject(Projet* p)
-{
+void ProjetManager::removeProject(Projet* p) {
     unsigned int i;
-    for (i=0 ; i<tabprojets.size();i++)
-    {
-        if (tabprojets[i]->getId() == p->getId()) break;
-        
+    for (i=0 ; i<tabprojets.size();i++) {
+        if (tabprojets[i]->getId() == p->getId())
+            break;
     }
     tabprojets.erase(tabprojets.begin()+i);
 }
 
-void ProjetManager::load(const QString& f)
-{
+void ProjetManager::load(const QString& f) {
     //qDebug()<<"debut load\n";
     this->~ProjetManager();
     file=f;
@@ -180,8 +187,7 @@ void ProjetManager::save(const QString& f) {
     stream.setAutoFormatting(true);
     stream.writeStartDocument();
     stream.writeStartElement("taches");
-    for(unsigned int i=0; i<tabprojets.size(); i++)
-    {
+    for(unsigned int i=0; i<tabprojets.size(); i++) {
         stream.writeStartElement("tache");
         //stream.writeAttribute("preemptive", (taches[i]->isPreemptive())?"true":"false");// isPreemtive dans Taches??
         stream.writeTextElement("identificateur",tabprojets[i]->getId());

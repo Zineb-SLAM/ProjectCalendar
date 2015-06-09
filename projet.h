@@ -27,23 +27,23 @@ class Projet {
     tabtaches tachesProjet; //ensemble des tâches du projet
     //méthodes
     Projet(const QString& id, const QString& t, const Date& disp, const Date& ech):id(id), titre(t), disponibilite(disp), echeance(ech), termine(false){}
+    void setId(const QString& identifiant) { id = identifiant; }
     void setTermine() { termine = true; }
-    void setDisponbilite(Date d) { this->disponibilite=d; }
-    void setEcheance (Date e) { this->echeance=e; }
+    void setDisponbilite(const Date& d) { disponibilite = d; }
+    void setEcheance (const Date& e) { echeance = e; }
     void addTache(Tache* t);
-    void removetache(Tache*t);
+    void removeTache(Tache*t);
     Projet(const Projet& m);
     Projet& operator=(const Projet& m);
     ~Projet();
-    
 public:
     const QString& getId() const { return id; }
     const QString& getTitre() const { return titre; }
     const Date& getDisponibilite() const { return disponibilite; }
     const Date& getEcheance() const { return echeance; }
     const bool& isTermine() const { return termine; }
-    const Tache& getTache(const QString& code) const;
-    bool Taskunavalaible(Tache* t);
+    const Tache& getTache(const QString& id) const;
+    bool isTacheDisponible(Tache* t);
     void afficher(QTextStream& f) const {f<<"****Projet*****";}
 };
 
@@ -67,11 +67,11 @@ class ProjetManager{
 public:
     static ProjetManager& getInstance();
     static void libererInstance();
-    bool ProjetExists(const Projet* const p);
+    bool ProjetExists(const Projet* const p); // retourne TRUE si le projet existe déjà
     Projet* getProjet(const QString& id);
-    void removeProject(Projet* p);
     void creerProjet(const QString &id, const QString& t, const Date& disp, const Date& ech); // crée le projet et l'ajoute à la liste des projets existants
     void ajouterTacheAProjet(Projet& p, Tache* t);
+    void removeProject(Projet* p);
     void afficher(QTextStream& f) const { f<<"****ProjetManager*****"; }
     void load(const QString& f);
     void save(const QString& f);
