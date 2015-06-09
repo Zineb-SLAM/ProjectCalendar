@@ -40,31 +40,30 @@ void Projet::addTache(Tache* t) {
 ProjetManager::Handler ProjetManager::handler=ProjetManager::Handler();
 
 ProjetManager& ProjetManager::getInstance() {
-    if (handler.instance==0) handler.instance=new ProjetManager();
+    if (handler.instance==0)
+        handler.instance=new ProjetManager();
     return *(handler.instance);
 }
 
 void ProjetManager::libererInstance() {
-    if (handler.instance!=0) delete handler.instance;
+    if (handler.instance!=0)
+        delete handler.instance;
     handler.instance=0;
 }
 
-void ProjetManager::creerProjet(const QString& id, const QString& t, const Date& disp, const Date& ech) // cree le projet et le renvoie a addprojet pour l'ajouter
+void ProjetManager::creerProjet(const QString& id, const QString& t, const Date& disp, const Date& ech) // cree le projet et l'ajoute à la liste des projets existants
 {
     Projet* newp=new Projet(id,t,disp,ech);
-    addProjet(newp);
+    if(ProjetExists(newp))
+        throw CalendarException ("Ce projet existe deja");
+    tabprojets.push_back(newp);
 }
 
-bool ProjetManager::Projetexists(const Projet* const p)
+bool ProjetManager::ProjetExists(const Projet* const p)
 {
     for (TabProjet::iterator it = tabprojets.begin(); it!=tabprojets.end(); ++it)
     if (*it == p) return true;
     return false;
-}
-void ProjetManager::addProjet(Projet* p)
-{
-    if(Projetexists(p)) throw CalendarException ("Ce projet existe deja");
-    tabprojets.push_back(p);
 }
 
 void ProjetManager::ajouterTacheAProjet(Projet& p, Tache* t) {

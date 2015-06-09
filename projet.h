@@ -67,13 +67,12 @@ class ProjetManager{
 public:
     static ProjetManager& getInstance();
     static void libererInstance();
-    bool Projetexists(const Projet* const p);
+    bool ProjetExists(const Projet* const p);
     Projet* getProjet(const QString& id);
     void removeProject(Projet* p);
-    void creerProjet(const QString &id, const QString& t, const Date& disp, const Date& ech); // crée le projet et le renvoie à addprojet pour l'ajouter
-    void addProjet(Projet* p);
+    void creerProjet(const QString &id, const QString& t, const Date& disp, const Date& ech); // crée le projet et l'ajoute à la liste des projets existants
     void ajouterTacheAProjet(Projet& p, Tache* t);
-    void afficher(QTextStream& f) const { f<<"****ProjetManager*****";}
+    void afficher(QTextStream& f) const { f<<"****ProjetManager*****"; }
     void load(const QString& f);
     void save(const QString& f);
 };
