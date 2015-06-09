@@ -7,6 +7,7 @@
 #include <sstream>
 #include "calendar.h"
 #include "evenement.h"
+
 using namespace std;
 using namespace TIME;
 
@@ -32,13 +33,9 @@ class Tache {
     void setTitre(const QString& str) { titre = str; }
     inline void setDisponibilite(const Date& d);
     inline void setEcheance(const Date& e);
-    void ajouterPrecedence(const Tache* t);
-    void supprimerPrecedence(const QString& id);
-    virtual ~Tache();
 protected:
-    Tache(const QString& t, const Duree& dur, const Date& dispo, const Date& deadl):titre(t),duree(dur),disponibilite(dispo),echeance(deadl),
-    isCompleted(false),precedence(0)
-    { QUuid u=QUuid::createUuid(); this->id=u.toString(); }
+    Tache(const QString& id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadl): id(id), titre(t),duree(dur),disponibilite(dispo),echeance(deadl),
+    isCompleted(false),precedence(0) {}
     virtual void setDuree(const Duree& d) { duree = d; }
     void setCompleted() {isCompleted = true;}
     
@@ -69,15 +66,15 @@ class TacheU : public Tache , public Event {
     void setDuree(const Duree& d); //redéfinition
     void setPreemptive() { preemptive = true;}
     inline void setNonPreemptive();
-    TacheU(const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, const bool& pre=false, const bool& prog=false):
-    Tache(t,dur,dispo,deadline), Event(prog), preemptive(pre)
+    TacheU(const QString& id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, const bool& pre=false, const bool& prog=false):
+    Tache(id,t,dur,dispo,deadline), Event(prog), preemptive(pre)
     {
         if ((preemptive == false) && (getDuree().getDureeEnHeures() > 12))
         throw CalendarException("Erreur tache unitaire : une tache non preemptive ne peut pas avoir une durée supérieure à 12h");
     }
 
     TacheU(const Tache& t, const bool& pre=false, const bool& prog=false):
-    Tache(t.getTitre(),t.getDuree(),t.getDisponibilite(),t.getEcheance()), Event(prog), preemptive(pre) {}
+    Tache(t.getId(), t.getTitre(),t.getDuree(),t.getDisponibilite(),t.getEcheance()), Event(prog), preemptive(pre) {}
 protected:
     void setProgression(unsigned int i)
     {
@@ -105,7 +102,7 @@ class TacheC : public Tache {
     vectcomp tachescomp;
     //méthodes
     ~TacheC() { tachescomp.clear(); } //clear() vide le contenu du conteneur
-    TacheC(const QString& t, const Duree& dur, const Date& dispo, const Date& deadl): Tache(t,dur,dispo,deadl)
+    TacheC(const QString& id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadl): Tache(id,t,dur,dispo,deadl)
     { tachescomp.reserve(10); }
     template <class T> void addTasktoC(const T& t) { tachescomp.push_back(t); }
 public:
@@ -138,16 +135,17 @@ class TacheManager {
 public:
     static TacheManager& getInstance();
     static void libererInstance();
-    TacheU& ajouterTacheU(const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, const bool& preempt=false, const bool& prog=false);
-    TacheC& ajouterTacheC(const QString& t, const Duree& dur, const Date& dispo, const Date& deadl);
+    TacheU& ajouterTacheU(const QString &id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, const bool& preempt=false, const bool& prog=false);
+    TacheC& ajouterTacheC(const QString& id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadl);
     template <class T> void ajouterTacheATacheC(const TacheC& tacheC, const T& tacheAjout) {
         tacheC.addTasktoC(tacheAjout);
     }
     void load(const QString& f);
     void save(const QString& f);
-    void afficher(QTextStream& f) const { f<<"****TacheManager*****"; }
+    void afficher(QTextStream& f) const { f << "****TacheManager*****" << endl; }
     Tache& getTache(const QString& id);
     void ajouterPrecedenceTache(const Tache& tAjout, const Tache& tPrecedente);
+    QTextStream& afficherTaches(QTextStream& fout);
 };
 
 //******************************************************************************************

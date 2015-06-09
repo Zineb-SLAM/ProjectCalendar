@@ -6,11 +6,13 @@
 #include <QTextStream>
 #include "Calendar.h"
 #include "projet.h"
+
 using namespace std;
 using namespace TIME;
+
 bool Projet::Taskunavalaible(Tache* t)
 {
-    for(tabtaches::iterator it = tachesprojet.begin(); it != tachesprojet.end(); ++it)
+    for(tabtaches::iterator it = tachesProjet.begin(); it != tachesProjet.end(); ++it)
     {
         if((*it)->getId()==t->getId()) return true;
     }
@@ -20,12 +22,19 @@ bool Projet::Taskunavalaible(Tache* t)
 void Projet::removetache(Tache*t)
 {
     unsigned int i;
-    for (i=0 ; i<tachesprojet.size();i++)
+    for (i=0 ; i<tachesProjet.size();i++)
     {
-        if (tachesprojet[i]->getId() == t->getId()) break;
+        if (tachesProjet[i]->getId() == t->getId()) break;
     }
-    tachesprojet.erase(tachesprojet.begin()+i);
+    tachesProjet.erase(tachesProjet.begin()+i);
 }
+
+void Projet::addTache(Tache* t) {
+    if(Taskunavalaible(t))
+    throw CalendarException ("La tache appartient deja au projet");
+    tachesProjet.push_back(t);
+}
+
 //******************************************************************************************
 
 ProjetManager::Handler ProjetManager::handler=ProjetManager::Handler();
@@ -40,9 +49,9 @@ void ProjetManager::libererInstance() {
     handler.instance=0;
 }
 
-void ProjetManager::creerProjet(const QString& t,const Date& disp, const Date& ech) // cree le projet et le renvoie a addprojet pour l'ajouter
+void ProjetManager::creerProjet(const QString& id, const QString& t, const Date& disp, const Date& ech) // cree le projet et le renvoie a addprojet pour l'ajouter
 {
-    Projet* newp=new Projet(t,disp,ech);
+    Projet* newp=new Projet(id,t,disp,ech);
     addProjet(newp);
 }
 
@@ -106,7 +115,9 @@ void ProjetManager::load(const QString& f)
             // If it's named tache, we'll dig the information from there.
             if(xml.name() == "tache") {
                 qDebug()<<"new tache\n";
+                QString identificateur;
                 QString titre;
+                Duree duree;
                 Date disponibilite;
                 Date echeance;
                 
@@ -118,20 +129,25 @@ void ProjetManager::load(const QString& f)
                 
                 while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "projet")) {
                     if(xml.tokenType() == QXmlStreamReader::StartElement) {
-                        
+                        // We've found id.
+                        if(xml.name() == "id") {
+                            xml.readNext();
+                            identificateur=xml.text().toString();
+                            //qDebug()<<"id="<<id<<"\n";
+                        }
                         // We've found titre.
                         if(xml.name() == "titre") {
                             xml.readNext();
                             titre=xml.text().toString();
                             //qDebug()<<"titre="<<titre<<"\n";
                         }
-                        // We've found disponibilite
+                        // We've found disponibilite.
                         if(xml.name() == "disponibilite") {
                             xml.readNext();
                             disponibilite=Date::fromString(xml.text().toString());
                             //qDebug()<<"disp="<<disponibilite.toString()<<"\n";
                         }
-                        // We've found echeance
+                        // We've found echeance.
                         if(xml.name() == "echeance") {
                             xml.readNext();
                             echeance=Date::fromString(xml.text().toString());
@@ -143,10 +159,7 @@ void ProjetManager::load(const QString& f)
                     xml.readNext();
                 }
                 //qDebug()<<"ajout tache "<<identificateur<<"\n";
-                creerProjet(titre,disponibilite,echeance);
-                
-                {
-                }
+                creerProjet(identificateur,titre,disponibilite,echeance);
             }
         }
         // Error handling.

@@ -17,10 +17,12 @@ SOURCES += main.cpp\
     calendar.cpp \
     timing.cpp \
     tache.cpp \
-    projet.cpp
+    projet.cpp \
+    evenement.cpp
 
 HEADERS  += \
     calendar.h \
     timing.h \
     tache.h \
-    projet.h
+    projet.h \
+    evenement.h

@@ -11,12 +11,15 @@ using namespace std;
 using namespace TIME;
 
 //******************************************************************************************
+/*! \class CalendarException
+        \brief Classe permettant de gérer les exceptions de l'application
+*/
 class CalendarException
 {
     QString info;
 public:
     CalendarException(const QString& message) : info(message) {}
-    QString getInfo() const { return info; }
+    const QString& getInfo() const { return info; }
 };
 
 #endif // CALENDAR_H
