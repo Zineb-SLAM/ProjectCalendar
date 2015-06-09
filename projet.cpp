@@ -10,7 +10,7 @@
 using namespace std;
 using namespace TIME;
 
-bool Projet::isTacheDisponible(Tache* t) {
+bool Projet::isTacheDansProjet(Tache* t) {
     for(tabtaches::iterator it = tachesProjet.begin(); it != tachesProjet.end(); ++it) {
         if((*it)->getId()==t->getId())
             return true;
@@ -22,13 +22,12 @@ void Projet::removeTache(Tache*t) {
     unsigned int i;
     for (i=0 ; i<tachesProjet.size();i++) {
         if (tachesProjet[i]->getId() == t->getId())
-            break;
+            tachesProjet.erase(tachesProjet.begin()+i);
     }
-    tachesProjet.erase(tachesProjet.begin()+i);
 }
 
 void Projet::addTache(Tache* t) {
-    if(isTacheDisponible(t))
+    if(isTacheDansProjet(t))
         throw CalendarException ("La tache appartient deja au projet");
     tachesProjet.push_back(t);
 }
@@ -40,6 +39,18 @@ const Tache& Projet::getTache(const QString& id) const {
     if (it != tachesProjet.end())
         return **it;
     throw CalendarException("La tache n'appartient pas au projet");
+}
+
+void Projet::afficher(QTextStream& f) const {
+    f << "Projet " << id << endl;
+    f << titre;
+    f << disponibilite.toString();
+    f << echeance.toString();
+    f << "etat : ";
+    if(isTermine())
+        f << "termine" << endl;
+    else
+        f << "non termine" << endl;
 }
 
 //******************************************************************************************
@@ -58,9 +69,8 @@ void ProjetManager::libererInstance() {
     handler.instance=0;
 }
 
-bool ProjetManager::ProjetExists(const Projet* const p)
-{
-    for (TabProjet::iterator it = tabprojets.begin(); it!=tabprojets.end(); ++it) {
+bool ProjetManager::ProjetExists(const Projet* const p) {
+    for (tabprojets::iterator it = projets.begin(); it!=projets.end(); ++it) {
         if (*it == p)
             return true;
     }
@@ -68,7 +78,7 @@ bool ProjetManager::ProjetExists(const Projet* const p)
 }
 
 Projet* ProjetManager::getProjet(const QString& id) {
-    for (TabProjet::iterator it = tabprojets.begin(); it!=tabprojets.end(); ++it) {
+    for (tabprojets::iterator it = projets.begin(); it!=projets.end(); ++it) {
         if ((*it)->getId() == id)
             return *it;
     }
@@ -79,7 +89,7 @@ void ProjetManager::creerProjet(const QString& id, const QString& t, const Date&
     Projet* newp=new Projet(id,t,disp,ech);
     if(ProjetExists(newp))
         throw CalendarException ("Ce projet existe deja");
-    tabprojets.push_back(newp);
+    projets.push_back(newp);
 }
 
 void ProjetManager::ajouterTacheAProjet(Projet& p, Tache* t) {
@@ -89,11 +99,11 @@ void ProjetManager::ajouterTacheAProjet(Projet& p, Tache* t) {
 
 void ProjetManager::removeProject(Projet* p) {
     unsigned int i;
-    for (i=0 ; i<tabprojets.size();i++) {
-        if (tabprojets[i]->getId() == p->getId())
+    for (i=0 ; i<projets.size();i++) {
+        if (projets[i]->getId() == p->getId())
             break;
     }
-    tabprojets.erase(tabprojets.begin()+i);
+    projets.erase(projets.begin()+i);
 }
 
 void ProjetManager::load(const QString& f) {
@@ -187,18 +197,26 @@ void ProjetManager::save(const QString& f) {
     stream.setAutoFormatting(true);
     stream.writeStartDocument();
     stream.writeStartElement("taches");
-    for(unsigned int i=0; i<tabprojets.size(); i++) {
+    for(unsigned int i=0; i<projets.size(); i++) {
         stream.writeStartElement("tache");
         //stream.writeAttribute("preemptive", (taches[i]->isPreemptive())?"true":"false");// isPreemtive dans Taches??
-        stream.writeTextElement("identificateur",tabprojets[i]->getId());
-        stream.writeTextElement("titre",tabprojets[i]->getTitre());
-        stream.writeTextElement("disponibilite",tabprojets[i]->getDisponibilite().toString());
-        stream.writeTextElement("echeance",tabprojets[i]->getEcheance().toString());
+        stream.writeTextElement("identificateur",projets[i]->getId());
+        stream.writeTextElement("titre",projets[i]->getTitre());
+        stream.writeTextElement("disponibilite",projets[i]->getDisponibilite().toString());
+        stream.writeTextElement("echeance",projets[i]->getEcheance().toString());
         stream.writeEndElement();
     }
     stream.writeEndElement();
     stream.writeEndDocument();
     newfile.close();
+}
+
+void ProjetManager::afficherTitreProjets(QTextStream& fout) const {
+    fout << "projets" << endl;
+    for(tabprojets::const_iterator it = projets.begin(); it != projets.end(); it++) {
+        (*it)->afficher(fout);
+    }
+    fout << "fin des projets" << endl;
 }
 
 
