@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <QTextStream>
 #include <QString>
+#include<cmath>
 
 namespace TIME {
     /*! \class TimeException
@@ -76,6 +77,7 @@ namespace TIME {
         double getDureeEnHeures() const { return double(nb_minutes)/60; } //<!Retourne la duree en heures
         unsigned int getMinute() const { return nb_minutes%60; }
         unsigned int getHeure() const { return nb_minutes/60; }
+        unsigned int getJour() const{ return floor(getHeure()/24);}//<!Retourne la duree en jours pour les taches prremptv
         void afficher(QTextStream& f) const; //<!Affiche la duree sous le format hhHmm
     };
 
@@ -100,7 +102,18 @@ namespace TIME {
         void afficher(QTextStream& f) const; //<!Affiche l'horaire sous le format hhHmm
         unsigned short int getHeure() const { return heure; } //<!Retourne l'heure de l'horaire
         unsigned short int getMinute() const { return minute; } //<!Retourne les minutes de l'horaire
+        Horaire* getFin(const Duree& d)const
+        {
+            Horaire* h= new Horaire(this->heure,this->minute);
+            unsigned int total=minute+d.getDureeEnMinutes();
+            unsigned int hour = total/60;
+            unsigned int min= total%60;
+            h->heure+=hour;
+            h->minute=min;
+            return h;
+        }
         bool operator<(const Horaire& h) const; //<! h1<h2 retourne true si h1 est avant h2 dans le temps
+        bool operator==(const Horaire& h) const;  //<! h1<h2 retourne true si h1 est au meme temps que h2 dans le temps
     private:
         unsigned short int  heure;
         unsigned short int  minute;

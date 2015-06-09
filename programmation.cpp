@@ -21,47 +21,145 @@ void ProgrammationManager::libererInstance() {
     handler.instance=0;
 }
 
-
-
-Programmation* ProgrammationManager::trouverProgrammation(const Event& e) const {
-    for(unsigned int i=0; i<tabprogs.size(); i++)
-    if (&e==&tabprogs[i]->getEvent()) return tabprogs[i];
+//Programmation* ProgrammationManager::trouverProgrammation(const Programmation* e)
+Programmation* ProgrammationManager::trouverProgrammation(const Event* e)
+{
+    if(!e->estProgrammee()) throw CalendarException ("la tache n'est pas programmee");
+    for( vector<Programmation*>::iterator it = tabprogs.begin(); it != tabprogs.end(); ++it)
+    {
+        if ((*it)->getEvent()==*e)
+                return *it;
+    }
     return 0;
 }
 
-ProgrammationManager::~ProgrammationManager() {
-    for(unsigned int i=0; i<tabprogs.size(); i++)
-    delete tabprogs[i];
-}
+void ProgrammationManager::ajouterProgrammation (TacheU* t, const Date& d, const Horaire& h)
+{
+    if(t->estProgrammee()) throw CalendarException ("Cette Tache est deja Programmee");
+    if(t->isPreemptive())
+    {
+        std::cout<<"Entrer le nombre de minutes a programmer < 720 minutes \n";
+        unsigned int nb;
+        std::cin>>nb;
+        if(nb>720) throw CalendarException("Entrer un nombre de Minutes < 720");
+        Duree duree(nb);
+        float n=t->getProgression()+((nb*100)/t->getDuree().getDureeEnMinutes());
+        if(n>100) throw CalendarException("Impossible: Vous pouvez la finir en moins de temps");
+        t->getProgression()+=n;
+        Programmation* newt = new Programmation(t,d,h);
+        addprog(newt);
+        return;
 
-void ProgrammationManager::ajouterProgrammation (const Event& e, const Date& d, const Horaire& h)
+    }
+    else
+     {
+        t->setProgrammee();
+     // il faut parcourir tous ses taches precedentes et taches suivantes --> Ma tache doit etre après TOUTES ses dates precedentes et avant TOUTES ses taches suivantes
+
+        /********************Precedente****************/
+         for( vector<TacheU*>::iterator it = t->getPrecedence().begin(); it != t->getPrecedence().end(); ++it)
+       {
+             if((*it)->estProgrammee())
+            {
+                 Programmation * prog= trouverProgrammation(*it);
+
+                if((prog->getDate()<d))
+                 {
+                         Horaire* test= prog->getHoraire().getFin((*it)->getDuree()); //mon horaire apres avoir fini ma date
+                        if(23>=test->getHeure()) //  meme apres avoir fini ma date (+duree) je reste dans le meme jour precedent
+                        {
+                            Programmation* newt = new Programmation(t,d,h);
+                            addprog(newt);
+                        }
+                        else if(23<test->getHeure()) //  mais si elle est a cheval sur deux jours (exemple elle commence a 23h et a une duree de 4h et donc finit a 3h (27h)
+                        {
+                          unsigned int diff_h= test->getHeure()-24; // je convertis 27h45 à 3h45
+                          Horaire testh=Horaire(diff_h,test->getMinute());// je reconstruis mon nouveau horaire qui sera dans le jour d'apres
+
+                            if(h<testh || testh==h) // si la precedence finit a 3h et je commence ma tache a 4h c'est ok
+                                {
+                                    Programmation* newt = new Programmation(t,d,h);
+                                    addprog(newt);
+                                 }
+                          else
+                              throw CalendarException("Votre Programmation ne respecte pas le principe de Precedence");
+
+                        }
+
+                   }
+
+                else if ((prog->getDate()==d) && (prog->getHoraire()<h) && ((*(prog->getHoraire().getFin((*it)->getDuree())))<h))
+                {
+                    Programmation* newt = new Programmation(t,d,h);
+                    addprog(newt);
+                 }
+                else
+                     throw CalendarException("Votre Programmation ne respecte pas le principe de Precedence");
+
+          }
+       }
+
+         /********************Suivante****************/
+         for( vector<TacheU*>::iterator it = t->getSuivante().begin(); it != t->getSuivante().end(); ++it)
+       {
+             if((*it)->estProgrammee())
+            {
+                 Programmation * prog= trouverProgrammation(*it);
+
+                if(d<prog->getDate())
+                 {
+                         Horaire* test= h.getFin(t->getDuree()); //mon horaire apres avoir fini ma date a ajouter doit rester dans le jour precedent
+                        if(23>=test->getHeure()) //  meme apres avoir fini ma date (+duree) je reste dans le meme jour precedent
+                        {
+                            Programmation* newt = new Programmation(t,d,h);
+                            addprog(newt);
+                        }
+                        else if(23<test->getHeure()) //  mais si elle est a cheval sur deux jours (exemple elle commence a 23h et a une duree de 4h et donc finit a 3h (27h)
+                        {
+                          unsigned int diff_h= test->getHeure()-24; // je convertis 27h45 à 3h45 (27-24=3)
+                          Horaire testh=Horaire(diff_h,test->getMinute()); // je reconstruis mon nouveau horaire qui sera dans le jour d'apres
+
+                            if(testh<prog->getHoraire()) // je finis ma tache que j'ajoute après le debut de sa tache suivante
+                                {
+                                    Programmation* newt = new Programmation(t,d,h);
+                                    addprog(newt);
+                                 }
+                         else
+                              throw CalendarException("Votre Programmation ne respecte pas le principe de Precedence");
+
+                        }
+
+                   }
+
+                else if ((prog->getDate()==d) && (h<prog->getHoraire()) && (h<(*(prog->getHoraire().getFin((*it)->getDuree())))))
+                {
+                    Programmation* newt = new Programmation(t,d,h);
+                    addprog(newt);
+                 }
+                else
+                     throw CalendarException("Votre Programmation ne respecte pas le principe de Precedence");
+
+          }
+       }
+    }
+
+ }
+
+void ProgrammationManager::ajouterProgrammation (const Activite* e, const Date& d, const Horaire& h)
 {
     Programmation* newt = new Programmation(e,d,h);
     addprog(newt);
 }
 
-void ProgrammationManager::ajouterProgrammation (TacheU* t, const Date& d, const Horaire& h)
-{
-    if(t->isProgrammee()) throw CalendarException ("Cette Tache est deja Programmee");
-    t->setProgrammee();
-    
-    for(vectProg::iterator it = tabprogs.begin(); it != tabprogs.end(); ++it)
-    {
-        if(d<(*it)->getDate() || (((*it)->getDate()==d) && (*it)->getHoraire()<h))  // t.getPrecedence().push_back(it);
-            t->ajouterPrecedence(it);
 
-        if(((*it)->getDate()<d || (((*it)->getDate()==d) && h<(*it)->getHoraire())) && t->cestunetache())  //it.getPrecedence().push_back(t);
-            it->ajouterPrecedence(t);
-        
-    }
-    
-    Programmation* newt = new Programmation(t,d,h);
-    addprog(newt);
-}
 void ProgrammationManager::addprog(Programmation* p)
 {
     
     tabprogs.push_back(p);
+}
+
+ProgrammationManager::~ProgrammationManager() {
+    tabprogs.clear();
 }
 
 /*ProgrammationManager::ProgrammationManager(const ProgrammationManager& e) {

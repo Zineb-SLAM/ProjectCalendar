@@ -14,7 +14,6 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
     calendar.cpp \
     timing.cpp \
     table.cpp \
@@ -24,7 +23,7 @@ SOURCES += main.cpp\
     projet.cpp \
     treeview.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS  += \
     calendar.h \
     timing.h \
     table.h \

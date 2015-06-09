@@ -20,7 +20,7 @@ class Programmation
     Date date;
     Horaire horaire;
     //constructeurs et destructeur en privé car les Programmations sont gérées par ProgrammationManager
-    Programmation(const Event& e, const Date& d, const Horaire& h):event(&e), date(d), horaire(h){}
+    Programmation(const Event* e, const Date& d, const Horaire& h):event(e), date(d), horaire(h){}
     Programmation(const Programmation& e);
 public:
     const Event& getEvent() const { return *event; }
@@ -48,9 +48,9 @@ public:
     ~ProgrammationManager();
     ProgrammationManager& getInstance();
     void libererInstance();
-    Programmation* trouverProgrammation(const Event& t) const;
+    Programmation* trouverProgrammation(const Event* t);
     Programmation& getProg(const QString& id_evt);
-    void ajouterProgrammation (const Event& e, const Date& d, const Horaire& h);
+    void ajouterProgrammation (const Activite* , const Date& d, const Horaire& h);
     void ajouterProgrammation (TacheU* t, const Date& d, const Horaire& h);
     void addprog(Programmation* p);
 };

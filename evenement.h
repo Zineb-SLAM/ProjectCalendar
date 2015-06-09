@@ -15,11 +15,10 @@ class Event  // CLASSE ABSTRAITE
     
 public:
     Event(const bool& p=false):programmee(p){}
-    bool isProgrammee() const { return programmee; }
-    //bool isProgrammee() { return programmee; }
+    bool estProgrammee() const { return programmee; }
     void setProgrammee() { programmee = true; }
     void setNonProgrammee() { programmee = false; }
-    virtual bool  cestunetache() const =0;
+    virtual bool cestunetache() const =0;
 };
 
 class Activite: public Event

@@ -23,21 +23,20 @@ class Tache {
     Date disponibilite;
     Date echeance;
     bool isCompleted;
-    vector<Tache*> precedence;
+
     //méthodes
-    Tache(const Tache& t); //pas implémentée: on ne devrait pas l'implementer car chaque tache unique -->id
+   Tache(const Tache& t); //pas implémentée: on ne devrait pas l'implementer car chaque tache unique -->id
     Tache& operator=(const Tache&); //pas implémentée:on ne devrait pas l'implementer car chaque tache unique -->id
     //les méthodes set sont privées car c'est TacheManager qui gère les Tache
     void setId(const QString& str);
     void setTitre(const QString& str) { titre = str; }
     inline void setDisponibilite(const Date& d);
     inline void setEcheance(const Date& e);
-    void ajouterPrecedence(const Tache* t);
-    void supprimerPrecedence(const QString& id);
+
     virtual ~Tache();
 protected:
     Tache(const QString& t, const Duree& dur, const Date& dispo, const Date& deadl):titre(t),duree(dur),disponibilite(dispo),echeance(deadl),
-    isCompleted(false),precedence(0)
+    isCompleted(false)
     { QUuid u=QUuid::createUuid(); this->id=u.toString(); }
     virtual void setDuree(const Duree& d) { duree = d; }
     void setCompleted() {isCompleted = true;}
@@ -47,8 +46,7 @@ public:
     const QString getTitre() const { return titre; }
     const Duree getDuree() const { return duree; }
     const Date getDisponibilite() const { return disponibilite; }
-    const Date getEcheance() const { return echeance; }
-    vector<Tache*>& getPrecedence(){ return precedence;}
+    const Date getEcheance() const { return echeance;}
     virtual QString toString() const=0;
     
 };
@@ -64,7 +62,9 @@ class TacheU : public Tache , public Event {
     friend class TacheManager;
     //attributs
     bool preemptive;
-    unsigned int progression; // La prograssion est evaluee de 1 a 100 si la progression est 100 le projet va alors considerer la tache comme completed
+    unsigned int progression;
+    vector<TacheU*> precedence;
+    vector<TacheU*> suivante;// La prograssion est evaluee de 1 a 100 si la progression est 100 le projet va alors considerer la tache comme completed
     //méthodes
     void setDuree(const Duree& d); //redéfinition
     void setPreemptive() { preemptive = true;}
@@ -77,16 +77,20 @@ class TacheU : public Tache , public Event {
     }
 
     TacheU(const Tache& t, const bool& pre=false, const bool& prog=false):
-    Tache(t.getTitre(),t.getDuree(),t.getDisponibilite(),t.getEcheance()), Event(prog), preemptive(pre) {}
-protected:
+    Tache(t.getTitre(),t.getDuree(),t.getDisponibilite(),t.getEcheance()), Event(prog), preemptive(pre),precedence(0), suivante(0) {}
+
+public:
+    void ajouterPrecedence(TacheU* t );
+    void supprimerPrecedence(const QString& id);
+    vector<TacheU*> getPrecedence(){ return precedence;}
+    vector<TacheU*> getSuivante(){ return suivante;}
     void setProgression(unsigned int i)
     {
         if( i>100) throw CalendarException("Progression invalide la progression doit etre entre 0 et 100");
         if(progression>i) throw CalendarException("Impossible La prrogression a inserer doit être supérieure à la progression actuelle");
         progression=i;
     }
-    
-public:
+    unsigned int& getProgression() { return progression;}
     bool isPreemptive() const { return preemptive; }
     bool cestunetache() const { return true;}
     QString toString() const;

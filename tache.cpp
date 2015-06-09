@@ -40,27 +40,38 @@ void Tache::setEcheance(const Date& e) {
  }
  */
 
-void Tache::ajouterPrecedence(const Tache* t )
+void TacheU::ajouterPrecedence(TacheU* t )
 {
-    for(vector<Tache*>::const_iterator it =t->precedence.begin(); it!=t->precedence.end(); it++)
+    for(vector<TacheU*>::iterator it =t->precedence.begin(); it!=t->precedence.end(); it++)
     {
         if((*it)->getId()==this->id) throw CalendarException("Impossible Cette Tache precede Deja La Tache t ");
     }
 
-    this->precedence.push_back(t); // on met la tache elle meme ou juste une copie de la tache?
+    if((this->disponibilite<t->echeance) && ((this->disponibilite)-(t->echeance))<this->duree.getJour())
+    {
+
+             this->precedence.push_back(t);
+             t->suivante.push_back(this);
+    }
+    else
+        throw CalendarException("Impossoble d'ajouter precedence : contrainte de Precedence non verifie");
 
 }
-void Tache::supprimerPrecedence(const QString& id)
+void TacheU::supprimerPrecedence(const QString& id)
 {
-    for(vector<Tache*>::iterator it =precedence.begin(); it!=precedence.end(); it++)
-    {
-        if((*it)->id==id)
-        {precedence.erase(it);
-         return;
-        }
-    }
+    vector<TacheU*>::iterator it =precedence.begin();
+    while(it!=precedence.end()&& ((*it)->id!=id))
+        it++;
 
-     throw CalendarException("Cette Tache n'existe pas");
+    if(it==precedence.end()) throw CalendarException("Cette Tache n'existe pas");
+    vector<TacheU*>::iterator its;
+    for(its =(*it)->suivante.begin();(*its)->id!=(*it)->id;its++);
+
+    (*it)->suivante.erase(its);
+    precedence.erase(it);
+
+
+
 
 
 }
@@ -84,7 +95,7 @@ QString TacheU::toString() const {
     QString str;
     f<<"**Tache Unitaire** \n";
     if(isPreemptive()) f<<"Tache Preemtive \n";
-    if(isProgrammee()) f<<"Tache Programmee \n";
+    if(estProgrammee()) f<<"Tache Programmee \n";
     f>>str;
     return str;
 }

@@ -49,7 +49,7 @@ void ProjetManager::creerProjet(const QString& t,const Date& disp, const Date& e
 bool ProjetManager::Projetexists(const Projet* const p)
 {
     for (TabProjet::iterator it = tabprojets.begin(); it!=tabprojets.end(); ++it)
-    if (*it == p) return true;
+            if (*it == p) return true;
     return false;
 }
 void ProjetManager::addProjet(Projet* p)

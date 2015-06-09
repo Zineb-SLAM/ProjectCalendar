@@ -157,7 +157,11 @@ bool Horaire::operator<(const Horaire& h) const {
     if (minute>h.minute) return false;
     return true;
 }
-
+bool Horaire::operator==(const Horaire& h) const {
+    if (heure==h.heure) return true;
+    if (minute==h.minute) return true;
+    return true;
+}
 //******************************************************************************************
 Periode::Periode(unsigned int j, unsigned int m, unsigned int a):
            nb_jours(j), nb_mois(m), nb_annees(a) {
