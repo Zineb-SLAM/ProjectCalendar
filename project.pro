@@ -14,24 +14,13 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
     calendar.cpp \
     timing.cpp \
-    table.cpp \
     tache.cpp \
-    programmation.cpp \
-    evenement.cpp \
-    projet.cpp \
-    treeview.cpp
+    projet.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS  += \
     calendar.h \
     timing.h \
-    table.h \
     tache.h \
-    programmation.h \
-    evenement.h \
-    projet.h \
-    treeview.h
-
-FORMS    += mainwindow.ui
+    projet.h
