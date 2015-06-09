@@ -68,19 +68,21 @@ class ProjetManager{
     //méthodes
     ProjetManager(const ProjetManager& m);
     ProjetManager& operator=(const ProjetManager& m);
-    ProjetManager() { projets.reserve(10);}
+    ProjetManager() { projets.reserve(10); }
+    ~ProjetManager() { projets.clear(); }
 public:
     static ProjetManager& getInstance();
     static void libererInstance();
-    bool ProjetExists(const Projet* const p); // retourne TRUE si le projet existe déjà
+    bool ProjetExists(const QString& id); // retourne TRUE si le projet existe déjà
     Projet* getProjet(const QString& id);
     void creerProjet(const QString &id, const QString& t, const Date& disp, const Date& ech); // crée le projet et l'ajoute à la liste des projets existants
     void ajouterTacheAProjet(Projet& p, Tache* t);
-    void removeProject(Projet* p);
+    void removeProject(const QString& id);
     void afficher(QTextStream& f) const { f<<"****ProjetManager*****"; }
     void load(const QString& f);
     void save(const QString& f);
     void afficherTitreProjets(QTextStream& fout) const; // affiche le titre de tous les projets existants
+    void afficherProjets(QTextStream& fout) const;
 };
 
 //******************************************************************************************

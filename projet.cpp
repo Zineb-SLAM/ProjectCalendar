@@ -43,10 +43,11 @@ const Tache& Projet::getTache(const QString& id) const {
 
 void Projet::afficher(QTextStream& f) const {
     f << "Projet " << id << endl;
-    f << titre;
-    f << disponibilite.toString();
-    f << echeance.toString();
-    f << "etat : ";
+    f << titre <<endl;
+    disponibilite.afficher(f);
+    f << endl;
+    echeance.afficher(f);
+    f << endl << "etat : ";
     if(isTermine())
         f << "termine" << endl;
     else
@@ -69,9 +70,9 @@ void ProjetManager::libererInstance() {
     handler.instance=0;
 }
 
-bool ProjetManager::ProjetExists(const Projet* const p) {
+bool ProjetManager::ProjetExists(const QString &id) {
     for (tabprojets::iterator it = projets.begin(); it!=projets.end(); ++it) {
-        if (*it == p)
+        if ((*it)->id == id)
             return true;
     }
     return false;
@@ -79,15 +80,15 @@ bool ProjetManager::ProjetExists(const Projet* const p) {
 
 Projet* ProjetManager::getProjet(const QString& id) {
     for (tabprojets::iterator it = projets.begin(); it!=projets.end(); ++it) {
-        if ((*it)->getId() == id)
+        if ((*it)->id == id)
             return *it;
     }
     throw CalendarException("Le projet n'existe pas");
 }
 
 void ProjetManager::creerProjet(const QString& id, const QString& t, const Date& disp, const Date& ech) { // crée le projet et l'ajoute à la liste des projets existants
-    Projet* newp=new Projet(id,t,disp,ech);
-    if(ProjetExists(newp))
+    Projet* newp = new Projet(id,t,disp,ech);
+    if(ProjetExists(id))
         throw CalendarException ("Ce projet existe deja");
     projets.push_back(newp);
 }
@@ -97,13 +98,14 @@ void ProjetManager::ajouterTacheAProjet(Projet& p, Tache* t) {
     p.addTache(t);
 }
 
-void ProjetManager::removeProject(Projet* p) {
-    unsigned int i;
-    for (i=0 ; i<projets.size();i++) {
-        if (projets[i]->getId() == p->getId())
-            break;
-    }
-    projets.erase(projets.begin()+i);
+void ProjetManager::removeProject(const QString &id) {
+    tabprojets::iterator it = projets.begin();
+    while (it != projets.end() && (*it)->id != id)
+        it++;
+    if(it != projets.end())
+        projets.erase(it);
+    else
+        throw CalendarException("Le projet n'existe pas");
 }
 
 void ProjetManager::load(const QString& f) {
@@ -213,13 +215,21 @@ void ProjetManager::save(const QString& f) {
 
 void ProjetManager::afficherTitreProjets(QTextStream& fout) const {
     fout << "projets" << endl;
+    fout << "****" << endl;
     for(tabprojets::const_iterator it = projets.begin(); it != projets.end(); it++) {
-        (*it)->afficher(fout);
+        fout << (*it)->titre << endl;
     }
-    fout << "fin des projets" << endl;
+    fout << "****" << endl << "fin des projets" << endl;
 }
 
-
-
+void ProjetManager::afficherProjets(QTextStream& fout) const {
+    fout << "projets" << endl;
+    fout << "****" << endl;
+    for(tabprojets::const_iterator it = projets.begin(); it != projets.end(); it++) {
+        (*it)->afficher(fout);
+        fout << "*****";
+    }
+    fout << endl << "fin des projets" << endl;
+}
 
 //******************************************************************************************

@@ -30,7 +30,6 @@ void Date::setDateAujourdhui() {
 
 void Date::afficher(QTextStream& f) const {
     // affiche le date sous le format JJ/MM/AAAA
-    //plus valable : f<<std::setfill('0')<<std::setw(2)<<jour<<"/"<<std::setw(2)<<mois<<"/"<<annee<<std::setfill(' ');
     f.setPadChar('0');
     f.setFieldWidth(2);
     f<<jour;
@@ -99,7 +98,7 @@ Date Date::fromString(QString s) {
 
 QString Date::toString() {
     QString s;
-    //conversion Date en QString format YYYY-MM-DD
+    //conversion Date en QString YYYY-MM-DD
     return s;
 }
 

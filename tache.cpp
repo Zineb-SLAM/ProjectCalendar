@@ -84,13 +84,13 @@ TacheManager::Handler TacheManager::handler=TacheManager::Handler();
 
 TacheManager& TacheManager::getInstance(){
     if (handler.instance==0)
-    handler.instance=new TacheManager;
+        handler.instance=new TacheManager;
     return *(handler.instance);
 }
 
 void TacheManager::libererInstance(){
     if (handler.instance!=0)
-    delete handler.instance;
+        delete handler.instance;
     handler.instance=0;
 }
 
