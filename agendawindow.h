@@ -13,12 +13,15 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QMessageBox>
+#include <QGraphicsView>
+#include <QMenuBar>
+#include <QMenu>
 
 #include "calendar.h"
 #include "timing.h"
 #include "tache.h"
 
-class AgendaWindow : public QMainWindow
+class AgendaWindow : public QWidget
 {
     Q_OBJECT
 
@@ -63,21 +66,25 @@ class AgendaWindow : public QMainWindow
     QVBoxLayout *heures;
 
     //couche emploi du temps
-    QWidget *cadre; //truc graphique pour mettre les tâches
+    QGraphicsView *cadre; //truc graphique pour mettre les tâches
     QHBoxLayout *emploi_du_temps;
 
     //couche agenda
     QLabel *semaine;
     QSpinBox *choix_semaine;
-    QHBoxLayout *agenda;
+    QVBoxLayout *agenda;
+
+    //autres éléments
+    QMenuBar *barre_menu;
+    QMenu *options;
 
 public:
     explicit AgendaWindow(QWidget *parent = 0);
 signals:
 public slots:
-    void changer_semaine(const unsigned int& s);
+   /* void changer_semaine(const unsigned int& s);
     void placer_tache(const Tache& t);
-    void deplacer_tache(const Tache& t);
+    void deplacer_tache(const Tache& t);*/
 };
 
 #endif // AGENDAWINDOW_H

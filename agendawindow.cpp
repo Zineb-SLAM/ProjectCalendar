@@ -1,13 +1,13 @@
 #include "agendawindow.h"
 
-explicit AgendaWindow::AgendaWindow(QWidget *parent) :
-    QMainWindow(parent)
+AgendaWindow::AgendaWindow(QWidget *parent) :
+    QWidget(parent)
 {
     this->vertical = new QVBoxLayout(this);
     jours = new QHBoxLayout;
     heures = new QVBoxLayout;
     emploi_du_temps = new QHBoxLayout;
-    agenda = new QHBoxLayout;
+    agenda = new QVBoxLayout;
 
     //couche jours
     lundi = new QLabel("lundi", this);
@@ -78,8 +78,8 @@ explicit AgendaWindow::AgendaWindow(QWidget *parent) :
     heures->addWidget(label_23h);
 
     //couche emploi du temps
-    cadre = new QGraphic(this);
-    emploi_du_temps->addWidget(heures);
+    cadre = new QGraphicsView(this);
+    emploi_du_temps->addItem(heures);
     emploi_du_temps->addWidget(cadre);
 
     //couche agenda
@@ -87,11 +87,15 @@ explicit AgendaWindow::AgendaWindow(QWidget *parent) :
     choix_semaine = new QSpinBox(this);
     agenda->addWidget(semaine);
     agenda->addWidget(choix_semaine);
+    agenda->addItem(jours);
+    agenda->addItem(emploi_du_temps);
 
+    barre_menu = new QMenuBar;
+    options = new QMenu;
+    barre_menu->addMenu(options);
+
+    vertical->addWidget(barre_menu);
     vertical->addItem(agenda);
-    vertical->addItem(jours);
-    vertical->addItem(heures);
-    vertical->addItem(emploi_du_temps);
 
     /*idLineEdit->setText(t.getId());
     titreTextEdit->setText(t.getTitre());
