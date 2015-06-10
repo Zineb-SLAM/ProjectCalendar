@@ -16,19 +16,19 @@ TEMPLATE = app
 SOURCES += main.cpp\
     calendar.cpp \
     timing.cpp \
-    table.cpp \
     tache.cpp \
     programmation.cpp \
     evenement.cpp \
-    projet.cpp
+    projet.cpp \
+    window.cpp
 
 HEADERS  += \
     calendar.h \
     timing.h \
-    table.h \
     tache.h \
     programmation.h \
     evenement.h \
-    projet.h
+    projet.h \
+    window.h
 
-FORMS    += mainwindow.ui
+FORMS    +=
