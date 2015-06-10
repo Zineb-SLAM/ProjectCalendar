@@ -12,7 +12,7 @@ class AgendaWindow : public QMainWindow
     Q_OBJECT
 
     QWidget *widget_central;
-    QVBoxLayout *agenda;
+    QVBoxLayout *general;
 
     //dock widget
     QDockWidget *projets;
@@ -21,9 +21,11 @@ class AgendaWindow : public QMainWindow
     //menus
     QMenu *menu_options;
     QMenu *menu_tache;
+    QMenu *menu_projet;
     QAction *programmer_tache;
     QAction *charger;
     QAction *exporter;
+    QAction *creer_projet;
 
     //couche jours
     QLabel *lundi;
@@ -65,9 +67,14 @@ class AgendaWindow : public QMainWindow
 
     //couche emploi du temps
     QGraphicsView *cadre; //truc graphique pour mettre les tâches
-    QHBoxLayout *emploi_du_temps;
+    QVBoxLayout *emploi_du_temps;
+
+    //couche agenda
+    QHBoxLayout *agenda;
+    QSpacerItem *spacer; //espace entre les heures et la table
 
     //couche semaine
+    QSpacerItem *spacer_semaine;
     QLabel *s;
     QSpinBox *choix_semaine;
     QHBoxLayout *semaine;
@@ -78,10 +85,15 @@ class AgendaWindow : public QMainWindow
 public:
     explicit AgendaWindow();
 signals:
-public slots:
-   /* void changer_semaine(const unsigned int& s);
+private slots:
+    void changer_semaine(const unsigned int& s);
     void placer_tache(const Tache& t);
-    void deplacer_tache(const Tache& t);*/
+    void deplacer_tache(const Tache& t);
+    void charger_agenda();
+    void sauvegarder_agenda();
+    void programmer();
+    void ajouter_projet();
+public slots:
 };
 
 #endif // AGENDAWINDOW_H

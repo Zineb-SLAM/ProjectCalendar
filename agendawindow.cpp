@@ -5,9 +5,10 @@ AgendaWindow::AgendaWindow()
 {
     jours = new QHBoxLayout;
     heures = new QVBoxLayout;
-    emploi_du_temps = new QHBoxLayout;
+    emploi_du_temps = new QVBoxLayout;
     semaine = new QHBoxLayout;
-    agenda = new QVBoxLayout;
+    agenda = new QHBoxLayout;
+    general = new QVBoxLayout;
 
     //couche jours
     lundi = new QLabel("lundi", this);
@@ -79,23 +80,30 @@ AgendaWindow::AgendaWindow()
 
     //couche emploi du temps
     cadre = new QGraphicsView(this);
-    emploi_du_temps->addItem(heures);
+    emploi_du_temps->addItem(jours);
     emploi_du_temps->addWidget(cadre);
 
     //couche semaine
+    spacer_semaine = new QSpacerItem(50,0,QSizePolicy::Expanding,QSizePolicy::Preferred);
     s = new QLabel("Semaine", this);
     choix_semaine = new QSpinBox(this);
+    semaine->addItem(spacer_semaine);
     semaine->addWidget(s);
     semaine->addWidget(choix_semaine);
 
+    //couche agenda
+    spacer = new QSpacerItem(20,0,QSizePolicy::Preferred,QSizePolicy::Preferred);
+    agenda->addItem(heures);
+    agenda->addItem(spacer);
+    agenda->addItem(emploi_du_temps);
+
     //fenêtre principale
     widget_central = new QWidget(this);
-    agenda->addItem(semaine);
-    agenda->addItem(jours);
-    agenda->addItem(emploi_du_temps);
-    widget_central->setLayout(agenda);
+    general->addItem(semaine);
+    general->addItem(agenda);
+    widget_central->setLayout(general);
 
-    setCentralWidget(widget_central);
+    setCentralWidget(widget_central); //place le widget central
 
     //dock
     projets = new QDockWidget(this);
@@ -137,13 +145,16 @@ AgendaWindow::AgendaWindow()
 
 void AgendaWindow::createActions() {
     charger = new QAction("Charger",this);
-    connect(charger, SIGNAL(triggered()), this, SLOT(ProjetManager::load()));
+    connect(charger, SIGNAL(triggered()), this, SLOT(charger_agenda()));
 
     exporter = new QAction("Exporter",this);
-    connect(exporter, SIGNAL(triggered()), this, SLOT(ProjetManager::save()));
+    connect(exporter, SIGNAL(triggered()), this, SLOT(sauvegarder_agenda()));
 
     programmer_tache = new QAction("Programmer",this);
-    connect(programmer_tache, SIGNAL(triggered()), this, SLOT(close())); //changer close() par la fonction correspondante
+    connect(programmer_tache, SIGNAL(triggered()), this, SLOT(programmer()));
+
+    creer_projet = new QAction("Creer un projet", this);
+    connect(creer_projet, SIGNAL(triggered()), this, SLOT(ajouter_projet()));
 }
 
 void AgendaWindow::createMenus() {
@@ -153,4 +164,37 @@ void AgendaWindow::createMenus() {
 
     menu_tache = menuBar()->addMenu("Tache");
     menu_tache->addAction(programmer_tache);
+
+    menu_projet = menuBar()->addMenu("Projet");
+    menu_projet->addAction(creer_projet);
+}
+
+//fonctions des slots
+
+void AgendaWindow::changer_semaine(const unsigned int& s) {
+
+}
+
+void AgendaWindow::placer_tache(const Tache& t) {
+
+}
+
+void AgendaWindow::deplacer_tache(const Tache& t) {
+
+}
+
+void AgendaWindow::charger_agenda() {
+
+}
+
+void AgendaWindow::sauvegarder_agenda() {
+
+}
+
+void AgendaWindow::programmer() {
+
+}
+
+void AgendaWindow::ajouter_projet() {
+
 }
