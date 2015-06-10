@@ -1,31 +1,29 @@
 #ifndef AGENDAWINDOW_H
 #define AGENDAWINDOW_H
 
-#include <QMainWindow>
-#include <QWidget>
-#include <QLabel>
-#include <QLineEdit>
-#include <QTextEdit>
-#include <QCheckBox>
-#include <QSpinBox>
-#include <QDateEdit>
-#include <QPushButton>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QMessageBox>
-#include <QGraphicsView>
-#include <QMenuBar>
-#include <QMenu>
+#include <QtWidgets> //header qui contient les définitions de toutes les classes widgets
 
 #include "calendar.h"
 #include "timing.h"
 #include "tache.h"
 
-class AgendaWindow : public QWidget
+class AgendaWindow : public QMainWindow
 {
     Q_OBJECT
 
-    QVBoxLayout *vertical;
+    QWidget *widget_central;
+    QVBoxLayout *agenda;
+
+    //dock widget
+    QDockWidget *projets;
+    QTextEdit *liste_projets;
+
+    //menus
+    QMenu *menu_options;
+    QMenu *menu_tache;
+    QAction *programmer_tache;
+    QAction *charger;
+    QAction *exporter;
 
     //couche jours
     QLabel *lundi;
@@ -69,17 +67,16 @@ class AgendaWindow : public QWidget
     QGraphicsView *cadre; //truc graphique pour mettre les tâches
     QHBoxLayout *emploi_du_temps;
 
-    //couche agenda
-    QLabel *semaine;
+    //couche semaine
+    QLabel *s;
     QSpinBox *choix_semaine;
-    QVBoxLayout *agenda;
+    QHBoxLayout *semaine;
 
-    //autres éléments
-    QMenuBar *barre_menu;
-    QMenu *options;
+    void createActions();
+    void createMenus();
 
 public:
-    explicit AgendaWindow(QWidget *parent = 0);
+    explicit AgendaWindow();
 signals:
 public slots:
    /* void changer_semaine(const unsigned int& s);

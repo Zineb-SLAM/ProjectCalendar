@@ -1,12 +1,12 @@
 #include "agendawindow.h"
+#include "projet.h"
 
-AgendaWindow::AgendaWindow(QWidget *parent) :
-    QWidget(parent)
+AgendaWindow::AgendaWindow()
 {
-    this->vertical = new QVBoxLayout(this);
     jours = new QHBoxLayout;
     heures = new QVBoxLayout;
     emploi_du_temps = new QHBoxLayout;
+    semaine = new QHBoxLayout;
     agenda = new QVBoxLayout;
 
     //couche jours
@@ -82,20 +82,37 @@ AgendaWindow::AgendaWindow(QWidget *parent) :
     emploi_du_temps->addItem(heures);
     emploi_du_temps->addWidget(cadre);
 
-    //couche agenda
-    semaine = new QLabel("Semaine", this);
+    //couche semaine
+    s = new QLabel("Semaine", this);
     choix_semaine = new QSpinBox(this);
-    agenda->addWidget(semaine);
-    agenda->addWidget(choix_semaine);
+    semaine->addWidget(s);
+    semaine->addWidget(choix_semaine);
+
+    //fenêtre principale
+    widget_central = new QWidget(this);
+    agenda->addItem(semaine);
     agenda->addItem(jours);
     agenda->addItem(emploi_du_temps);
+    widget_central->setLayout(agenda);
 
-    barre_menu = new QMenuBar;
-    options = new QMenu;
-    barre_menu->addMenu(options);
+    setCentralWidget(widget_central);
 
-    vertical->addWidget(barre_menu);
-    vertical->addItem(agenda);
+    //dock
+    projets = new QDockWidget(this);
+    projets->setWindowTitle("Projets"); //donne un titre au dock
+    liste_projets = new QTextEdit(this);
+    liste_projets->setReadOnly(1); //en lecture seulement
+    addDockWidget(Qt::LeftDockWidgetArea,projets);
+    projets->setWidget(liste_projets);
+
+    createActions();
+    createMenus();
+
+    //options = new QMenu;
+    //barre_menu->addMenu(options);
+
+    //vertical->addWidget(barre_menu);
+    //vertical->addItem(agenda);
 
     /*idLineEdit->setText(t.getId());
     titreTextEdit->setText(t.getTitre());
@@ -116,4 +133,24 @@ AgendaWindow::AgendaWindow(QWidget *parent) :
     QObject::connect(dureeM, SIGNAL(valueChanged(int)),this,SLOT(activerButton()));
     QObject::connect(preemptive, SIGNAL(stateChanged(int)),this,SLOT(activerButton()));
     */
+}
+
+void AgendaWindow::createActions() {
+    charger = new QAction("Charger",this);
+    connect(charger, SIGNAL(triggered()), this, SLOT(ProjetManager::load()));
+
+    exporter = new QAction("Exporter",this);
+    connect(exporter, SIGNAL(triggered()), this, SLOT(ProjetManager::save()));
+
+    programmer_tache = new QAction("Programmer",this);
+    connect(programmer_tache, SIGNAL(triggered()), this, SLOT(close())); //changer close() par la fonction correspondante
+}
+
+void AgendaWindow::createMenus() {
+    menu_options = menuBar()->addMenu("Options");
+    menu_options->addAction(charger);
+    menu_options->addAction(exporter);
+
+    menu_tache = menuBar()->addMenu("Tache");
+    menu_tache->addAction(programmer_tache);
 }
