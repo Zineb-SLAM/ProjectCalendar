@@ -18,11 +18,13 @@ SOURCES += main.cpp\
     timing.cpp \
     tache.cpp \
     projet.cpp \
-    evenement.cpp
+    evenement.cpp \
+    agendawindow.cpp
 
 HEADERS  += \
     calendar.h \
     timing.h \
     tache.h \
     projet.h \
-    evenement.h
+    evenement.h \
+    agendawindow.h

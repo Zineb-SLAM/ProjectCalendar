@@ -1,10 +1,9 @@
-#include "tache.h"
-#include "projet.h"
+#include <QApplication>
+#include "agendawindow.h"
 
 using namespace std;
-using namespace TIME;
 
-int main()
+/*int main()
 {
     //TacheU* tache1 = new TacheU("tache numéro 1", Duree(50), Date(4,5,2015), Date(6,5,2015), true, false);
     TacheManager& tacheM = TacheManager::getInstance();
@@ -27,4 +26,12 @@ int main()
     projetM.libererInstance();
     tacheM.libererInstance();
     return 0;
+}*/
+
+
+int main(int argc, char* argv[]) {
+    QApplication app(argc,argv);
+    AgendaWindow fenetre;
+    fenetre.show();
+    return app.exec();
 }
