@@ -117,7 +117,10 @@ void Duree::afficher(QTextStream& f) const {
     f.setPadChar(' ');
 }
 
-QTextStream& operator<<(QTextStream& f, const Duree& d){ d.afficher(f); return f; }
+QTextStream& operator<<(QTextStream& f, const Duree& d)
+{ d.afficher(f);
+    return f;
+}
 QTextStream& operator>>(QTextStream& flot, Duree& duree){
     unsigned int h,m;
     bool ok=true;
@@ -161,6 +164,11 @@ bool Horaire::operator==(const Horaire& h) const {
     if (heure==h.heure) return true;
     if (minute==h.minute) return true;
     return true;
+}
+
+QTextStream& operator<<(QTextStream& f, const Horaire& d)
+{
+    d.afficher(f);
 }
 //******************************************************************************************
 Periode::Periode(unsigned int j, unsigned int m, unsigned int a):

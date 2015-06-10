@@ -20,8 +20,7 @@ SOURCES += main.cpp\
     tache.cpp \
     programmation.cpp \
     evenement.cpp \
-    projet.cpp \
-    treeview.cpp
+    projet.cpp
 
 HEADERS  += \
     calendar.h \
@@ -30,7 +29,6 @@ HEADERS  += \
     tache.h \
     programmation.h \
     evenement.h \
-    projet.h \
-    treeview.h
+    projet.h
 
 FORMS    += mainwindow.ui

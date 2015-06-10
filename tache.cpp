@@ -9,13 +9,15 @@
 
 using namespace TIME;
 
-QTextStream& operator<<(QTextStream& fout, const Tache& t){
-    fout<<t.getId()<<"\n";
-    fout<<t.getTitre()<<"\n";
-    fout<<t.getDuree()<<"\n";
-    t.getDisponibilite().afficher(fout);
+QTextStream& operator<<(QTextStream& fout, const Tache*  t)
+{
+    fout<<t->getId()<<"\n";
+    fout<<t->getTitre()<<"\n";
+    t->getDuree().afficher(fout);
     fout<<"\n";
-    t.getEcheance().afficher(fout);
+    t->getDisponibilite().afficher(fout);
+    fout<<"\n";
+    t->getEcheance().afficher(fout);
     fout<<"\n";
     return fout;
 }
@@ -39,6 +41,8 @@ void Tache::setEcheance(const Date& e) {
  identificateur=str;
  }
  */
+
+//******************************************************************************************
 
 void TacheU::ajouterPrecedence(TacheU* t )
 {
@@ -75,8 +79,6 @@ void TacheU::supprimerPrecedence(const QString& id)
 
 
 }
-
-//******************************************************************************************
 
 void TacheU::setDuree(const Duree& d) {
     if ((preemptive == false) && (d.getDureeEnHeures() > 12))

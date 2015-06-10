@@ -23,10 +23,14 @@ class Programmation
     Programmation(const Event* e, const Date& d, const Horaire& h):event(e), date(d), horaire(h){}
     Programmation(const Programmation& e);
 public:
-    const Event& getEvent() const { return *event; }
+    const Event* getEvent() const { return event; }
     const Date& getDate() const { return date; }
-    const Horaire& getHoraire() const { return horaire; }
+    const Date& getDate()  { return date; }
+    const Horaire& getHoraire() { return horaire; }
+    const Horaire& getHoraire() const { return horaire;}
+    QTextStream& afficher(QTextStream& f)const ;
 };
+QTextStream& operator<<(QTextStream& fout, const Programmation* t);
 
 //******************************************************************************************
 
@@ -49,11 +53,21 @@ public:
     ProgrammationManager& getInstance();
     void libererInstance();
     Programmation* trouverProgrammation(const Event* t);
-    Programmation& getProg(const QString& id_evt);
+    Programmation* getProg(const QString& id_evt);
     void ajouterProgrammation (const Activite* , const Date& d, const Horaire& h);
     void ajouterProgrammation (TacheU* t, const Date& d, const Horaire& h);
     void addprog(Programmation* p);
+    QTextStream& afficher(QTextStream& f,const Event* t)
+    {
+       Programmation* a= trouverProgrammation(t);
+      return a->afficher(f);
+    }
+
+
+
 };
+
+
 
 //******************************************************************************************
 

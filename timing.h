@@ -118,6 +118,7 @@ namespace TIME {
         unsigned short int  heure;
         unsigned short int  minute;
     };
+QTextStream& operator<<(QTextStream& f, const Horaire& d);
 
 //******************************************************************************************
     /*! \class Periode

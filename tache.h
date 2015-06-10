@@ -33,25 +33,26 @@ class Tache {
     inline void setDisponibilite(const Date& d);
     inline void setEcheance(const Date& e);
 
-    virtual ~Tache();
 protected:
     Tache(const QString& t, const Duree& dur, const Date& dispo, const Date& deadl):titre(t),duree(dur),disponibilite(dispo),echeance(deadl),
     isCompleted(false)
     { QUuid u=QUuid::createUuid(); this->id=u.toString(); }
     virtual void setDuree(const Duree& d) { duree = d; }
     void setCompleted() {isCompleted = true;}
+    virtual ~Tache(){};
     
 public:
-    const QString getId() const { return id; }
-    const QString getTitre() const { return titre; }
-    const Duree getDuree() const { return duree; }
+    virtual const QString& getId() const { return id; }
+    virtual const QString& getTitre() const { return titre; }
+    virtual const Duree& getDuree() const { return duree; }
     const Date getDisponibilite() const { return disponibilite; }
     const Date getEcheance() const { return echeance;}
     virtual QString toString() const=0;
+
     
 };
 
-QTextStream& operator<<(QTextStream& fout, const Tache& t);
+QTextStream& operator<<(QTextStream& fout, const Tache* const t);
 
 //******************************************************************************************
 
@@ -72,13 +73,12 @@ class TacheU : public Tache , public Event {
     TacheU(const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, const bool& pre=false, const bool& prog=false):
     Tache(t,dur,dispo,deadline), Event(prog), preemptive(pre)
     {
-        if ((preemptive == false) && (getDuree().getDureeEnHeures() > 12))
+        if ((preemptive == false) && (dur.getDureeEnHeures() > 12))
         throw CalendarException("Erreur tache unitaire : une tache non preemptive ne peut pas avoir une durée supérieure à 12h");
     }
 
     TacheU(const Tache& t, const bool& pre=false, const bool& prog=false):
     Tache(t.getTitre(),t.getDuree(),t.getDisponibilite(),t.getEcheance()), Event(prog), preemptive(pre),precedence(0), suivante(0) {}
-
 public:
     void ajouterPrecedence(TacheU* t );
     void supprimerPrecedence(const QString& id);
@@ -93,6 +93,9 @@ public:
     unsigned int& getProgression() { return progression;}
     bool isPreemptive() const { return preemptive; }
     bool cestunetache() const { return true;}
+    const QString& getId() const { return id; }
+    const Duree& getDuree() const { return duree; }
+    const QString& getTitre() const { return titre; }
     QString toString() const;
     
 };
@@ -118,7 +121,8 @@ public:
 
 //******************************************************************************************
 
-class TacheManager {
+class TacheManager
+{
     /*! \class TacheManager
      \brief Classe permettant de créer, modifier et détruire des tâches
      */
