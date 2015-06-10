@@ -6,10 +6,14 @@
 #include "calendar.h"
 #include "timing.h"
 #include "tache.h"
+#include "projet.h"
 
 class AgendaWindow : public QMainWindow
 {
     Q_OBJECT
+
+    TacheManager& TM;
+    ProjetManager& PM;
 
     QWidget *widget_central;
     QVBoxLayout *general;
@@ -22,10 +26,14 @@ class AgendaWindow : public QMainWindow
     QMenu *menu_options;
     QMenu *menu_tache;
     QMenu *menu_projet;
+
+    //actions
     QAction *programmer_tache;
     QAction *charger;
     QAction *exporter;
     QAction *creer_projet;
+    QAction *creer_tache;
+    QAction *tout_afficher;
 
     //couche jours
     QLabel *lundi;
@@ -66,7 +74,8 @@ class AgendaWindow : public QMainWindow
     QVBoxLayout *heures;
 
     //couche emploi du temps
-    QGraphicsView *cadre; //truc graphique pour mettre les tâches
+    QGraphicsScene *scene;
+    QGraphicsView *visu;
     QVBoxLayout *emploi_du_temps;
 
     //couche agenda
@@ -91,9 +100,23 @@ private slots:
     void deplacer_tache(const Tache& t);
     void charger_agenda();
     void sauvegarder_agenda();
-    void programmer();
+    void demander_programmer();
     void ajouter_projet();
+    void ajouter_tache();
+    void afficher();
 public slots:
+};
+
+class ItemTache : public QGraphicsItem {
+    Tache* t;
+public:
+    ItemTache(Tache* tache, QGraphicsItem* parent = NULL):QGraphicsItem(parent),t(tache) {
+        setFlag(QGraphicsItem::ItemIsFocusable);
+    }
+    //fonctions virtuelles pures de QGraphicsItem à implémenter
+    QRectF boundingRect() const;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    virtual void keyPressEvent(QKeyEvent *event);
 };
 
 #endif // AGENDAWINDOW_H

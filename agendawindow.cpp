@@ -1,7 +1,7 @@
 #include "agendawindow.h"
-#include "projet.h"
 
-AgendaWindow::AgendaWindow()
+AgendaWindow::AgendaWindow() :
+    TM(TacheManager::getInstance()), PM(ProjetManager::getInstance())
 {
     jours = new QHBoxLayout;
     heures = new QVBoxLayout;
@@ -79,9 +79,10 @@ AgendaWindow::AgendaWindow()
     heures->addWidget(label_23h);
 
     //couche emploi du temps
-    cadre = new QGraphicsView(this);
+    scene = new QGraphicsScene(0,0,300,300,this);
+    visu = new QGraphicsView(scene, this);
     emploi_du_temps->addItem(jours);
-    emploi_du_temps->addWidget(cadre);
+    emploi_du_temps->addWidget(visu);
 
     //couche semaine
     spacer_semaine = new QSpacerItem(50,0,QSizePolicy::Expanding,QSizePolicy::Preferred);
@@ -151,18 +152,26 @@ void AgendaWindow::createActions() {
     connect(exporter, SIGNAL(triggered()), this, SLOT(sauvegarder_agenda()));
 
     programmer_tache = new QAction("Programmer",this);
-    connect(programmer_tache, SIGNAL(triggered()), this, SLOT(programmer()));
+    connect(programmer_tache, SIGNAL(triggered()), this, SLOT(demander_programmer()));
 
     creer_projet = new QAction("Creer un projet", this);
     connect(creer_projet, SIGNAL(triggered()), this, SLOT(ajouter_projet()));
+
+    creer_tache = new QAction("Creer une tache", this);
+    connect(creer_tache, SIGNAL(triggered()), this, SLOT(ajouter_tache()));
+
+    tout_afficher = new QAction("Afficher toutes les taches", this);
+    connect(tout_afficher, SIGNAL(triggered()), this, SLOT(afficher()));
 }
 
 void AgendaWindow::createMenus() {
     menu_options = menuBar()->addMenu("Options");
     menu_options->addAction(charger);
     menu_options->addAction(exporter);
+    menu_options->addAction(tout_afficher);
 
     menu_tache = menuBar()->addMenu("Tache");
+    menu_tache->addAction(creer_tache);
     menu_tache->addAction(programmer_tache);
 
     menu_projet = menuBar()->addMenu("Projet");
@@ -191,10 +200,44 @@ void AgendaWindow::sauvegarder_agenda() {
 
 }
 
-void AgendaWindow::programmer() {
-
+void AgendaWindow::demander_programmer() {
+    bool ok;
+    QString id = QInputDialog::getText(this,"Programmer","Entrez l'id de la tache à programmer :", QLineEdit::Normal,"valeur", &ok);
+    if (ok && !id.isEmpty()) {
+        Tache& t = TM.getTache(id);
+        ItemTache *tache = new ItemTache(&t);
+        scene->addItem(tache);
+        tache->setFocus();
+    }
 }
 
 void AgendaWindow::ajouter_projet() {
 
+}
+
+void AgendaWindow::ajouter_tache() {
+
+}
+
+void AgendaWindow::afficher() {
+
+}
+
+void afficher_proprietes(Tache* t) {
+
+}
+
+QRectF ItemTache::boundingRect() const {
+    return QRectF(-15,-7,30,14);
+}
+
+void ItemTache::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
+    painter->drawRoundedRect(-15,-7,30,14,5,5);
+    painter->drawText(boundingRect(), Qt::AlignCenter, t->getTitre());
+}
+
+void ItemTache::keyPressEvent(QKeyEvent *event) {
+    if(event->key() == Qt::Key_Left) {
+        afficher_proprietes(this->t);
+    }
 }
