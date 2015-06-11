@@ -232,4 +232,11 @@ void ProjetManager::afficherProjets(QTextStream& fout) const {
     fout << endl << "fin des projets" << endl;
 }
 
+const QString& ProjetManager::afficherTitreProjets() const {
+    QString* s = new QString(" ");
+    for(tabprojets::const_iterator it = projets.begin(); it != projets.end(); it++)
+        s->append((*it)->titre);
+    return *s;
+}
+
 //******************************************************************************************

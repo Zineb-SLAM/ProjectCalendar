@@ -83,6 +83,7 @@ public:
     void save(const QString& f);
     void afficherTitreProjets(QTextStream& fout) const; // affiche le titre de tous les projets existants
     void afficherProjets(QTextStream& fout) const;
+    const QString& afficherTitreProjets() const;
 };
 
 //******************************************************************************************

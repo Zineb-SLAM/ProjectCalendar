@@ -110,6 +110,7 @@ AgendaWindow::AgendaWindow() :
     projets = new QDockWidget(this);
     projets->setWindowTitle("Projets"); //donne un titre au dock
     liste_projets = new QTextEdit(this);
+    liste_projets->textCursor().insertText(PM.afficherTitreProjets());
     liste_projets->setReadOnly(1); //en lecture seulement
     addDockWidget(Qt::LeftDockWidgetArea,projets);
     projets->setWidget(liste_projets);
@@ -117,31 +118,6 @@ AgendaWindow::AgendaWindow() :
     createActions();
     createMenus();
 
-    //options = new QMenu;
-    //barre_menu->addMenu(options);
-
-    //vertical->addWidget(barre_menu);
-    //vertical->addItem(agenda);
-
-    /*idLineEdit->setText(t.getId());
-    titreTextEdit->setText(t.getTitre());
-    dateDispo->setDate(t.getDateDisponibilite());
-    dateEcheance->setDate(t.getDateEcheance());
-    dureeH->setValue(t.getDuree().getHeure());
-    dureeM->setValue(t.getDuree().getMinute());
-    save->setEnabled(false);
-    QObject::connect(annuler, SIGNAL(clicked()), this, SLOT(close()));
-    QObject::connect(save,SIGNAL(clicked()),this,SLOT(sauverTache()));
-    QObject::connect(idLineEdit,SIGNAL(textChanged(QString)),this,SLOT(activerButton()));
-    QObject::connect(titreTextEdit,SIGNAL(textChanged(QString)),this,SLOT(activerButton()));
-    QObject::connect(dateDispo, SIGNAL(dateChanged(QDate)),this,SLOT(activerButton()));
-    QObject::connect(dateEcheance, SIGNAL(dateChanged(QDate)),this,SLOT(activerButton()));
-    QObject::connect(dateEcheance, SIGNAL(dateChanged(QDate)),this,SLOT(verifierDate(const QDate&)));
-    QObject::connect(dateDispo, SIGNAL(dateChanged(QDate)),this,SLOT(verifierDate(const QDate&)));
-    QObject::connect(dureeH, SIGNAL(valueChanged(int)),this,SLOT(activerButton()));
-    QObject::connect(dureeM, SIGNAL(valueChanged(int)),this,SLOT(activerButton()));
-    QObject::connect(preemptive, SIGNAL(stateChanged(int)),this,SLOT(activerButton()));
-    */
 }
 
 void AgendaWindow::createActions() {
@@ -212,19 +188,22 @@ void AgendaWindow::demander_programmer() {
 }
 
 void AgendaWindow::ajouter_projet() {
-
+    //ouvrir la fenêtre de configuration de projet
 }
 
 void AgendaWindow::ajouter_tache() {
-
+    //ouvrir la fenêtre de configuration de tache
 }
 
 void AgendaWindow::afficher() {
-
+    //insérer toutes les taches existantes dans l'agenda
 }
 
 void afficher_proprietes(Tache* t) {
-
+    QMessageBox message;
+    message.setText("Propriétés de la tache");
+    message.setInformativeText(t->toString());
+    message.exec();
 }
 
 QRectF ItemTache::boundingRect() const {
