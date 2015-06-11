@@ -1,8 +1,7 @@
 #ifndef AGENDAWINDOW_H
 #define AGENDAWINDOW_H
-
+#include<QMainWindow>
 #include <QtWidgets> //header qui contient les définitions de toutes les classes widgets
-
 #include "projet.h"
 #include "programmation.h"
 
