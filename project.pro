@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     projet.cpp \
     window.cpp \
     evenement.cpp \
-    agendawindow.cpp
+    agendawindow.cpp \
+    programmation.cpp
 
 HEADERS  += \
     calendar.h \
@@ -29,4 +30,5 @@ HEADERS  += \
     projet.h \
     window.h \
     evenement.h \
-    agendawindow.h
+    agendawindow.h \
+    programmation.h
