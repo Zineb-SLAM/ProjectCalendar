@@ -1,38 +1,15 @@
 #ifndef WINDOW_H
 #define WINDOW_H
+
+#include <math.h>
+#include <QtWidgets>
+
 #include"calendar.h"
 #include"timing.h"
 #include"programmation.h"
 #include"projet.h"
 #include"tache.h"
 #include"evenement.h"
-#include <QApplication>
-#include <QWidget>
-#include <QPushButton>
-#include <QLineEdit>
-#include <QTextEdit>
-#include <QLabel>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QComboBox>
-#include <QFileDialog>
-#include <QStandardItemModel>
-#include <QStandardItem>
-#include <QTreeView>
-#include <QTableWidget>
-#include <QDialog>
-#include <QFormLayout>
-#include <QTimeEdit>
-#include <QDateEdit>
-#include <QMessageBox>
-#include <QListWidget>
-#include <QListView>
-#include <QDialogButtonBox>
-#include <QPoint>
-#include <QMenu>
-#include<QSpinBox>
-#include <math.h>
-#include <QTableView>
 
 
 class NewProject: public QDialog {
@@ -44,13 +21,6 @@ class NewProject: public QDialog {
     QDateEdit* disponibility;
     QDateEdit* deadline;
     QListView* tasks;
-
-    QLabel* identifierL;
-    QLabel* titleL;
-    QLabel* durationL;
-    QLabel* disponibilityL;
-    QLabel* deadlineL;
-    QLabel* tasksL;
 
     QFormLayout* formLayout;
 
@@ -68,23 +38,11 @@ class NewTask : public QDialog {
 
     QLineEdit* id;
     QLineEdit* title;
-    QSpinBox *durationH,*durationM;
+    QTimeEdit *duration;
     QDateEdit* disponibility;
     QDateEdit* deadline;
     QComboBox* taskType;
-    QListView* tasks;
-    QListView* precedecessor;
-    QListView* successor;
-
-    QLabel* idl;
-    QLabel* titlel;
-    QLabel* durationHl; QLabel* durationMl;
-    QLabel* disponibilityl;
-    QLabel* deadlineL;
-    QLabel* tasksl;
-    QLabel* taskTypel;
-    QLabel* precedl;
-    QLabel* succl;
+    QListView* predecessors;
 
     QFormLayout* formLayout;
 
@@ -94,28 +52,19 @@ public slots:
     //void addNewTask();
 };
 
-class NewActivity : public QWidget {
+class NewActivity : public QDialog {
     Q_OBJECT
-
+    QDialogButtonBox* buttonBox;
     QComboBox* type;// RDV or Meeting
     QLineEdit* id;
-    QLineEdit* name;
+    QLineEdit* title;
     QDateEdit* date;
     QTimeEdit* time;
-    QSpinBox *durationH,*durationM;
+    QTimeEdit *duration;
     QLineEdit* place;
     QLineEdit* people;
 
-
-    QLabel* typel;
-    QLabel* idl;
-    QLabel* namel;
-    QLabel* datel;
-    QLabel* timel;
-    QLabel* durationHl; QLabel* durationMl;
-    QLabel* placel;
-    QLabel* peoplel;
-
+    QFormLayout* formLayout;
 
 public:
    NewActivity(QWidget* parent);
@@ -124,19 +73,20 @@ public slots:
     //void addNewActivity();
 };
 
-class NewProgrammation : public QWidget {
+class NewProgrammation : public QDialog {
     Q_OBJECT
+    QDialogButtonBox* buttonBox;
 
     QListView* events;// RDV or Meeting
-    QSpinBox *scheduleH,*scheduleM;
-    QLineEdit* date;
+    QTimeEdit *schedule;
+    QDateEdit* date;
 
-    QLabel* eventsl;
-    QLabel* scheduleHl; QLabel* scheduleMl;
-    QLabel* datel;
+    QFormLayout* formLayout;
 
 public:
     NewProgrammation(QWidget* parent);
+    const QTimeEdit& getSchedule() const { return *schedule; }
+    const QDateEdit& getDate() const { return *date; }
 
 public slots:
     //void addProgrammation();

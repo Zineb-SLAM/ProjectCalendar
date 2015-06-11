@@ -1,7 +1,8 @@
 #include "agendawindow.h"
+#include "window.h"
 
 AgendaWindow::AgendaWindow() :
-    TM(TacheManager::getInstance()), PM(ProjetManager::getInstance())
+    TM(TacheManager::getInstance()), PM(ProjetManager::getInstance()), ProgM(ProgrammationManager::getInstance())
 {
     jours = new QHBoxLayout;
     heures = new QVBoxLayout;
@@ -138,6 +139,9 @@ void AgendaWindow::createActions() {
 
     tout_afficher = new QAction("Afficher toutes les taches", this);
     connect(tout_afficher, SIGNAL(triggered()), this, SLOT(afficher()));
+
+    creer_activite = new QAction("Creer une activite", this);
+    connect(creer_activite, SIGNAL(triggered()), this, SLOT(ajouter_activite()));
 }
 
 void AgendaWindow::createMenus() {
@@ -152,6 +156,9 @@ void AgendaWindow::createMenus() {
 
     menu_projet = menuBar()->addMenu("Projet");
     menu_projet->addAction(creer_projet);
+
+    menu_activite = menuBar()->addMenu("Activite");
+    menu_activite->addAction(creer_activite);
 }
 
 //fonctions des slots
@@ -178,21 +185,36 @@ void AgendaWindow::sauvegarder_agenda() {
 
 void AgendaWindow::demander_programmer() {
     bool ok;
+    Horaire *h;
+    Date *d;
     QString id = QInputDialog::getText(this,"Programmer","Entrez l'id de la tache à programmer :", QLineEdit::Normal,"valeur", &ok);
     if (ok && !id.isEmpty()) {
-        Tache& t = TM.getTache(id);
-        ItemTache *tache = new ItemTache(&t);
+        TacheU* t = dynamic_cast<TacheU*>(TM.getTache(id));
+        NewProgrammation *fenetre_programmation = new NewProgrammation(this);
+        if(fenetre_programmation->exec()) {
+            h = new Horaire(fenetre_programmation->getSchedule().time().hour(), fenetre_programmation->getSchedule().time().minute());
+            d = new Date(fenetre_programmation->getDate().date().day(),fenetre_programmation->getDate().date().month(),fenetre_programmation->getDate().date().year());
+        }
+        ProgM.ajouterProgrammation(t,*d,*h);
+        ItemTache *tache = new ItemTache(t);
         scene->addItem(tache);
         tache->setFocus();
     }
 }
 
 void AgendaWindow::ajouter_projet() {
-    //ouvrir la fenêtre de configuration de projet
+    NewProject *fenetre_projet = new NewProject(this);
+    fenetre_projet->exec();
 }
 
 void AgendaWindow::ajouter_tache() {
-    //ouvrir la fenêtre de configuration de tache
+    NewTask *fenetre_tache = new NewTask(this);
+    fenetre_tache->exec();
+}
+
+void AgendaWindow::ajouter_activite() {
+    NewActivity *fenetre_activite = new NewActivity(this);
+    fenetre_activite->exec();
 }
 
 void AgendaWindow::afficher() {

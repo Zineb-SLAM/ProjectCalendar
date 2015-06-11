@@ -3,10 +3,8 @@
 
 #include <QtWidgets> //header qui contient les définitions de toutes les classes widgets
 
-#include "calendar.h"
-#include "timing.h"
-#include "tache.h"
 #include "projet.h"
+#include "programmation.h"
 
 class AgendaWindow : public QMainWindow
 {
@@ -14,6 +12,7 @@ class AgendaWindow : public QMainWindow
 
     TacheManager& TM;
     ProjetManager& PM;
+    ProgrammationManager& ProgM;
 
     QWidget *widget_central;
     QVBoxLayout *general;
@@ -26,6 +25,7 @@ class AgendaWindow : public QMainWindow
     QMenu *menu_options;
     QMenu *menu_tache;
     QMenu *menu_projet;
+    QMenu *menu_activite;
 
     //actions
     QAction *programmer_tache;
@@ -34,6 +34,7 @@ class AgendaWindow : public QMainWindow
     QAction *creer_projet;
     QAction *creer_tache;
     QAction *tout_afficher;
+    QAction *creer_activite;
 
     //couche jours
     QLabel *lundi;
@@ -104,6 +105,7 @@ private slots:
     void ajouter_projet();
     void ajouter_tache();
     void afficher();
+    void ajouter_activite();
 public slots:
 };
 

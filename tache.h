@@ -153,7 +153,7 @@ public:
     void load(const QString& f);
     void save(const QString& f);
     void afficher(QTextStream& f) const { f << "****TacheManager*****" << endl; }
-    Tache& getTache(const QString& id);
+    Tache* getTache(const QString& id);
     void ajouterPrecedenceTache(const Tache& tAjout, const Tache& tPrecedente);
     QTextStream& afficherTaches(QTextStream& fout);
 };

@@ -268,13 +268,13 @@ void TacheManager::save(const QString& f){
     newfile.close();
 }
 
-Tache& TacheManager::getTache(const QString& id){
+Tache* TacheManager::getTache(const QString& id){
     tabtaches::iterator it = taches.begin();
     while(it!=taches.end() && (*it)->getId() != id) {
         it++;
     }
     if(it!=taches.end()) {
-        return **it;
+        return *it;
     }
     throw CalendarException("Tache inconnue");
 }
