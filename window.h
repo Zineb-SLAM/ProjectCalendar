@@ -57,7 +57,7 @@ class NewProject: public QDialog {
 public:
     NewProject(QWidget* parent = 0);
 public slots:
-    void addProject();
+    //void addNewProject();
 
 
 };
@@ -91,7 +91,7 @@ class NewTask : public QDialog {
 public:
     NewTask(QWidget* parent = 0);
 public slots:
-    void addTask();
+    //void addNewTask();
 };
 
 class NewActivity : public QWidget {
@@ -118,10 +118,10 @@ class NewActivity : public QWidget {
 
 
 public:
-    NewActivity(QWidget* parent);
+   NewActivity(QWidget* parent);
 
 public slots:
-    void addActivity();
+    //void addNewActivity();
 };
 
 class NewProgrammation : public QWidget {
@@ -139,7 +139,7 @@ public:
     NewProgrammation(QWidget* parent);
 
 public slots:
-    void addProgrammation();
+    //void addProgrammation();
 };
 
 class MainWindow:public QWidget
