@@ -4,7 +4,6 @@
 #include <QtXml>
 #include <QMessageBox>
 #include <QTextStream>
-#include "calendar.h"
 #include "tache.h"
 
 using namespace TIME;
@@ -73,11 +72,6 @@ void TacheU::supprimerPrecedence(const QString& id)
 
     (*it)->suivante.erase(its);
     precedence.erase(it);
-
-
-
-
-
 }
 
 void TacheU::setDuree(const Duree& d) {
@@ -121,24 +115,24 @@ TacheManager::Handler TacheManager::handler=TacheManager::Handler();
 
 TacheManager& TacheManager::getInstance(){
     if (handler.instance==0)
-    handler.instance=new TacheManager;
+        handler.instance=new TacheManager;
     return *(handler.instance);
 }
 
 void TacheManager::libererInstance(){
     if (handler.instance!=0)
-    delete handler.instance;
+        delete handler.instance;
     handler.instance=0;
 }
 
-TacheU& TacheManager::ajouterTacheU(const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, const bool& preempt, const bool& prog){
-    TacheU* newt = new TacheU(t,dur,dispo,deadline,preempt, prog);
+TacheU& TacheManager::ajouterTacheU(const QString& id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, const bool& preempt, const bool& prog){
+    TacheU* newt = new TacheU(id,t,dur,dispo,deadline,preempt,prog);
     addItem(newt);
     return *newt;
 }
 
-TacheC& TacheManager::ajouterTacheC(const QString& t, const Duree& dur, const Date& dispo, const Date& deadl) {
-    TacheC* newt = new TacheC(t,dur,dispo,deadl);
+TacheC& TacheManager::ajouterTacheC(const QString& id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadl) {
+    TacheC* newt = new TacheC(id,t,dur,dispo,deadl);
     addItem(newt);
     return *newt;
 }
@@ -234,7 +228,7 @@ void TacheManager::load(const QString& f)
                     xml.readNext();
                 }
                 //qDebug()<<"ajout tache "<<identificateur<<"\n";
-                ajouterTacheU(titre,duree,disponibilite,echeance,preemptive,program);
+                ajouterTacheU(identificateur,titre,duree,disponibilite,echeance,preemptive,program);
                 
             }
         }
@@ -283,6 +277,12 @@ Tache& TacheManager::getTache(const QString& id){
         return **it;
     }
     throw CalendarException("Tache inconnue");
+}
+
+QTextStream& TacheManager::afficherTaches(QTextStream& fout){
+    for(tabtaches::iterator it = taches.begin(); it != taches.end(); it++)
+        fout << *it;
+    return fout;
 }
 
 
