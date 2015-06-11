@@ -77,7 +77,7 @@ namespace TIME {
         double getDureeEnHeures() const { return double(nb_minutes)/60; } //<!Retourne la duree en heures
         unsigned int getMinute() const { return nb_minutes%60; }
         unsigned int getHeure() const { return nb_minutes/60; }
-        //unsigned int getJour() const{ return floor(getHeure()/24); }//<!Retourne la duree en jours pour les taches prremptv
+        unsigned int getJour() const{ double x = getHeure()/24; return floor(x); }//<!Retourne la duree en jours pour les taches prremptv
         void afficher(QTextStream& f) const; //<!Affiche la duree sous le format hhHmm
     };
 

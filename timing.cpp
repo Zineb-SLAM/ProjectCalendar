@@ -168,7 +168,9 @@ bool Horaire::operator==(const Horaire& h) const {
 QTextStream& operator<<(QTextStream& f, const Horaire& d)
 {
     d.afficher(f);
+    return f;
 }
+
 //******************************************************************************************
 Periode::Periode(unsigned int j, unsigned int m, unsigned int a):
            nb_jours(j), nb_mois(m), nb_annees(a) {
