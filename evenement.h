@@ -32,7 +32,14 @@ class Activite: public Event
     Duree duree;
     QString lieu;
 public:
+<<<<<<< HEAD
+    Activite(const QString& i,const QString& t, const Duree d, const QString& l):id(i),titre(t), duree(d), lieu(l)
+    {
+
+    }
+=======
     Activite(const QString& i, const QString& t, const Duree d, const QString& l):id(i), titre(t), duree(d), lieu(l) {}
+>>>>>>> origin/master
     const QString& getId() const { return id; }
     const QString& getTitre() const { return titre; }
     void setTitre(const QString& t ) { this->titre=t; }
@@ -40,16 +47,28 @@ public:
     void setDuree(const Duree& d) { this->duree=d; }
     const QString& getLieu() const { return lieu; }
     void setLieu(const QString& l) { this->lieu =l; }
+<<<<<<< HEAD
+    bool  cestunetache() const { return false;}
+=======
     //virtual void Afficher_Activite () const =0;
     bool  cestunetache() const { return false; }
+<<<<<<< HEAD
     const QString toString() const;
+=======
+    const QString& toString() const;
+>>>>>>> origin/master
+>>>>>>> 5fe0ea44c61abbf1da5ac5efaab1fa08e3b28aba
 };
 
 class Rdv : public Activite
 {
     QString personne;
 public:
+<<<<<<< HEAD
+    Rdv(const QString id,const QString& t, const Duree d, const QString& l, const QString& p):Activite(id,t,d,l), personne(p) {}
+=======
     Rdv(const QString& i, const QString& t, const Duree d, const QString& l, const QString& p):Activite(i,t,d,l), personne(p) {}
+>>>>>>> origin/master
 
 };
 
@@ -57,7 +76,11 @@ class Reunion : public Activite
 {
     //QString outils;
 public:
+<<<<<<< HEAD
+    Reunion(const QString& i,const QString& t, const Duree d, const QString& l, const QString& o):Activite(i,t,d,l),outils(o){}
+=======
     Reunion(const QString& i, const QString& t, const Duree d, const QString& l/*, const QString& o*/):Activite(i,t,d,l)/*,outils(o)*/{}
+>>>>>>> origin/master
 
 };
 

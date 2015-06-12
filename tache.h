@@ -72,14 +72,18 @@ class TacheU : public Tache , public Event {
     void setPreemptive() { preemptive = true;}
     inline void setNonPreemptive();
     TacheU(const QString& id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, const bool& pre=false, const bool& prog=false):
+<<<<<<< HEAD
+    Tache(id,t,dur,dispo,deadline), Event(prog), preemptive(pre),progression(0)
+=======
     Tache(id,t,dur,dispo,deadline), Event(prog), preemptive(pre), progression(0)
+>>>>>>> origin/master
     {
         if ((preemptive == false) && (dur.getDureeEnHeures() > 12))
         throw CalendarException("Erreur tache unitaire : une tache non preemptive ne peut pas avoir une durée supérieure à 12h");
     }
 
     TacheU(const Tache& t, const bool& pre=false, const bool& prog=false):
-    Tache(t.getId(), t.getTitre(),t.getDuree(),t.getDisponibilite(),t.getEcheance()), Event(prog), preemptive(pre) {}
+    Tache(t.getId(), t.getTitre(),t.getDuree(),t.getDisponibilite(),t.getEcheance()), Event(prog), preemptive(pre),progression(0) {}
 public:
     void ajouterPrecedence(TacheU* t );
     void supprimerPrecedence(const QString& id);
@@ -160,7 +164,7 @@ public:
     void afficher(QTextStream& f) const { f << "****TacheManager*****" << endl; }
     Tache* getTache(const QString& id);
     TacheU* getTacheU(const QString& id); // ne retourne que les taches Unitaires pour pouvoir les programmer
-    void ajouterPrecedenceTache(const Tache& tAjout, const Tache& tPrecedente);
+    void ajouterPrecedenceTache(TacheU* tAjout,TacheU* tPrecedente);
     QTextStream& afficherTaches(QTextStream& fout);
     const QString& afficherTachesAProgrammer() const;
 };

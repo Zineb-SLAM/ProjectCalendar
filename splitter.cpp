@@ -25,6 +25,12 @@ splitter::splitter (QWidget* parent, Qt::WindowFlags flags): QDialog(parent,flag
     widget1 = new QListWidget;
     QHBoxLayout* w1Layout = new QHBoxLayout;
     widget1->setLayout(w1Layout);
+    QListWidgetItem *item = new QListWidgetItem();
+    item->setData(Qt::DisplayRole,"Mes Projets");
+    widget1->addItem(item);
+    connect(widget1, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+    this, SLOT(showProjects()));
+    connect(widget1, SIGNAL(itemClicked (QListWidgetItem*)),this,SLOT(onwidget1ItemClicked(QListWidgetItem*)));
 
     widget2 = new QListWidget;
     QHBoxLayout* w2Layout = new QHBoxLayout;
@@ -44,21 +50,25 @@ splitter::splitter (QWidget* parent, Qt::WindowFlags flags): QDialog(parent,flag
 }
 void splitter::showProjects()
 {
+    widget1->clear();
+    widget1->setWindowTitle("Affichage des Projets");
     for (std::vector<Projet*>::iterator it = PM.getTab().begin(); it!=PM.getTab().end(); ++it)
     {
         QListWidgetItem *item = new QListWidgetItem();
-         item->setData(Qt::DisplayRole, (*it)->getId());// Ceci est le titre
-         item->setData(Qt::UserRole + 1, (*it)->getTitre());// Ceci est la description
+         item->setData(Qt::DisplayRole, (*it)->getTitre());
+         item->setData(Qt::UserRole + 1, (*it)->getId());// Ceci est la description
+         const QString& s = widget1->currentItem()->text();
+
          widget1->addItem(item);
     }
 
       widget1->showMaximized();
+
 }
 
-
-
-void splitter::showTasks(Projet *p)
+/*void splitter::onwidget1ItemClicked(QListWidgetItem* item)
 {
+    widget2->clear();
     this->setWindowTitle("Taches du Projet "+p->getId());
     for (std::vector<Tache*>::iterator it = p->GetTabProjet().begin(); it!=p->GetTabProjet().end(); ++it)
     {
@@ -68,7 +78,7 @@ void splitter::showTasks(Projet *p)
          widget2->addItem(item);
     }
 
-}
+}*/
 
 void splitter::showTak(Tache * t)
 {
@@ -96,7 +106,6 @@ void splitter::showTak(Tache * t)
 
     }
 }
-
 
 void Unitary::TaskInfo(TacheU *t)
 {

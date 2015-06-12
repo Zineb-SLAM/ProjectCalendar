@@ -93,9 +93,9 @@ void ProjetManager::creerProjet(const QString& id, const QString& t, const Date&
     projets.push_back(newp);
 }
 
-void ProjetManager::ajouterTacheAProjet(Projet& p, Tache* t) {
+void ProjetManager::ajouterTacheAProjet(Projet* p, Tache* t) {
     //vérifier les échances des taches avant d'ajouter au projet
-    p.addTache(t);
+    p->addTache(t);
 }
 
 void ProjetManager::removeProject(const QString &id) {
