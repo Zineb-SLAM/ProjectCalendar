@@ -33,24 +33,19 @@ void Projet::addTache(Tache* t)
     tachesProjet.push_back(t);
 }
 
-<<<<<<< HEAD
-const Tache* Projet::getTache(const QString& id) const
+
+const Tache *Projet::getTache(const QString& id) const
 {
-=======
-const Tache *Projet::getTache(const QString& id) const {
->>>>>>> origin/master
+
     tabtaches::const_iterator it = tachesProjet.begin();
     while (it != tachesProjet.end() && (*it)->getId() != id)
     {
 
     if (it != tachesProjet.end())
         return *it;
-<<<<<<< HEAD
      it++;
     }
 
-=======
->>>>>>> origin/master
     throw CalendarException("La tache n'appartient pas au projet");
 }
 
