@@ -27,7 +27,7 @@ class Tache {
     bool isCompleted;
 
     //méthodes
-   Tache(const Tache& t); //pas implémentée: on ne devrait pas l'implementer car chaque tache unique -->id
+     Tache(const Tache& t); //pas implémentée: on ne devrait pas l'implementer car chaque tache unique -->id
     Tache& operator=(const Tache&); //pas implémentée:on ne devrait pas l'implementer car chaque tache unique -->id
     //les méthodes set sont privées car c'est TacheManager qui gère les Tache
     void setId(const QString& str);
