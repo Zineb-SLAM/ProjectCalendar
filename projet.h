@@ -78,7 +78,7 @@ public:
     Projet* getProjet(const QString& id);
     std::vector<Projet*>& getTab(){return projets;}
     void creerProjet(const QString &id, const QString& t, const Date& disp, const Date& ech); // crée le projet et l'ajoute à la liste des projets existants
-    void ajouterTacheAProjet(Projet& p, Tache* t);
+    void ajouterTacheAProjet(Projet*  p, Tache* t);
     void removeProject(const QString& id);
     void afficher(QTextStream& f) const { f<<"****ProjetManager*****"; }
     void load(const QString& f);

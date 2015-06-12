@@ -28,17 +28,16 @@ public:
      //~splitter();
 
 private:
-    void showProjects();
-    void showTasks(Projet *t);
+
+
     void showTak(Tache * t);
 
-signals:
-        private slots:
+private slots:
+    void showProjects();
+  //void onwidget1ItemClicked(QListWidgetItem* item);
 
 
 };
-
-
 
 
 

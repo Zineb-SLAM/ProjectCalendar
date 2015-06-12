@@ -311,5 +311,9 @@ const QString& TacheManager::afficherTachesAProgrammer() const {
     }
     return *s;
 }
+void TacheManager::ajouterPrecedenceTache(TacheU* tAjout,TacheU* tPrecedente)
+{
+    tAjout->ajouterPrecedence(tPrecedente);
+}
 
 //******************************************************************************************
