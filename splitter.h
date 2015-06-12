@@ -10,6 +10,7 @@
 #include<QListWidget>
 #include<QWidget>
 
+
 namespace Ui
 {
 class splitter;
@@ -20,7 +21,7 @@ class splitter : public QDialog
     Q_OBJECT
      ProjetManager& PM;
      QListWidget* widget1;
-     QWidget* widget2;
+     QListWidget* widget2;
 
 public:
      splitter(QWidget *parent = 0, Qt::WindowFlags flags=0);
@@ -28,7 +29,8 @@ public:
 
 private:
     void showProjects();
-    void showTasks(Tache *t);
+    void showTasks(Projet *t);
+    void showTak(Tache * t);
 
 signals:
         private slots:

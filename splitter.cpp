@@ -19,15 +19,15 @@ splitter::splitter (QWidget* parent, Qt::WindowFlags flags): QDialog(parent,flag
 {
     QApplication::setStyle("plastique");
 
-    QListWidget* listView = new QListWidget;//widget1
-    QTableView* tableView = new QTableView;//widget2
+    QListWidget* listWidget= new QListWidget;//widget1
+    QListView* tableView = new QListView;//widget2
 
     widget1 = new QListWidget;
     QHBoxLayout* w1Layout = new QHBoxLayout;
+    widget1->setLayout(w1Layout);
 
-    widget2 = new QWidget;
+    widget2 = new QListWidget;
     QHBoxLayout* w2Layout = new QHBoxLayout;
-    w2Layout->addWidget(tableView);
     widget2->setLayout(w2Layout);
 
 
@@ -57,20 +57,33 @@ void splitter::showProjects()
 
 
 
-void splitter::showTasks(Tache *t)
+void splitter::showTasks(Projet *p)
 {
-    this->setWindowTitle("Task "+t->getId());
-    QLabel* id = new QLabel(t->getId(),this);
-    QLabel*titre = new QLabel(t->getTitre(),this);
+    this->setWindowTitle("Taches du Projet "+p->getId());
+    for (std::vector<Tache*>::iterator it = p->GetTabProjet().begin(); it!=p->GetTabProjet().end(); ++it)
+    {
+        QListWidgetItem *item = new QListWidgetItem();
+         item->setData(Qt::DisplayRole, (*it)->getId());// Ceci est le titre
+         item->setData(Qt::UserRole + 1, (*it)->getTitre());// Ceci est la description
+         widget2->addItem(item);
+    }
 
-    if (!t->getTypeTache())
+}
+
+void splitter::showTak(Tache * t)
+{
+    if (!t->getTypeTache()) // Si c'est une tache composite
     {
          QLabel*type = new QLabel("composite",this);
          TacheC* tempC = dynamic_cast<TacheC*>(t);
 
         for (std::vector<Tache *>::iterator it=tempC->getCTaches().begin();it!=tempC->getCTaches().end();it++)
         {
-           // (*it)->getId();
+
+            QListWidgetItem *item = new QListWidgetItem();
+             item->setData(Qt::DisplayRole, (*it)->getId());// Ceci est le titre
+             item->setData(Qt::UserRole + 1, (*it)->getTitre());// Ceci est la description
+             widget2->addItem(item);
         }
 
     }
@@ -79,7 +92,7 @@ void splitter::showTasks(Tache *t)
     {
 
         TacheU* tempU = dynamic_cast<TacheU*>(t);
-        //faire appel a Task info
+        //faire appel a Task info de Unitary
 
     }
 
