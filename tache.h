@@ -48,6 +48,7 @@ public:
     const Date getDisponibilite() const { return disponibilite; }
     const Date getEcheance() const { return echeance;}
     virtual QString toString() const=0;
+    virtual bool getTypeTache()=0;
 
     
 };
@@ -96,6 +97,7 @@ public:
     const QString& getId() const { return id; }
     const Duree& getDuree() const { return duree; }
     const QString& getTitre() const { return titre; }
+    bool getTypeTache(){ return true;}
     QString toString() const;
     
 };
@@ -117,6 +119,8 @@ class TacheC : public Tache {
     template <class T> void addTasktoC(const T& t) { tachescomp.push_back(t); }
 public:
     QString toString() const;
+    vectcomp& getCTaches(){return tachescomp;}
+   bool getTypeTache(){ return false;}
 };
 
 //******************************************************************************************
@@ -155,6 +159,7 @@ public:
     void save(const QString& f);
     void afficher(QTextStream& f) const { f << "****TacheManager*****" << endl; }
     Tache* getTache(const QString& id);
+    TacheU* getTacheU(const QString& id); // ne retourne que les taches Unitaires pour pouvoir les programmer
     void ajouterPrecedenceTache(const Tache& tAjout, const Tache& tPrecedente);
     QTextStream& afficherTaches(QTextStream& fout);
     const QString& afficherTachesAProgrammer() const;

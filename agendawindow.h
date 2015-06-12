@@ -6,6 +6,7 @@
 #include "programmation.h"
 #include "customscene.h"
 
+class QMainWindow;
 class AgendaWindow : public QMainWindow
 {
     Q_OBJECT
@@ -91,6 +92,9 @@ class AgendaWindow : public QMainWindow
     QSpinBox *choix_semaine;
     QHBoxLayout *semaine;
 
+    //treeViewView
+    QStandardItemModel* projectsTreeV;
+
     void createActions();
     void createMenus();
 
@@ -107,7 +111,9 @@ private slots:
     void ajouter_projet();
     void ajouter_tache();
     void afficher();
+    void TreeViewProjet();
     void ajouter_activite();
+
 public slots:
 };
 

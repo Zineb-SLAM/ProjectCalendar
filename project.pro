@@ -22,7 +22,12 @@ SOURCES += main.cpp\
     evenement.cpp \
     agendawindow.cpp \
     programmation.cpp \
+<<<<<<< HEAD
     customscene.cpp
+=======
+    projetwindow.cpp \
+    splitter.cpp
+>>>>>>> fcaf01ed0d69d547081700e2d6187c33c9f1f8c4
 
 HEADERS  += \
     calendar.h \
@@ -33,4 +38,13 @@ HEADERS  += \
     evenement.h \
     agendawindow.h \
     programmation.h \
+<<<<<<< HEAD
     customscene.h
+=======
+    projetwindow.h \
+    splitter.h
+
+FORMS += \
+    projetwindow.ui \
+    splitter.ui
+>>>>>>> fcaf01ed0d69d547081700e2d6187c33c9f1f8c4
