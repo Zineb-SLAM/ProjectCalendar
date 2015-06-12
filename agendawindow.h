@@ -85,6 +85,7 @@ class AgendaWindow : public QMainWindow
     //couche agenda
     QHBoxLayout *agenda;
     QSpacerItem *spacer; //espace entre les heures et la table
+    QSpacerItem *spacer2;
 
     //couche semaine
     QSpacerItem *spacer_semaine;

@@ -82,6 +82,7 @@ AgendaWindow::AgendaWindow() :
     //couche emploi du temps
     scene = new CustomQGraphicsScene(this);
     visu = new QGraphicsView(scene, this);
+    visu->setFixedSize(700,600);
     emploi_du_temps->addItem(jours);
     emploi_du_temps->addWidget(visu);
 
@@ -94,9 +95,11 @@ AgendaWindow::AgendaWindow() :
     semaine->addWidget(choix_semaine);
 
     //couche agenda
-    spacer = new QSpacerItem(20,0,QSizePolicy::Preferred,QSizePolicy::Preferred);
-    agenda->addItem(heures);
+    spacer = new QSpacerItem(20,0,QSizePolicy::Expanding,QSizePolicy::Preferred);
+    spacer2 = new QSpacerItem(20,0,QSizePolicy::Preferred, QSizePolicy::Preferred);
     agenda->addItem(spacer);
+    agenda->addItem(heures);
+    agenda->addItem(spacer2);
     agenda->addItem(emploi_du_temps);
 
     //fenêtre principale
