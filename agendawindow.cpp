@@ -116,6 +116,14 @@ AgendaWindow::AgendaWindow() :
     addDockWidget(Qt::LeftDockWidgetArea,projets);
     projets->setWidget(liste_projets);
 
+    taches = new QDockWidget(this);
+    taches->setWindowTitle("Taches à programmer");
+    liste_taches = new QTextEdit(this);
+    liste_taches->textCursor().insertText(TM.afficherTachesAProgrammer());
+    liste_taches->setReadOnly(1);
+    addDockWidget(Qt::LeftDockWidgetArea, taches);
+    taches->setWidget(liste_taches);
+
     createActions();
     createMenus();
 
@@ -167,20 +175,22 @@ void AgendaWindow::changer_semaine(const unsigned int& s) {
 
 }
 
-void AgendaWindow::placer_tache(const Tache& t) {
+void AgendaWindow::placer_tache(const Tache* t) {
 
 }
 
-void AgendaWindow::deplacer_tache(const Tache& t) {
+void AgendaWindow::deplacer_tache(const Tache *t) {
 
 }
 
 void AgendaWindow::charger_agenda() {
-
+    QString chemin = QFileDialog::getOpenFileName();
+    PM.load(chemin);
 }
 
 void AgendaWindow::sauvegarder_agenda() {
-
+    QString chemin = QFileDialog::getSaveFileName();
+    PM.save(chemin);
 }
 
 void AgendaWindow::demander_programmer() {

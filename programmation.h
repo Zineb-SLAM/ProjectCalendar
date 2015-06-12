@@ -62,9 +62,6 @@ public:
        Programmation* a= trouverProgrammation(t);
       return a->afficher(f);
     }
-
-
-
 };
 
 

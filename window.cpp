@@ -1,7 +1,7 @@
 #include "window.h"
 
 NewProject::NewProject(QWidget *parent) {
-    buttonBox = new QDialogButtonBox(this);
+    buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     identifier = new QLineEdit(this);
     title = new QLineEdit(this);
     duration = new QTimeEdit(this);
@@ -16,11 +16,15 @@ NewProject::NewProject(QWidget *parent) {
     formLayout->addRow("Disponibilite", disponibility);
     formLayout->addRow("Echeance", deadline);
     formLayout->addRow("Taches", tasks);
+    formLayout->addWidget(buttonBox);
     setLayout(formLayout);
+
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }
 
 NewTask::NewTask(QWidget* parent) {
-    buttonBox = new QDialogButtonBox(this);
+    buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     id = new QLineEdit(this);
     title = new QLineEdit(this);
     duration = new QTimeEdit(this);
@@ -37,11 +41,15 @@ NewTask::NewTask(QWidget* parent) {
     formLayout->addRow("Echeance", deadline);
     formLayout->addRow("Type de la tache", taskType);
     formLayout->addRow("Predecesseurs", predecessors);
+    formLayout->addWidget(buttonBox);
     setLayout(formLayout);
+
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }
 
 NewActivity::NewActivity(QWidget* parent) {
-    buttonBox = new QDialogButtonBox(this);
+    buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     type = new QComboBox(this);
     id = new QLineEdit(this);
     title = new QLineEdit(this);
@@ -56,11 +64,15 @@ NewActivity::NewActivity(QWidget* parent) {
     formLayout->addRow("Date", date);
     formLayout->addRow("Horaire", time);
     formLayout->addRow("Duree", duration);
+    formLayout->addWidget(buttonBox);
     setLayout(formLayout);
+
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }
 
 NewProgrammation::NewProgrammation(QWidget* parent) {
-    buttonBox = new QDialogButtonBox(this);
+    buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     events = new QListView(this);
     schedule = new QTimeEdit(this);
     date = new QDateEdit(this);
@@ -69,5 +81,9 @@ NewProgrammation::NewProgrammation(QWidget* parent) {
     formLayout->addRow("Evenements", events);
     formLayout->addRow("Date", date);
     formLayout->addRow("Horaire", schedule);
+    formLayout->addWidget(buttonBox);
     setLayout(formLayout);
+
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }

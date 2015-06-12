@@ -18,7 +18,9 @@ class AgendaWindow : public QMainWindow
 
     //dock widget
     QDockWidget *projets;
-    QTextEdit *liste_projets;
+    QTextEdit *liste_projets; //liste des projets existants
+    QDockWidget *taches;
+    QTextEdit *liste_taches; //liste des tâches à programmer
 
     //menus
     QMenu *menu_options;
@@ -96,8 +98,8 @@ public:
 signals:
 private slots:
     void changer_semaine(const unsigned int& s);
-    void placer_tache(const Tache& t);
-    void deplacer_tache(const Tache& t);
+    void placer_tache(const Tache* t);
+    void deplacer_tache(const Tache* t);
     void charger_agenda();
     void sauvegarder_agenda();
     void demander_programmer();

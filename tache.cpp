@@ -285,5 +285,16 @@ QTextStream& TacheManager::afficherTaches(QTextStream& fout){
     return fout;
 }
 
+const QString& TacheManager::afficherTachesAProgrammer() const {
+    QString* s = new QString(" ");
+    for(tabtaches::const_iterator it = taches.begin(); it != taches.end(); it++) {
+        TacheU* tu = dynamic_cast<TacheU *>(*it);
+        if (!(tu->estProgrammee())) {
+                s->append(tu->getTitre());
+                s->append(tu->getId());
+            }
+    }
+    return *s;
+}
 
 //******************************************************************************************

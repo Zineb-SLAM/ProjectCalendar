@@ -5,6 +5,7 @@
 #include <vector>
 #include <QUuid>
 #include <sstream>
+#include <typeinfo>
 #include "calendar.h"
 #include "evenement.h"
 
@@ -156,6 +157,7 @@ public:
     Tache* getTache(const QString& id);
     void ajouterPrecedenceTache(const Tache& tAjout, const Tache& tPrecedente);
     QTextStream& afficherTaches(QTextStream& fout);
+    const QString& afficherTachesAProgrammer() const;
 };
 
 //******************************************************************************************
