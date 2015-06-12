@@ -1,9 +1,10 @@
 #ifndef AGENDAWINDOW_H
 #define AGENDAWINDOW_H
-#include<QMainWindow>
+#include <QMainWindow>
 #include <QtWidgets> //header qui contient les définitions de toutes les classes widgets
 #include "projet.h"
 #include "programmation.h"
+#include "customscene.h"
 
 class QMainWindow;
 class AgendaWindow : public QMainWindow
@@ -77,13 +78,14 @@ class AgendaWindow : public QMainWindow
     QVBoxLayout *heures;
 
     //couche emploi du temps
-    QGraphicsScene *scene;
+    CustomQGraphicsScene *scene;
     QGraphicsView *visu;
     QVBoxLayout *emploi_du_temps;
 
     //couche agenda
     QHBoxLayout *agenda;
     QSpacerItem *spacer; //espace entre les heures et la table
+    QSpacerItem *spacer2;
 
     //couche semaine
     QSpacerItem *spacer_semaine;
@@ -102,7 +104,8 @@ public:
 signals:
 private slots:
     void changer_semaine(const unsigned int& s);
-    void placer_tache(const Tache* t);
+    //void placer_tache(Tache* t);
+    void placer_evenement(Event* e);
     void deplacer_tache(const Tache* t);
     void charger_agenda();
     void sauvegarder_agenda();
@@ -116,10 +119,10 @@ private slots:
 public slots:
 };
 
-class ItemTache : public QGraphicsItem {
-    Tache* t;
+class ItemEvent : public QGraphicsItem {
+    Event* e;
 public:
-    ItemTache(Tache* tache, QGraphicsItem* parent = NULL):QGraphicsItem(parent),t(tache) {
+    ItemEvent(Event* event, QGraphicsItem* parent = NULL):QGraphicsItem(parent),e(event) {
         setFlag(QGraphicsItem::ItemIsFocusable);
     }
     //fonctions virtuelles pures de QGraphicsItem à implémenter

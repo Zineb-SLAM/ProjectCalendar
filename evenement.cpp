@@ -8,3 +8,14 @@
 #include "evenement.h"
 
 using namespace TIME;
+
+const QString& Activite::toString() const {
+    QString str;
+    QTextStream f;
+    f << getId() << endl;
+    f << getTitre() << endl;
+    getDuree().afficher(f);
+    f << getLieu() << endl;
+    f >> str;
+    return str;
+}

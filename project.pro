@@ -22,6 +22,7 @@ SOURCES += main.cpp\
     evenement.cpp \
     agendawindow.cpp \
     programmation.cpp \
+    customscene.cpp \
     projetwindow.cpp \
     splitter.cpp
 
@@ -34,6 +35,7 @@ HEADERS  += \
     evenement.h \
     agendawindow.h \
     programmation.h \
+    customscene.h \
     projetwindow.h \
     splitter.h
 

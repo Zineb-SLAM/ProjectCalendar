@@ -7,7 +7,7 @@ NewProject::NewProject(QWidget *parent) {
     duration = new QTimeEdit(this);
     disponibility = new QDateEdit(this);
     deadline = new QDateEdit(this);
-    tasks = new QListView(this);
+    tasks = new QListWidget(this);
 
     formLayout = new QFormLayout(this);
     formLayout->addRow("Id", identifier);
@@ -31,7 +31,9 @@ NewTask::NewTask(QWidget* parent) {
     disponibility = new QDateEdit(this);
     deadline = new QDateEdit(this);
     taskType = new QComboBox(this);
-    predecessors = new QListView(this);
+    taskType->addItem("unitaire");
+    taskType->addItem("composite");
+    predecessors = new QListWidget(this);
 
     formLayout = new QFormLayout(this);
     formLayout->addRow("Id", id);
@@ -51,6 +53,8 @@ NewTask::NewTask(QWidget* parent) {
 NewActivity::NewActivity(QWidget* parent) {
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     type = new QComboBox(this);
+    type->addItem("RDV");
+    type->addItem("réunion");
     id = new QLineEdit(this);
     title = new QLineEdit(this);
     date = new QDateEdit(this);
@@ -73,7 +77,7 @@ NewActivity::NewActivity(QWidget* parent) {
 
 NewProgrammation::NewProgrammation(QWidget* parent) {
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-    events = new QListView(this);
+    events = new QListWidget(this);
     schedule = new QTimeEdit(this);
     date = new QDateEdit(this);
 

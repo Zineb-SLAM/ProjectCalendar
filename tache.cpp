@@ -86,7 +86,7 @@ void TacheU::setNonPreemptive() {
     preemptive = false;
 }
 
-QString TacheU::toString() const {
+const QString &TacheU::toString() const {
     QTextStream f;
     QString str;
     f<<"**Tache Unitaire** \n";
@@ -98,7 +98,7 @@ QString TacheU::toString() const {
 
 //******************************************************************************************
 
-QString TacheC::toString() const {
+const QString &TacheC::toString() const {
     QTextStream f;
     QString str;
     f<<"**Tache Composite** \n";

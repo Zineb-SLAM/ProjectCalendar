@@ -1,10 +1,14 @@
 #include <QApplication>
 #include "agendawindow.h"
-#include"splitter.h"
+#include "splitter.h"
 
 using namespace std;
 
+<<<<<<< HEAD
 int main(int argc, char *argv[])
+=======
+/*int main()
+>>>>>>> origin/master
 {
 
 
@@ -88,14 +92,20 @@ int main(int argc, char *argv[])
     pM.ajouterProgrammation(temp2, Date(10,6,2015), Horaire(18,30));
 
 
+<<<<<<< HEAD
 return 0;
 }
+=======
+    return 0;
+}*/
+>>>>>>> origin/master
 
 
-/*int main(int argc, char* argv[]) {
+int main(int argc, char* argv[]) {
     QApplication app(argc,argv);
     AgendaWindow fenetre;
     fenetre.show();
+<<<<<<< HEAD
      return app.exec();
     //*******************************************Liberer**********************************************************************
      projetM.removeProject("p1");
@@ -105,6 +115,10 @@ return 0;
 
 
 }*/
+=======
+    return app.exec();
+}
+>>>>>>> origin/master
 
 /*int main(int argc, char *argv[])
 {
