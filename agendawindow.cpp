@@ -160,11 +160,11 @@ void AgendaWindow::changer_semaine(const unsigned int& s) {
 
 }
 
-void AgendaWindow::placer_tache(const Tache& t) {
+void AgendaWindow::placer_tache(const Tache* t) {
 
 }
 
-void AgendaWindow::deplacer_tache(const Tache& t) {
+void AgendaWindow::deplacer_tache(const Tache* t) {
 
 }
 
@@ -218,5 +218,28 @@ void ItemTache::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 void ItemTache::keyPressEvent(QKeyEvent *event) {
     if(event->key() == Qt::Key_Left) {
         afficher_proprietes(this->t);
+    }
+}
+
+void AgendaWindow::TreeViewProjet()
+{
+    QStandardItem* parent = projectsTreeV->invisibleRootItem();
+
+    for (std::vector<Projet*>::const_iterator it =PM.getInstance().getTab().begin() ; it!= PM.getInstance().getTab().end() ;it++ )
+    {
+        QStandardItem* item = new QStandardItem((*it)->getId());
+        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+        parent->appendRow(item);
+
+        Projet* p = (*it);
+
+        for (std::vector<Tache*>::const_iterator itp = p->GetTabProjet().begin(); itp != p->GetTabProjet().end() ;itp++)
+        {
+            QStandardItem* itemp = new QStandardItem((*itp)->getId());
+            itemp->setFlags(itemp->flags() & ~Qt::ItemIsEditable);
+            itemp->appendRow(itemp);
+
+
+        }
     }
 }

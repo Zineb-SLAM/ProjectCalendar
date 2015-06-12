@@ -43,6 +43,7 @@ public:
     const QString& getTitre() const { return titre; }
     const Date& getDisponibilite() const { return disponibilite; }
     const Date& getEcheance() const { return echeance; }
+    tabtaches& GetTabProjet(){ return tachesProjet;}
     const bool& isTermine() const { return termine; }
     const Tache& getTache(const QString& id) const;
     bool isTacheDansProjet(Tache* t);
@@ -75,6 +76,7 @@ public:
     static void libererInstance();
     bool ProjetExists(const QString& id); // retourne TRUE si le projet existe déjà
     Projet* getProjet(const QString& id);
+    std::vector<Projet*>& getTab(){return projets;}
     void creerProjet(const QString &id, const QString& t, const Date& disp, const Date& ech); // crée le projet et l'ajoute à la liste des projets existants
     void ajouterTacheAProjet(Projet& p, Tache* t);
     void removeProject(const QString& id);

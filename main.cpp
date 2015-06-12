@@ -1,5 +1,6 @@
 #include <QApplication>
 #include "agendawindow.h"
+#include"splitter.h"
 
 using namespace std;
 
@@ -29,9 +30,19 @@ using namespace std;
 }*/
 
 
-int main(int argc, char* argv[]) {
+/*int main(int argc, char* argv[]) {
     QApplication app(argc,argv);
     AgendaWindow fenetre;
     fenetre.show();
+     return app.exec();
+
+
+}*/
+
+int main(int argc, char *argv[])
+{
+    QApplication app(argc, argv);
+    splitter w;
+    w.show();
     return app.exec();
 }

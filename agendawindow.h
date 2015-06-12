@@ -7,6 +7,7 @@
 #include "tache.h"
 #include "projet.h"
 
+class QMainWindow;
 class AgendaWindow : public QMainWindow
 {
     Q_OBJECT
@@ -87,6 +88,9 @@ class AgendaWindow : public QMainWindow
     QSpinBox *choix_semaine;
     QHBoxLayout *semaine;
 
+    //treeViewView
+    QStandardItemModel* projectsTreeV;
+
     void createActions();
     void createMenus();
 
@@ -95,14 +99,15 @@ public:
 signals:
 private slots:
     void changer_semaine(const unsigned int& s);
-    void placer_tache(const Tache& t);
-    void deplacer_tache(const Tache& t);
+    void placer_tache(const Tache* t);
+    void deplacer_tache(const Tache* t);
     void charger_agenda();
     void sauvegarder_agenda();
     void demander_programmer();
     void ajouter_projet();
     void ajouter_tache();
     void afficher();
+    void TreeViewProjet();
 public slots:
 };
 
