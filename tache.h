@@ -47,7 +47,7 @@ public:
     virtual const Duree& getDuree() const { return duree; }
     const Date getDisponibilite() const { return disponibilite; }
     const Date getEcheance() const { return echeance;}
-    virtual const QString &toString() const=0;
+    virtual const QString toString() const=0;
     virtual bool getTypeTache()=0;
 
     
@@ -98,7 +98,7 @@ public:
     const Duree& getDuree() const { return duree; }
     const QString& getTitre() const { return titre; }
     bool getTypeTache(){ return true;}
-    const QString& toString() const;
+    const QString toString() const;
 };
 
 //******************************************************************************************
@@ -117,7 +117,7 @@ class TacheC : public Tache {
     { tachescomp.reserve(10); }
     template <class T> void addTasktoC(const T& t) { tachescomp.push_back(t); }
 public:
-    const QString& toString() const;
+    const QString toString() const;
     vectcomp& getCTaches(){return tachescomp;}
    bool getTypeTache(){ return false;}
 };

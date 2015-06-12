@@ -60,6 +60,8 @@ NewActivity::NewActivity(QWidget* parent) {
     date = new QDateEdit(this);
     time = new QTimeEdit(this);
     duration = new QTimeEdit(this);
+    place = new QLineEdit(this);
+    people = new QLineEdit(this);
 
     formLayout = new QFormLayout(this);
     formLayout->addRow("Type", type);
@@ -68,6 +70,8 @@ NewActivity::NewActivity(QWidget* parent) {
     formLayout->addRow("Date", date);
     formLayout->addRow("Horaire", time);
     formLayout->addRow("Duree", duration);
+    formLayout->addRow("Lieu", place);
+    formLayout->addRow("Personne", people);
     formLayout->addWidget(buttonBox);
     setLayout(formLayout);
 

@@ -9,7 +9,7 @@
 
 using namespace TIME;
 
-const QString& Activite::toString() const {
+const QString Activite::toString() const {
     QString str;
     QTextStream f;
     f << getId() << endl;

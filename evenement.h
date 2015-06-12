@@ -22,7 +22,7 @@ public:
     virtual const QString& getId() const=0;
     virtual const Duree& getDuree() const=0;
     virtual const QString& getTitre() const=0;
-    virtual const QString& toString() const=0;
+    virtual const QString toString() const=0;
 };
 
 class Activite: public Event
@@ -42,7 +42,7 @@ public:
     void setLieu(const QString& l) { this->lieu =l; }
     //virtual void Afficher_Activite () const =0;
     bool  cestunetache() const { return false; }
-    const QString& toString() const;
+    const QString toString() const;
 };
 
 class Rdv : public Activite

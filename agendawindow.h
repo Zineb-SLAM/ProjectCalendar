@@ -6,7 +6,6 @@
 #include "programmation.h"
 #include "customscene.h"
 
-class QMainWindow;
 class AgendaWindow : public QMainWindow
 {
     Q_OBJECT
@@ -105,7 +104,8 @@ signals:
 private slots:
     void changer_semaine(const unsigned int& s);
     //void placer_tache(Tache* t);
-    void placer_evenement(Event* e);
+    void placer_evenement(Activite* a);
+    void placer_evenement(TacheU* t);
     void deplacer_tache(const Tache* t);
     void charger_agenda();
     void sauvegarder_agenda();
@@ -119,10 +119,22 @@ private slots:
 public slots:
 };
 
-class ItemEvent : public QGraphicsItem {
-    Event* e;
+class ItemActivite : public QGraphicsItem {
+    Activite* a;
 public:
-    ItemEvent(Event* event, QGraphicsItem* parent = NULL):QGraphicsItem(parent),e(event) {
+    ItemActivite(Activite* act, QGraphicsItem* parent = NULL):QGraphicsItem(parent),a(act) {
+        setFlag(QGraphicsItem::ItemIsFocusable);
+    }
+    //fonctions virtuelles pures de QGraphicsItem à implémenter
+    QRectF boundingRect() const;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    virtual void keyPressEvent(QKeyEvent *event);
+};
+
+class ItemTache : public QGraphicsItem {
+    Tache* t;
+public:
+    ItemTache(Tache* tache, QGraphicsItem* parent = NULL):QGraphicsItem(parent),t(tache) {
         setFlag(QGraphicsItem::ItemIsFocusable);
     }
     //fonctions virtuelles pures de QGraphicsItem à implémenter

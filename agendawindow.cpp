@@ -184,12 +184,17 @@ void AgendaWindow::changer_semaine(const unsigned int& s) {
     tache->setFocus();
 }*/
 
-void AgendaWindow::placer_evenement(Event* e) {
-    ItemEvent *event = new ItemEvent(e);
-    scene->addItem(event);
-    event->setFocus();
+void AgendaWindow::placer_evenement(Activite* a) {
+    ItemActivite *activite = new ItemActivite(a);
+    scene->addItem(activite);
+    activite->setFocus();
 }
 
+void AgendaWindow::placer_evenement(TacheU *t) {
+    ItemTache *tache = new ItemTache(t);
+    scene->addItem(tache);
+    tache->setFocus();
+}
 
 void AgendaWindow::deplacer_tache(const Tache *t) {
 
@@ -224,6 +229,7 @@ void AgendaWindow::demander_programmer() {
     } catch (CalendarException ce) {
         QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);
       }
+    catch (std::exception e) { QMessageBox::information(0,"Erreur",e.what(),QMessageBox::Ok);}
 }
 
 void AgendaWindow::ajouter_projet() {
@@ -301,25 +307,47 @@ void AgendaWindow::afficher() {
     //insérer toutes les taches existantes dans l'agenda
 }
 
-void afficher_proprietes(Event* e) {
+void afficher_proprietes(Activite *a) {
     QMessageBox message;
     message.setText("Propriétés de l'evenement");
-    message.setInformativeText(e->toString());
+    message.setInformativeText(a->toString());
     message.exec();
 }
 
-QRectF ItemEvent::boundingRect() const {
+void afficher_proprietes(Tache* t) {
+    QMessageBox message;
+    message.setText("Propriétés de l'evenement");
+    message.setInformativeText(t->toString());
+    message.exec();
+}
+
+QRectF ItemActivite::boundingRect() const {
     return QRectF(-15,-7,30,14);
 }
 
-void ItemEvent::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
+void ItemActivite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
     painter->drawRoundedRect(-15,-7,30,14,5,5);
-    painter->drawText(boundingRect(), Qt::AlignCenter, e->getTitre());
+    painter->drawText(boundingRect(), Qt::AlignCenter, a->getTitre());
 }
 
-void ItemEvent::keyPressEvent(QKeyEvent *event) {
+void ItemActivite::keyPressEvent(QKeyEvent *event) {
     if(event->key() == Qt::Key_Left) {
-        afficher_proprietes(this->e);
+        afficher_proprietes(this->a);
+    }
+}
+
+QRectF ItemTache::boundingRect() const {
+    return QRectF(-15,-7,30,14);
+}
+
+void ItemTache::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
+    painter->drawRoundedRect(-15,-7,30,14,5,5);
+    painter->drawText(boundingRect(), Qt::AlignCenter, t->getTitre());
+}
+
+void ItemTache::keyPressEvent(QKeyEvent *event) {
+    if(event->key() == Qt::Key_Left) {
+        afficher_proprietes(this->t);
     }
 }
 
