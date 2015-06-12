@@ -233,12 +233,24 @@ void AgendaWindow::demander_programmer() {
 }
 
 void AgendaWindow::ajouter_projet() {
+    QString *id;
+    QString *title;
+    Date *disponibility;
+    Date *deadline;
     NewProject *fenetre_projet = new NewProject(this);
-    for(std::vector<Tache *>::iterator it = TM.getTabTaches().begin(); it != TM.getTabTaches().end(); it++) {
-        new QListWidgetItem((*it)->getTitre(), fenetre_projet->getTasks());
+    if(fenetre_projet->exec()) {
+        id = new QString(fenetre_projet->getId().text());
+        title = new QString(fenetre_projet->getTitle().text());
+        disponibility = new Date(fenetre_projet->getDisponibility().date().day(), fenetre_projet->getDisponibility().date().month(), fenetre_projet->getDisponibility().date().year());
+        deadline = new Date(fenetre_projet->getDeadline().date().day(), fenetre_projet->getDeadline().date().month(), fenetre_projet->getDeadline().date().year());
     }
+    try {
+        PM.creerProjet(*id,*title,*disponibility,*deadline);
+    } catch (CalendarException ce) {
+        QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);
+        }
+    this->liste_projets->setHtml(PM.afficherTitreProjets()); //mise à jour du texte du dock widget des tâches à programmer
 
-    fenetre_projet->exec();
 }
 
 void AgendaWindow::ajouter_tache() {
@@ -249,7 +261,6 @@ void AgendaWindow::ajouter_tache() {
     Date *deadl;
     QString *t;
     NewTask *fenetre_tache = new NewTask(this);
-    Tache* tache;
     try {
         if(fenetre_tache->exec()) {
             id = new QString(fenetre_tache->getId().text());
@@ -262,9 +273,10 @@ void AgendaWindow::ajouter_tache() {
             t = new QString(fenetre_tache->getType().currentText());
         }
         if(t == QString("unitaire"))
-            tache = &(TM.ajouterTacheU(*id,*title,*duration,*dispo,*deadl));
+            TM.ajouterTacheU(*id,*title,*duration,*dispo,*deadl);
         else
-            tache = &(TM.ajouterTacheC(*id,*title,*duration,*dispo,*deadl));
+            TM.ajouterTacheC(*id,*title,*duration,*dispo,*deadl);
+        this->liste_taches->setHtml(TM.afficherTachesAProgrammer()); //mise à jour du texte du dock widget des tâches à programmer
     } catch (CalendarException ce) {
         QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);
         }

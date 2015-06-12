@@ -8,7 +8,6 @@
 #include "timing.h"
 #include "programmation.h"
 #include "projet.h"
-#include "tache.h"
 #include "evenement.h"
 
 
@@ -17,7 +16,6 @@ class NewProject: public QDialog {
     QDialogButtonBox* buttonBox;
     QLineEdit* identifier;
     QLineEdit* title;
-    QTimeEdit* duration;
     QDateEdit* disponibility;
     QDateEdit* deadline;
     QListWidget* tasks;
@@ -28,14 +26,11 @@ public:
     NewProject(QWidget* parent = 0);
     const QLineEdit& getId() const { return *identifier; }
     const QLineEdit& getTitle() const { return *title; }
-    const QTimeEdit& getDuration() const { return *duration; }
     const QDateEdit& getDisponibility() const { return *disponibility; }
     const QDateEdit& getDeadline() const { return *deadline; }
     QListWidget* getTasks() { return tasks; }
 public slots:
     //void addNewProject();
-
-
 };
 
 class NewTask : public QDialog {

@@ -45,7 +45,7 @@ public:
     const Date& getEcheance() const { return echeance; }
     tabtaches& GetTabProjet(){ return tachesProjet;}
     const bool& isTermine() const { return termine; }
-    const Tache& getTache(const QString& id) const;
+    const Tache* getTache(const QString& id) const;
     bool isTacheDansProjet(Tache* t);
     void afficher(QTextStream& f) const;
 };

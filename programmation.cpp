@@ -42,6 +42,7 @@ Programmation* ProgrammationManager::trouverProgrammation(const Event* e)
     return 0;
 }
 
+
 void ProgrammationManager::ajouterProgrammation(TacheU* t, const Date& d, const Horaire& h)
 {
     if(t->estProgrammee()) throw CalendarException ("Cette Tache est deja Programmee");

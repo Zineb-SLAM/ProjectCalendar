@@ -32,12 +32,12 @@ void Projet::addTache(Tache* t) {
     tachesProjet.push_back(t);
 }
 
-const Tache& Projet::getTache(const QString& id) const {
+const Tache *Projet::getTache(const QString& id) const {
     tabtaches::const_iterator it = tachesProjet.begin();
     while (it != tachesProjet.end() && (*it)->getId() != id)
         it++;
     if (it != tachesProjet.end())
-        return **it;
+        return *it;
     throw CalendarException("La tache n'appartient pas au projet");
 }
 
@@ -234,8 +234,11 @@ void ProjetManager::afficherProjets(QTextStream& fout) const {
 
 const QString& ProjetManager::afficherTitreProjets() const {
     QString* s = new QString(" ");
-    for(tabprojets::const_iterator it = projets.begin(); it != projets.end(); it++)
+    for(tabprojets::const_iterator it = projets.begin(); it != projets.end(); it++) {
+        s->append(" *** ");
         s->append((*it)->titre);
+        s->append(" *** ");
+    }
     return *s;
 }
 

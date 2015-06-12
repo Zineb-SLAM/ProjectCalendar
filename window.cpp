@@ -1,18 +1,22 @@
 #include "window.h"
+#include "tache.h"
 
 NewProject::NewProject(QWidget *parent) {
+    TacheManager& TM = TacheManager::getInstance();
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     identifier = new QLineEdit(this);
     title = new QLineEdit(this);
-    duration = new QTimeEdit(this);
     disponibility = new QDateEdit(this);
     deadline = new QDateEdit(this);
     tasks = new QListWidget(this);
 
+    for(TacheManager::tabtaches::iterator it = TM.getTabTaches().begin(); it != TM.getTabTaches().end(); it++) {
+        new QListWidgetItem((*it)->getTitre(), getTasks());
+    }
+
     formLayout = new QFormLayout(this);
     formLayout->addRow("Id", identifier);
     formLayout->addRow("Titre", title);
-    formLayout->addRow("Duree", duration);
     formLayout->addRow("Disponibilite", disponibility);
     formLayout->addRow("Echeance", deadline);
     formLayout->addRow("Taches", tasks);
