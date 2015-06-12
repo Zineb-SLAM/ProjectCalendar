@@ -72,11 +72,7 @@ class TacheU : public Tache , public Event {
     void setPreemptive() { preemptive = true;}
     inline void setNonPreemptive();
     TacheU(const QString& id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, const bool& pre=false, const bool& prog=false):
-<<<<<<< HEAD
-    Tache(id,t,dur,dispo,deadline), Event(prog), preemptive(pre),progression(0)
-=======
     Tache(id,t,dur,dispo,deadline), Event(prog), preemptive(pre), progression(0)
->>>>>>> origin/master
     {
         if ((preemptive == false) && (dur.getDureeEnHeures() > 12))
         throw CalendarException("Erreur tache unitaire : une tache non preemptive ne peut pas avoir une durée supérieure à 12h");

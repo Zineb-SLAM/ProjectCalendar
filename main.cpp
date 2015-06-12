@@ -4,11 +4,8 @@
 
 using namespace std;
 
-<<<<<<< HEAD
-int main(int argc, char *argv[])
-=======
+
 /*int main()
->>>>>>> origin/master
 {
 
 
@@ -79,7 +76,7 @@ int main(int argc, char *argv[])
 
     }
     catch(CalendarException e) { stdoutQt << "erreur" << e.getInfo(); }
-    catch(TimeException t) { stdoutQt << "erreur TIME" << t.GetInfo(); }*/
+    catch(TimeException t) { stdoutQt << "erreur TIME" << t.GetInfo(); }
 
 
     //*******************************************Programmation**********************************************************************
@@ -90,40 +87,27 @@ int main(int argc, char *argv[])
     pM.ajouterProgrammation(a,Date(02,01,2015),Horaire(2,40));
     pM.ajouterProgrammation(temp, Date(7,6,2015), Horaire(3,20));
     pM.ajouterProgrammation(temp2, Date(10,6,2015), Horaire(18,30));
-
-
-<<<<<<< HEAD
-return 0;
-}
-=======
-    return 0;
-}*/
->>>>>>> origin/master
-
-
-int main(int argc, char* argv[]) {
-   try {
-    QApplication app(argc,argv);
-    AgendaWindow fenetre;
-    fenetre.show();
-<<<<<<< HEAD
-     return app.exec();
     //*******************************************Liberer**********************************************************************
      projetM.removeProject("p1");
     projetM.libererInstance();
     tacheM.libererInstance();
     pM.libererInstance();
 
-
+return 0;
 }*/
-=======
-    return app.exec();
+
+int main(int argc, char* argv[]) {
+   try {
+    QApplication app(argc,argv);
+    AgendaWindow fenetre;
+    fenetre.show();
+     return app.exec();
     } catch (CalendarException ce) {
         QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);
       }
     catch (std::exception e) { QMessageBox::information(0,"Erreur",e.what(),QMessageBox::Ok);}
 }
->>>>>>> origin/master
+
 
 /*int main(int argc, char *argv[])
 {
