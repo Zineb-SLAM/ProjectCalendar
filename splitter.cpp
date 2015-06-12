@@ -19,17 +19,11 @@ splitter::splitter (QWidget* parent, Qt::WindowFlags flags): QDialog(parent,flag
 {
     QApplication::setStyle("plastique");
 
-    QListView* listView = new QListView;//widget1
+    QListWidget* listView = new QListWidget;//widget1
     QTableView* tableView = new QTableView;//widget2
 
-    widget1 = new QWidget;
+    widget1 = new QListWidget;
     QHBoxLayout* w1Layout = new QHBoxLayout;
-    button = new QPushButton("Show");
-    w1Layout->addWidget(listView);
-    w1Layout->addWidget(button);
-    widget1->setLayout(w1Layout);
-
-    connect(button, SIGNAL(clicked()), this, SLOT(showTaks(const QString& id)));
 
     widget2 = new QWidget;
     QHBoxLayout* w2Layout = new QHBoxLayout;
@@ -52,9 +46,13 @@ void splitter::showProjects()
 {
     for (std::vector<Projet*>::iterator it = PM.getTab().begin(); it!=PM.getTab().end(); ++it)
     {
-
-
+        QListWidgetItem *item = new QListWidgetItem();
+         item->setData(Qt::DisplayRole, (*it)->getId());// Ceci est le titre
+         item->setData(Qt::UserRole + 1, (*it)->getTitre());// Ceci est la description
+         widget1->addItem(item);
     }
+
+      widget1->showMaximized();
 }
 
 

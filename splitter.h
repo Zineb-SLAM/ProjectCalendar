@@ -6,6 +6,10 @@
 #include "timing.h"
 #include "tache.h"
 #include "projet.h"
+#include<QListView>
+#include<QListWidget>
+#include<QWidget>
+
 namespace Ui
 {
 class splitter;
@@ -15,11 +19,8 @@ class splitter : public QDialog
 {
     Q_OBJECT
      ProjetManager& PM;
-
-    QWidget* widget1;
-    QWidget* widget2;
-   QPushButton* button;
-
+     QListWidget* widget1;
+     QWidget* widget2;
 
 public:
      splitter(QWidget *parent = 0, Qt::WindowFlags flags=0);
@@ -37,6 +38,8 @@ signals:
 
 
 
+
+
 class Unitary: public QDialog
 {
     QWidget* widget;
@@ -49,6 +52,7 @@ private:
    void TaskInfo(TacheU *t);
 
 };
+
 
 
 
