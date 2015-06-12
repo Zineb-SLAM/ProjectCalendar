@@ -129,6 +129,7 @@ class TacheManager
     /*! \class TacheManager
      \brief Classe permettant de créer, modifier et détruire des tâches
      */
+    friend class NewProject;
     typedef std::vector<Tache*> tabtaches;
     struct Handler
     {

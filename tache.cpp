@@ -305,8 +305,11 @@ const QString& TacheManager::afficherTachesAProgrammer() const {
     for(tabtaches::const_iterator it = taches.begin(); it != taches.end(); it++) {
         TacheU* tu = dynamic_cast<TacheU *>(*it);
         if (!(tu->estProgrammee())) {
+                s->append(" *** ");
                 s->append(tu->getTitre());
+                s->append(" ");
                 s->append(tu->getId());
+                s->append(" *** ");
             }
     }
     return *s;
