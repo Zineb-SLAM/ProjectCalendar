@@ -104,7 +104,8 @@ public:
 signals:
 private slots:
     void changer_semaine(const unsigned int& s);
-    void placer_tache(const Tache* t);
+    //void placer_tache(Tache* t);
+    void placer_evenement(Event* e);
     void deplacer_tache(const Tache* t);
     void charger_agenda();
     void sauvegarder_agenda();
@@ -118,10 +119,10 @@ private slots:
 public slots:
 };
 
-class ItemTache : public QGraphicsItem {
-    Tache* t;
+class ItemEvent : public QGraphicsItem {
+    Event* e;
 public:
-    ItemTache(Tache* tache, QGraphicsItem* parent = NULL):QGraphicsItem(parent),t(tache) {
+    ItemEvent(Event* event, QGraphicsItem* parent = NULL):QGraphicsItem(parent),e(event) {
         setFlag(QGraphicsItem::ItemIsFocusable);
     }
     //fonctions virtuelles pures de QGraphicsItem à implémenter

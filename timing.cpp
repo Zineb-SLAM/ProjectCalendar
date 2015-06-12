@@ -120,6 +120,7 @@ QTextStream& operator<<(QTextStream& f, const Duree& d)
 { d.afficher(f);
     return f;
 }
+
 QTextStream& operator>>(QTextStream& flot, Duree& duree){
     unsigned int h,m;
     bool ok=true;
