@@ -122,7 +122,7 @@ public slots:
 class ItemActivite : public QGraphicsItem {
     Activite* a;
 public:
-    ItemActivite(Activite* act, QGraphicsItem* parent = NULL):QGraphicsItem(parent),a(act) {
+    ItemActivite(Activite* act, QGraphicsItem* parent = 0):QGraphicsItem(parent), a(act) {
         setFlag(QGraphicsItem::ItemIsFocusable);
     }
     //fonctions virtuelles pures de QGraphicsItem à implémenter
@@ -134,7 +134,7 @@ public:
 class ItemTache : public QGraphicsItem {
     Tache* t;
 public:
-    ItemTache(Tache* tache, QGraphicsItem* parent = NULL):QGraphicsItem(parent),t(tache) {
+    ItemTache(Tache* tache, QGraphicsItem* parent = 0):QGraphicsItem(parent), t(tache) {
         setFlag(QGraphicsItem::ItemIsFocusable);
     }
     //fonctions virtuelles pures de QGraphicsItem à implémenter

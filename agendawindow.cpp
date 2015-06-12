@@ -186,6 +186,13 @@ void AgendaWindow::changer_semaine(const unsigned int& s) {
 
 void AgendaWindow::placer_evenement(Activite* a) {
     ItemActivite *activite = new ItemActivite(a);
+    int jour = 0; //lundi : 0, mardi : 1...
+    qreal x = jour * 100;
+    unsigned int debutH = ProgM.trouverProgrammation(a)->getHoraire().getHeure();
+    unsigned int debutM = ProgM.trouverProgrammation(a)->getHoraire().getMinute();
+    int nbMinutes = (60 * debutH) + debutM;
+    qreal y = (nbMinutes * -25) / 60;
+    activite->setPos(x,y);
     scene->addItem(activite);
     activite->setFocus();
 }
@@ -193,6 +200,12 @@ void AgendaWindow::placer_evenement(Activite* a) {
 void AgendaWindow::placer_evenement(TacheU *t) {
     ItemTache *tache = new ItemTache(t);
     scene->addItem(tache);
+    int jour = 0; //lundi : 0, mardi : 1...
+    qreal x = jour * 100;
+    unsigned int debutH = ProgM.trouverProgrammation(t)->getHoraire().getHeure();
+    unsigned int debutM = ProgM.trouverProgrammation(t)->getHoraire().getMinute();
+    qreal y = (60 * debutH) + debutM;
+    tache->setPos(x,y);
     tache->setFocus();
 }
 
@@ -334,11 +347,15 @@ void afficher_proprietes(Tache* t) {
 }
 
 QRectF ItemActivite::boundingRect() const {
-    return QRectF(-15,-7,30,14);
+    int minutes = a->getDuree().getDureeEnMinutes();
+    qreal hauteur = minutes * (25/60);
+    return QRectF(-50,-(hauteur/2),100,hauteur);
 }
 
 void ItemActivite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-    painter->drawRoundedRect(-15,-7,30,14,5,5);
+    int minutes = a->getDuree().getDureeEnMinutes();
+    qreal hauteur = minutes * (25/60);
+    painter->drawRoundedRect(-50,-(hauteur/2),100,hauteur,5,5);
     painter->drawText(boundingRect(), Qt::AlignCenter, a->getTitre());
 }
 
@@ -349,11 +366,15 @@ void ItemActivite::keyPressEvent(QKeyEvent *event) {
 }
 
 QRectF ItemTache::boundingRect() const {
-    return QRectF(-15,-7,30,14);
+    int minutes = t->getDuree().getDureeEnMinutes();
+    qreal hauteur = minutes * (25/60);
+    return QRectF(-50,-(hauteur/2),100,hauteur);
 }
 
 void ItemTache::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-    painter->drawRoundedRect(-15,-7,30,14,5,5);
+    int minutes = t->getDuree().getDureeEnMinutes();
+    qreal hauteur = minutes * (25/60);
+    painter->drawRoundedRect(-50,-(hauteur/2),100,hauteur,5,5);
     painter->drawText(boundingRect(), Qt::AlignCenter, t->getTitre());
 }
 

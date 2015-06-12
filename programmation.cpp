@@ -240,6 +240,7 @@ void ProgrammationManager::ajouterProgrammation(TacheU* t, const Date& d, const 
 void ProgrammationManager::ajouterProgrammation(Activite* a, const Date& d, const Horaire& h)
 {
     Programmation* newt = new Programmation(a,d,h);
+    a->setProgrammee();
     addprog(newt);
 }
 
