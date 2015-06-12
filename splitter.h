@@ -28,8 +28,9 @@ public:
 private:
     void showProjects();
     void showTasks(Tache *t);
+
 signals:
-private slots:
+        private slots:
 
 
 };

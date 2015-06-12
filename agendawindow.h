@@ -110,11 +110,9 @@ private slots:
     void ajouter_projet();
     void ajouter_tache();
     void afficher();
-<<<<<<< HEAD
     void TreeViewProjet();
-=======
     void ajouter_activite();
->>>>>>> origin/master
+
 public slots:
 };
 

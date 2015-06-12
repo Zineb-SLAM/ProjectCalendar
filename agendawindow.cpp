@@ -179,11 +179,9 @@ void AgendaWindow::placer_tache(const Tache* t) {
 
 }
 
-<<<<<<< HEAD
-void AgendaWindow::deplacer_tache(const Tache* t) {
-=======
+
 void AgendaWindow::deplacer_tache(const Tache *t) {
->>>>>>> origin/master
+
 
 }
 
