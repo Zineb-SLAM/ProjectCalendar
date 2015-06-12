@@ -42,7 +42,7 @@ Programmation* ProgrammationManager::trouverProgrammation(const Event* e)
     return 0;
 }
 
-void ProgrammationManager::ajouterProgrammation (TacheU* t, const Date& d, const Horaire& h)
+void ProgrammationManager::ajouterProgrammation(TacheU* t, const Date& d, const Horaire& h)
 {
     if(t->estProgrammee()) throw CalendarException ("Cette Tache est deja Programmee");
     /*************Tache non Preemptive***********/
@@ -241,9 +241,9 @@ void ProgrammationManager::ajouterProgrammation (TacheU* t, const Date& d, const
 
  }
 
-void ProgrammationManager::ajouterProgrammation (const Activite* e, const Date& d, const Horaire& h)
+void ProgrammationManager::ajouterProgrammation(Activite* a, const Date& d, const Horaire& h)
 {
-    Programmation* newt = new Programmation(e,d,h);
+    Programmation* newt = new Programmation(a,d,h);
     addprog(newt);
 }
 
@@ -294,5 +294,4 @@ ProgrammationManager::~ProgrammationManager()
  addprog(new Programmation(*e.tabprogs[i]));
  return *this;
  }*/
-
 

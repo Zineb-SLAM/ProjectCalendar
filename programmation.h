@@ -50,21 +50,18 @@ class ProgrammationManager
 public:
     ProgrammationManager(){ tabprogs.reserve(10);};
     ~ProgrammationManager();
-    ProgrammationManager& getInstance();
-    void libererInstance();
+    static ProgrammationManager& getInstance();
+    static void libererInstance();
     Programmation* trouverProgrammation(const Event* t);
     Programmation* getProg(const QString& id_evt);
-    void ajouterProgrammation (const Activite* , const Date& d, const Horaire& h);
-    void ajouterProgrammation (TacheU* t, const Date& d, const Horaire& h);
+    void ajouterProgrammation(TacheU* t, const Date& d, const Horaire& h);
+    void ajouterProgrammation(Activite* a, const Date& d, const Horaire& h);
     void addprog(Programmation* p);
     QTextStream& afficher(QTextStream& f,const Event* t)
     {
        Programmation* a= trouverProgrammation(t);
       return a->afficher(f);
     }
-
-
-
 };
 
 

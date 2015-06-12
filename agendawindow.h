@@ -2,10 +2,8 @@
 #define AGENDAWINDOW_H
 #include<QMainWindow>
 #include <QtWidgets> //header qui contient les définitions de toutes les classes widgets
-#include "calendar.h"
-#include "timing.h"
-#include "tache.h"
 #include "projet.h"
+#include "programmation.h"
 
 class QMainWindow;
 class AgendaWindow : public QMainWindow
@@ -14,18 +12,22 @@ class AgendaWindow : public QMainWindow
 
     TacheManager& TM;
     ProjetManager& PM;
+    ProgrammationManager& ProgM;
 
     QWidget *widget_central;
     QVBoxLayout *general;
 
     //dock widget
     QDockWidget *projets;
-    QTextEdit *liste_projets;
+    QTextEdit *liste_projets; //liste des projets existants
+    QDockWidget *taches;
+    QTextEdit *liste_taches; //liste des tâches à programmer
 
     //menus
     QMenu *menu_options;
     QMenu *menu_tache;
     QMenu *menu_projet;
+    QMenu *menu_activite;
 
     //actions
     QAction *programmer_tache;
@@ -34,6 +36,7 @@ class AgendaWindow : public QMainWindow
     QAction *creer_projet;
     QAction *creer_tache;
     QAction *tout_afficher;
+    QAction *creer_activite;
 
     //couche jours
     QLabel *lundi;
@@ -107,7 +110,11 @@ private slots:
     void ajouter_projet();
     void ajouter_tache();
     void afficher();
+<<<<<<< HEAD
     void TreeViewProjet();
+=======
+    void ajouter_activite();
+>>>>>>> origin/master
 public slots:
 };
 
