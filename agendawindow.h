@@ -1,9 +1,10 @@
 #ifndef AGENDAWINDOW_H
 #define AGENDAWINDOW_H
-#include<QMainWindow>
+#include <QMainWindow>
 #include <QtWidgets> //header qui contient les définitions de toutes les classes widgets
 #include "projet.h"
 #include "programmation.h"
+#include "customscene.h"
 
 class AgendaWindow : public QMainWindow
 {
@@ -76,7 +77,7 @@ class AgendaWindow : public QMainWindow
     QVBoxLayout *heures;
 
     //couche emploi du temps
-    QGraphicsScene *scene;
+    CustomQGraphicsScene *scene;
     QGraphicsView *visu;
     QVBoxLayout *emploi_du_temps;
 

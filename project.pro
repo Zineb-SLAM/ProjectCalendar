@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     window.cpp \
     evenement.cpp \
     agendawindow.cpp \
-    programmation.cpp
+    programmation.cpp \
+    customscene.cpp
 
 HEADERS  += \
     calendar.h \
@@ -31,4 +32,5 @@ HEADERS  += \
     window.h \
     evenement.h \
     agendawindow.h \
-    programmation.h
+    programmation.h \
+    customscene.h

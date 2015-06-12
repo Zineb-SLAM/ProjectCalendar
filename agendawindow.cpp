@@ -80,7 +80,7 @@ AgendaWindow::AgendaWindow() :
     heures->addWidget(label_23h);
 
     //couche emploi du temps
-    scene = new QGraphicsScene(0,0,300,300,this);
+    scene = new CustomQGraphicsScene(this);
     visu = new QGraphicsView(scene, this);
     emploi_du_temps->addItem(jours);
     emploi_du_temps->addWidget(visu);
