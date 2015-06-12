@@ -95,8 +95,8 @@ void splitter::showTak(Tache * t)
         //faire appel a Task info de Unitary
 
     }
-
 }
+
 
 void Unitary::TaskInfo(TacheU *t)
 {

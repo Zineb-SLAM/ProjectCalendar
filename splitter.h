@@ -48,7 +48,7 @@ class Unitary: public QDialog
 
 public:
      Unitary(QDialog *parent = 0);
-         ~Unitary();
+      ~Unitary();
 
 private:
    void TaskInfo(TacheU *t);

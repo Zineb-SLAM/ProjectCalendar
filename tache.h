@@ -159,6 +159,7 @@ public:
     void save(const QString& f);
     void afficher(QTextStream& f) const { f << "****TacheManager*****" << endl; }
     Tache* getTache(const QString& id);
+    TacheU* getTacheU(const QString& id); // ne retourne que les taches Unitaires pour pouvoir les programmer
     void ajouterPrecedenceTache(const Tache& tAjout, const Tache& tPrecedente);
     QTextStream& afficherTaches(QTextStream& fout);
     const QString& afficherTachesAProgrammer() const;

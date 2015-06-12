@@ -278,6 +278,21 @@ Tache* TacheManager::getTache(const QString& id){
     }
     throw CalendarException("Tache inconnue");
 }
+TacheU* TacheManager::getTacheU(const QString& id)
+{
+    tabtaches::iterator it = taches.begin();
+    while(it!=taches.end() && (*it)->getId() != id && (!(*it)->getTypeTache())) {
+        it++;
+    }
+    if(it!=taches.end())
+    {
+        TacheU* tempU = dynamic_cast<TacheU*>(*it);
+        return tempU;
+    }
+    throw CalendarException("Tache Unitaire inexistante");
+
+}
+
 
 QTextStream& TacheManager::afficherTaches(QTextStream& fout){
     for(tabtaches::iterator it = taches.begin(); it != taches.end(); it++)
