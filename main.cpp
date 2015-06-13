@@ -1,6 +1,7 @@
 #include <QApplication>
 #include "agendawindow.h"
 #include "splitter.h"
+#include"show_info.h"
 
 using namespace std;
 
@@ -42,6 +43,11 @@ int main(int argc, char* argv[])
         projetM.ajouterTacheAProjet(p2, &t8);
         projetM.ajouterTacheAProjet(p2, &t1);
         projetM.ajouterTacheAProjet(p2, &t3);
+        tacheM.ajouterPrecedenceTache(&t1,&t2);
+        tacheM.ajouterPrecedenceTache(&t5,&t1);
+        tacheM.ajouterPrecedenceTache(&t2,&t3);
+        tacheM.ajouterPrecedenceTache(&t3,&t4);
+
 
     stdoutQt<<"Affichage des taches du projet 1"<<endl;
 
@@ -63,7 +69,8 @@ int main(int argc, char* argv[])
 
 
     QApplication app(argc, argv);
-    splitter w;
+    //splitter w;
+    TacheInfo w(&t1);
     w.show();
     return app.exec();
     /*projetM.removeProject("p1");
@@ -72,11 +79,6 @@ int main(int argc, char* argv[])
      projetM.libererInstance();*/
 }
 
-
-
-    //tacheM.ajouterPrecedenceTache(&t1,&t2);
-    //tacheM.ajouterPrecedenceTache(&t2,&t3);
-    //tacheM.ajouterPrecedenceTache(&t3,&t4);*./
 
     //*******************************************Liberer**********************************************************************
    /* projetM.removeProject("p1");

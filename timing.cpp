@@ -99,7 +99,7 @@ Date Date::fromString(QString s) {
 QString Date::toString() {
     QString s;
     //conversion Date en QString YYYY-MM-DD
-    return s;
+   return s;
 }
 
 

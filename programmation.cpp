@@ -69,33 +69,22 @@ void ProgrammationManager::ajouterProgrammation(TacheU* t, const Date& d, const 
                 if((prog->getDate()<d))
                  {
                          Horaire* test= prog->getHoraire().getFin((*it)->getDuree()); //mon horaire apres avoir fini ma date
-                        if(23>=test->getHeure()) //  meme apres avoir fini ma date (+duree) je reste dans le meme jour precedent
-                        {
-                           //rien
-                        }
-                        else if(23<test->getHeure()) //  mais si elle est a cheval sur deux jours (exemple elle commence a 23h et a une duree de 4h et donc finit a 3h (27h)
+                        //if(23>=test->getHeure()) //  meme apres avoir fini ma date (+duree) je reste dans le meme jour precedent
+                        if(23<test->getHeure()) //  mais si elle est a cheval sur deux jours (exemple elle commence a 23h et a une duree de 4h et donc finit a 3h (27h)
                         {
                           unsigned int diff_h= test->getHeure()-24; // je convertis 27h45 à 3h45
                           Horaire testh=Horaire(diff_h,test->getMinute());// je reconstruis mon nouveau horaire qui sera dans le jour d'apres
 
-                            if(testh<h || testh==h) // si la precedence finit a 3h et je commence ma tache a 4h c'est ok
-                                {
-                                    //rien
-                                 }
-                          else
+                            //if(testh<h || testh==h) // si la precedence finit a 3h et je commence ma tache a 4h c'est ok
+
+                          if(h<testh)
                               throw CalendarException("Votre Programmation ne respecte pas le principe de Precedence");
-
                         }
-
                    }
-
-                else if ((prog->getDate()==d) && (prog->getHoraire()<h) && ((*(prog->getHoraire().getFin((*it)->getDuree())))<h))// the first is obvious
+                else if ((prog->getDate()==d) && (h<(*(prog->getHoraire().getFin((*it)->getDuree())))) || (d<prog->getDate()))
                 {
-                    //rien
-                 }
-                else
                      throw CalendarException("Votre Programmation ne respecte pas le principe de Precedence");
-
+                 }
           }
        }
 
@@ -109,31 +98,18 @@ void ProgrammationManager::ajouterProgrammation(TacheU* t, const Date& d, const 
                 if(d<prog->getDate())
                  {
                          Horaire* test=h.getFin(duree); //mon horaire apres avoir fini ma date a ajouter doit rester dans le jour precedent
-                        if(23>=test->getHeure()) //  meme apres avoir fini ma date (+duree) je reste dans le meme jour precedent
-                        {
-                            //rien
-                        }
-                        else if(23<test->getHeure()) //  mais si elle est a cheval sur deux jours (exemple elle commence a 23h et a une duree de 4h et donc finit a 3h (27h)
+                        //if(23>=test->getHeure()) //  meme apres avoir fini ma date (+duree) je reste dans le meme jour precedent
+                        if(23<test->getHeure()) //  mais si elle est a cheval sur deux jours (exemple elle commence a 23h et a une duree de 4h et donc finit a 3h (27h)
                         {
                           unsigned int diff_h= test->getHeure()-24; // je convertis 27h45 à 3h45 (27-24=3)
                           Horaire testh=Horaire(diff_h,test->getMinute()); // je reconstruis mon nouveau horaire qui sera dans le jour d'apres
+                            if(prog->getHoraire()<testh) // je finis ma tache que j'ajoute après le debut de sa tache suivante
+                                   throw CalendarException("Votre Programmation ne respecte pas le principe de Precedence");
+                             }
+                       }
 
-                            if(testh<prog->getHoraire()) // je finis ma tache que j'ajoute après le debut de sa tache suivante
-                                {
-                                   //rien
-                                 }
-                         else
-                              throw CalendarException("Votre Programmation ne respecte pas le principe de Precedence");
+                else if ((prog->getDate()==d) && (prog->getHoraire()<(*h.getFin((duree)))) || (d<prog->getDate()))
 
-                        }
-
-                   }
-
-                else if ((prog->getDate()==d) && (h<prog->getHoraire()) && ((*h.getFin((duree)))<prog->getHoraire()))
-                {
-                   //rien
-                 }
-                else
                      throw CalendarException("Votre Programmation ne respecte pas le principe de Precedence");
 
           }
@@ -148,7 +124,6 @@ void ProgrammationManager::ajouterProgrammation(TacheU* t, const Date& d, const 
         t->setProgrammee();
         t->setProgression(100);
 
-
      // il faut parcourir tous ses taches precedentes et taches suivantes --> Ma tache doit etre après TOUTES ses dates precedentes et avant TOUTES ses taches suivantes
 
         /********************Precedente****************/
@@ -161,33 +136,19 @@ void ProgrammationManager::ajouterProgrammation(TacheU* t, const Date& d, const 
                 if((prog->getDate()<d))
                  {
                          Horaire* test= prog->getHoraire().getFin((*it)->getDuree()); //mon horaire apres avoir fini ma date
-                        if(23>=test->getHeure()) //  meme apres avoir fini ma date (+duree) je reste dans le meme jour precedent
-                        {
-                            //rien
-                        }
-                        else if(23<test->getHeure()) //  mais si elle est a cheval sur deux jours (exemple elle commence a 23h et a une duree de 4h et donc finit a 3h (27h)
+                        if(23<test->getHeure()) //  mais si elle est a cheval sur deux jours (exemple elle commence a 23h et a une duree de 4h et donc finit a 3h (27h)
                         {
                           unsigned int diff_h= test->getHeure()-24; // je convertis 27h45 à 3h45
                           Horaire testh=Horaire(diff_h,test->getMinute());// je reconstruis mon nouveau horaire qui sera dans le jour d'apres
 
-                            if(h<testh || testh==h) // si la precedence finit a 3h et je commence ma tache a 4h c'est ok
-                                {
-                                    //rien
-                                 }
-                          else
+                            if(testh<h) // si la precedence finit a 3h et je commence ma tache a 4h c'est ok
                               throw CalendarException("Votre Programmation ne respecte pas le principe de Precedence");
-
                         }
-
                    }
 
-                else if ((prog->getDate()==d) && (prog->getHoraire()<h) && ((*(prog->getHoraire().getFin((*it)->getDuree())))<h))
-                {
-                    //rien
-                 }
-                else
-                     throw CalendarException("Votre Programmation ne respecte pas le principe de Precedence");
+                else if ((prog->getDate()==d) && (h<(*(prog->getHoraire().getFin((*it)->getDuree())))) || d<prog->getDate())
 
+                   throw CalendarException("Votre Programmation ne respecte pas le principe de Precedence");
           }
        }
 
@@ -201,32 +162,18 @@ void ProgrammationManager::ajouterProgrammation(TacheU* t, const Date& d, const 
                 if(d<prog->getDate())
                  {
                          Horaire* test= h.getFin(t->getDuree()); //mon horaire apres avoir fini ma date a ajouter doit rester dans le jour precedent
-                        if(23>=test->getHeure()) //  meme apres avoir fini ma date (+duree) je reste dans le meme jour precedent
-                        {
-                            //rien
-                        }
-                        else if(23<test->getHeure()) //  mais si elle est a cheval sur deux jours (exemple elle commence a 23h et a une duree de 4h et donc finit a 3h (27h)
+                       if(23<test->getHeure()) //  mais si elle est a cheval sur deux jours (exemple elle commence a 23h et a une duree de 4h et donc finit a 3h (27h)
                         {
                           unsigned int diff_h= test->getHeure()-24; // je convertis 27h45 à 3h45 (27-24=3)
                           Horaire testh=Horaire(diff_h,test->getMinute()); // je reconstruis mon nouveau horaire qui sera dans le jour d'apres
 
-                            if(testh<prog->getHoraire()) // je finis ma tache que j'ajoute après le debut de sa tache suivante
-                                {
-                                    //rien
-                                 }
-                         else
-                              throw CalendarException("Votre Programmation ne respecte pas le principe de Precedence");
-
-                        }
-
+                            if(prog->getHoraire()<testh) // je finis ma tache que j'ajoute après le debut de sa tache suivante
+                             throw CalendarException("Votre Programmation ne respecte pas le principe de Precedence");
+                         }
                    }
 
-                else if ((prog->getDate()==d) && (h<prog->getHoraire()) && (h<(*(prog->getHoraire().getFin((*it)->getDuree())))))
-                {
-                    //rien
-                 }
-                else
-                     throw CalendarException("Votre Programmation ne respecte pas le principe de Precedence");
+                else if ((prog->getDate()==d) && ((*(prog->getHoraire().getFin((*it)->getDuree())))<h) || (d>prog->getDate()))
+                    throw CalendarException("Votre Programmation ne respecte pas le principe de Precedence");
 
           }
        }

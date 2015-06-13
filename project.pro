@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     programmation.cpp \
     customscene.cpp \
     projetwindow.cpp \
-    splitter.cpp
+    splitter.cpp \
+    show_info.cpp
 
 HEADERS  += \
     calendar.h \
@@ -37,7 +38,8 @@ HEADERS  += \
     programmation.h \
     customscene.h \
     projetwindow.h \
-    splitter.h
+    splitter.h \
+    show_info.h
 
 FORMS += \
     projetwindow.ui \

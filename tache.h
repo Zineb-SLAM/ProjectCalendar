@@ -164,6 +164,7 @@ public:
     void ajouterPrecedenceTache(TacheU* tAjout,TacheU* tPrecedente);
     QTextStream& afficherTaches(QTextStream& fout);
     const QString& afficherTachesAProgrammer() const;
+
 };
 
 //******************************************************************************************
