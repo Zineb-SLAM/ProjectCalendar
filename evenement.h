@@ -40,7 +40,7 @@ public:
     void setDuree(const Duree& d) { this->duree=d; }
     const QString& getLieu() const { return lieu; }
     void setLieu(const QString& l) { this->lieu =l; }
-    //virtual void Afficher_Activite () const =0;
+    virtual void Afficher_Activite () const =0;
     bool  cestunetache() const { return false; }
     const QString toString() const;
 };
@@ -50,7 +50,7 @@ class Rdv : public Activite
     QString personne;
 public:
     Rdv(const QString& i, const QString& t, const Duree d, const QString& l, const QString& p):Activite(i,t,d,l), personne(p) {}
-
+    void Afficher_Activite () const;
 };
 
 class Reunion : public Activite
@@ -58,6 +58,7 @@ class Reunion : public Activite
     //QString outils;
 public:
     Reunion(const QString& i, const QString& t, const Duree d, const QString& l/*, const QString& o*/):Activite(i,t,d,l)/*,outils(o)*/{}
+    void Afficher_Activite () const;
 };
 
 //******************************************************************************************
