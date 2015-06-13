@@ -24,10 +24,9 @@ class Tache {
     Duree duree;
     Date disponibilite;
     Date echeance;
-    bool isCompleted;
 
     //méthodes
-     Tache(const Tache& t); //pas implémentée: on ne devrait pas l'implementer car chaque tache unique -->id
+    Tache(const Tache& t); //pas implémentée: on ne devrait pas l'implementer car chaque tache unique -->id
     Tache& operator=(const Tache&); //pas implémentée:on ne devrait pas l'implementer car chaque tache unique -->id
     //les méthodes set sont privées car c'est TacheManager qui gère les Tache
     void setId(const QString& str);
@@ -35,12 +34,9 @@ class Tache {
     inline void setDisponibilite(const Date& d);
     inline void setEcheance(const Date& e);
 protected:
-    Tache(const QString& id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadl): id(id), titre(t),duree(dur),disponibilite(dispo),echeance(deadl),
-    isCompleted(false) {}
+    Tache(const QString& id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadl): id(id), titre(t),duree(dur),disponibilite(dispo),echeance(deadl){}
     virtual void setDuree(const Duree& d) { duree = d; }
-    void setCompleted() {isCompleted = true;}
     virtual ~Tache(){};
-    
 public:
     virtual const QString& getId() const { return id; }
     virtual const QString& getTitre() const { return titre; }
@@ -49,8 +45,6 @@ public:
     const Date getEcheance() const { return echeance;}
     virtual const QString toString() const=0;
     virtual bool getTypeTache()=0;
-
-    
 };
 
 QTextStream& operator<<(QTextStream& fout, const Tache* const t);
