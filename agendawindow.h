@@ -86,10 +86,12 @@ class AgendaWindow : public QMainWindow
     QSpacerItem *spacer; //espace entre les heures et la table
     QSpacerItem *spacer2;
 
-    //couche semaine
+    //couche semaine et années
     QSpacerItem *spacer_semaine;
     QLabel *s;
     QSpinBox *choix_semaine;
+    QLabel *a;
+    QSpinBox *choix_annee;
     QHBoxLayout *semaine;
 
     //treeViewView
@@ -102,11 +104,9 @@ public:
     explicit AgendaWindow();
 signals:
 private slots:
-    void changer_semaine(const unsigned int& s);
-    //void placer_tache(Tache* t);
+    void changer_semaine();
     void placer_evenement(Activite* a);
     void placer_evenement(TacheU* t);
-    void deplacer_tache(const Tache* t);
     void charger_agenda();
     void sauvegarder_agenda();
     void demander_programmer();
@@ -122,7 +122,7 @@ public slots:
 class ItemActivite : public QGraphicsItem {
     Activite* a;
 public:
-    ItemActivite(Activite* act, QGraphicsItem* parent = NULL):QGraphicsItem(parent),a(act) {
+    ItemActivite(Activite* act, QGraphicsItem* parent = 0):QGraphicsItem(parent), a(act) {
         setFlag(QGraphicsItem::ItemIsFocusable);
     }
     //fonctions virtuelles pures de QGraphicsItem à implémenter
@@ -134,7 +134,7 @@ public:
 class ItemTache : public QGraphicsItem {
     Tache* t;
 public:
-    ItemTache(Tache* tache, QGraphicsItem* parent = NULL):QGraphicsItem(parent),t(tache) {
+    ItemTache(Tache* tache, QGraphicsItem* parent = 0):QGraphicsItem(parent), t(tache) {
         setFlag(QGraphicsItem::ItemIsFocusable);
     }
     //fonctions virtuelles pures de QGraphicsItem à implémenter

@@ -102,6 +102,11 @@ QString Date::toString() {
    return s;
 }
 
+const QDate& Date::toQDate() const {
+    QDate *d = new QDate(jour, mois, annee);
+    return *d;
+}
+
 
 //******************************************************************************************
 void Duree::afficher(QTextStream& f) const {

@@ -6,6 +6,7 @@
 #include <QTextStream>
 #include <QString>
 #include <cmath>
+#include <QDate>
 
 namespace TIME {
     /*! \class TimeException
@@ -51,6 +52,7 @@ namespace TIME {
         Date operator+(unsigned int nb) const; //<!Retourne la date de dans nb jours
         static Date fromString(QString s);
         static QString toString();
+        const QDate& toQDate() const;
     };
 
 //******************************************************************************************

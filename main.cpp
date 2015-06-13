@@ -6,9 +6,8 @@
 using namespace std;
 
 
-int main(int argc, char* argv[])
-{
-
+/*int main(int argc, char* argv[])
+{*
  TacheManager& tacheM = TacheManager::getInstance();
     TacheU& t1=tacheM.ajouterTacheU("t1", "tache numéro 1", Duree(50), Date(4,5,2015), Date(6,5,2015), true,false);
     TacheU& t2=tacheM.ajouterTacheU("t2", "tache 2", Duree(15), Date(6,6,2015), Date(6,6,2015),true,false);
@@ -77,7 +76,6 @@ int main(int argc, char* argv[])
      projetM.libererInstance();
      tacheM.libererInstance();
      projetM.libererInstance();*/
-}
 
 
     //*******************************************Liberer**********************************************************************
@@ -128,19 +126,14 @@ int main(int argc, char* argv[])
     pM.libererInstance();
 
 return 0;
-}
+}*/
 
-/*int main(int argc, char* argv[]) {
-   try {
+int main(int argc, char* argv[]) {
     QApplication app(argc,argv);
     AgendaWindow fenetre;
     fenetre.show();
      return app.exec();
-    } catch (CalendarException ce) {
-        QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);
-      }
-    catch (std::exception e) { QMessageBox::information(0,"Erreur",e.what(),QMessageBox::Ok);}
-}*/
+}
 
 
 
