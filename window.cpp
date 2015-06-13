@@ -94,13 +94,11 @@ NewActivity::NewActivity(QWidget* parent) {
 
 NewProgrammation::NewProgrammation(QWidget* parent) {
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-    events = new QListWidget(this);
     schedule = new QTimeEdit(this);
     date = new QDateEdit(this);
     date->setMinimumDate(QDate(QDate::currentDate()));
 
     formLayout = new QFormLayout(this);
-    formLayout->addRow("Evenements", events);
     formLayout->addRow("Date", date);
     formLayout->addRow("Horaire", schedule);
     formLayout->addWidget(buttonBox);

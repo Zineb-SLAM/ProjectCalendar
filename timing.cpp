@@ -111,7 +111,7 @@ Date Date::fromString(QString s) {
 }
 
 const QDate& Date::toQDate() const {
-    QDate *d = new QDate(jour, mois, annee);
+    QDate *d = new QDate(annee,mois,jour);
     return *d;
 }
 

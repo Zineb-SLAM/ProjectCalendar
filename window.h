@@ -93,7 +93,6 @@ class NewProgrammation : public QDialog {
     Q_OBJECT
     QDialogButtonBox* buttonBox;
 
-    QListWidget* events;// RDV or Meeting
     QTimeEdit *schedule;
     QDateEdit* date;
 

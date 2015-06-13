@@ -82,8 +82,9 @@ AgendaWindow::AgendaWindow() :
 
     //couche emploi du temps
     scene = new CustomQGraphicsScene();
+    scene->setSceneRect(-350,-300,700,600);
     visu = new QGraphicsView(scene);
-    visu->setFixedSize(700,600);
+    //visu->setFixedSize(700,600);
     visu->show();
     emploi_du_temps->addItem(jours);
     emploi_du_temps->addWidget(visu);
@@ -135,8 +136,8 @@ AgendaWindow::AgendaWindow() :
     addDockWidget(Qt::LeftDockWidgetArea, taches);
     taches->setWidget(liste_taches);
 
-    connect(choix_semaine, SIGNAL(valueChanged()), this, SLOT(changer_semaine()));
-    connect(choix_annee, SIGNAL(valueChanged()), this, SLOT(changer_semaine()));
+    connect(choix_semaine, SIGNAL(valueChanged(int)), this, SLOT(changer_semaine()));
+    connect(choix_annee, SIGNAL(valueChanged(int)), this, SLOT(changer_semaine()));
 
     createActions();
     createMenus();
@@ -204,10 +205,14 @@ void AgendaWindow::createMenus() {
 
 void AgendaWindow::changer_semaine() {
     scene->clear();
+    scene->update();
     int s = choix_semaine->value();
     int a = choix_annee->value();
     for(std::vector<Programmation *>::iterator it = ProgM.getTabprogs().begin(); it != ProgM.getTabprogs().end(); it++) {
-        if((*it)->getDate().toQDate().weekNumber(&a) == s)
+        //if((choix_semaine->value() == date->toQDate().weekNumber(year)) && (choix_annee->value() == date->getAnnee()))
+        int temp = (*it)->getDate().getAnnee();
+        int *year = &temp;
+        if((s == (*it)->getDate().toQDate().weekNumber(&temp)) && (a == (*it)->getDate().getAnnee()))
             if(!((*it)->getEvent()->cestunetache())) {
                 Event *temp = const_cast<Event *>((*it)->getEvent());
                 placer_evenement(dynamic_cast<Activite *>(temp));
@@ -219,12 +224,6 @@ void AgendaWindow::changer_semaine() {
     }
 }
 
-/*void AgendaWindow::placer_tache(Tache* t) {
-    ItemTache *tache = new ItemTache(t);
-    scene->addItem(tache);
-    tache->setFocus();
-}*/
-
 void AgendaWindow::placer_evenement(Activite* a) {
     ItemActivite *activite = new ItemActivite(a);
     QDate date_prog = ProgM.getProg(a->getId())->getDate().toQDate();
@@ -233,7 +232,7 @@ void AgendaWindow::placer_evenement(Activite* a) {
     unsigned int debutH = ProgM.trouverProgrammation(a)->getHoraire().getHeure();
     unsigned int debutM = ProgM.trouverProgrammation(a)->getHoraire().getMinute();
     int nbMinutes = (60 * debutH) + debutM;
-    qreal y = (nbMinutes * -25) / 60;
+    qreal y = (nbMinutes * 25) / 60;
     scene->addItem(activite);
     activite->setPos(scene->sceneRect().left()+x,scene->sceneRect().top()+y);
 }
@@ -276,8 +275,10 @@ void AgendaWindow::demander_programmer() {
             ProgM.ajouterProgrammation(t,*d,*h);
             int temp = d->getAnnee();
             int *year = &temp;
-            if((choix_semaine->value() == d->toQDate().weekNumber(year)) && (choix_annee->value() == d->getAnnee()))
+            if((choix_semaine->value() == d->toQDate().weekNumber(year)) && (choix_annee->value() == d->getAnnee())) {
+                QMessageBox::information(0,"coucou","même semaine et annee",QMessageBox::Ok);
                 placer_evenement(t);
+            }
         }
     } catch (CalendarException ce) {
         QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);
@@ -362,7 +363,14 @@ void AgendaWindow::ajouter_activite() {
         else
             activite =  new Reunion(*id,*title,*duration,*place);
         ProgM.ajouterProgrammation(activite, *date, *time);
-        placer_evenement(activite);
+        int temp = date->getAnnee();
+        int *year = &temp;
+        if((choix_semaine->value() == date->toQDate().weekNumber(year)) && (choix_annee->value() == date->getAnnee())) {
+            placer_evenement(activite);
+        }
+        else
+            QMessageBox::information(0,"erreur",QString::number(date->toQDate().weekNumber(year)),QMessageBox::Ok);
+
     } catch (CalendarException ce) {
         QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);
         }
@@ -591,30 +599,31 @@ void afficher_proprietes(Tache* t) {
 }
 
 QRectF ItemActivite::boundingRect() const {
-    const int PEN = 1;
     int minutes = a->getDuree().getDureeEnMinutes();
-    qreal hauteur = minutes * (25/60);
-    return QRectF(-50 - PEN,(hauteur/2) + PEN, 100 + PEN, hauteur + PEN);
+    qreal hauteur = minutes *25/60;
+    return QRectF(0,0,100,hauteur);
 }
 
 void ItemActivite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-    int minutes = a->getDuree().getDureeEnMinutes();
-    qreal hauteur = minutes * (25/60);
-    painter->drawRoundedRect(-50,(hauteur/2), 100, hauteur, 5, 5);
-    painter->drawText(boundingRect(), Qt::AlignCenter, a->getTitre());
+    QRectF rec = boundingRect();
+    QBrush brush(Qt::blue);
+    painter->fillRect(rec,brush);
+    painter->drawRect(rec);
+    painter->drawText(rec, Qt::AlignCenter, a->getTitre());
 }
 
 QRectF ItemTache::boundingRect() const {
     int minutes = t->getDuree().getDureeEnMinutes();
-    qreal hauteur = minutes * (25/60);
-    return QRectF(-50,(hauteur/2),100,hauteur);
+    qreal hauteur = minutes *25/60;
+    return QRectF(0,0,100,hauteur);
 }
 
 void ItemTache::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-    int minutes = t->getDuree().getDureeEnMinutes();
-    qreal hauteur = minutes * (25/60);
-    painter->drawRoundedRect(-50,(hauteur/2),100,hauteur,5,5);
-    painter->drawText(boundingRect(), Qt::AlignCenter, t->getTitre());
+    QRectF rec = boundingRect();
+    QBrush brush(Qt::red);
+    painter->fillRect(rec,brush);
+    painter->drawRect(rec);
+    painter->drawText(rec, Qt::AlignCenter, t->getTitre());
 }
 
 void AgendaWindow::TreeViewProjet()
