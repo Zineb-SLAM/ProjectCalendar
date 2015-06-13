@@ -29,14 +29,14 @@ class Tache {
     Tache(const Tache& t); //pas implémentée: on ne devrait pas l'implementer car chaque tache unique -->id
     Tache& operator=(const Tache&); //pas implémentée:on ne devrait pas l'implementer car chaque tache unique -->id
     //les méthodes set sont privées car c'est TacheManager qui gère les Tache
+protected:
+    Tache(const QString& id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadl): id(id), titre(t),duree(dur),disponibilite(dispo),echeance(deadl){}
+    virtual ~Tache(){};
+    virtual void setDuree(const Duree& d) { duree = d; }
     void setId(const QString& str);
     void setTitre(const QString& str) { titre = str; }
     inline void setDisponibilite(const Date& d);
     inline void setEcheance(const Date& e);
-protected:
-    Tache(const QString& id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadl): id(id), titre(t),duree(dur),disponibilite(dispo),echeance(deadl){}
-    virtual void setDuree(const Duree& d) { duree = d; }
-    virtual ~Tache(){};
 public:
     virtual const QString& getId() const { return id; }
     virtual const QString& getTitre() const { return titre; }
