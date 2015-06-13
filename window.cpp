@@ -7,7 +7,9 @@ NewProject::NewProject(QWidget *parent) {
     identifier = new QLineEdit(this);
     title = new QLineEdit(this);
     disponibility = new QDateEdit(this);
+    disponibility->setMinimumDate(QDate(QDate::currentDate())); //on ne peut pas créer un projet dans le passé
     deadline = new QDateEdit(this);
+    deadline->setMinimumDate(QDate(QDate::currentDate()));
     tasks = new QListWidget(this);
 
     for(TacheManager::tabtaches::iterator it = TM.getTabTaches().begin(); it != TM.getTabTaches().end(); it++) {
@@ -28,16 +30,22 @@ NewProject::NewProject(QWidget *parent) {
 }
 
 NewTask::NewTask(QWidget* parent) {
+    TacheManager& TM = TacheManager::getInstance();
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     id = new QLineEdit(this);
     title = new QLineEdit(this);
     duration = new QTimeEdit(this);
     disponibility = new QDateEdit(this);
+    disponibility->setMinimumDate(QDate(QDate::currentDate()));
     deadline = new QDateEdit(this);
+    deadline->setMinimumDate(QDate(QDate::currentDate()));
     taskType = new QComboBox(this);
     taskType->addItem("unitaire");
     taskType->addItem("composite");
     predecessors = new QListWidget(this);
+    for(vector<Tache *>::iterator it = TM.getTabTaches().begin(); it != TM.getTabTaches().end(); it++) {
+        new QListWidgetItem((*it)->getTitre(), predecessors);
+    }
 
     formLayout = new QFormLayout(this);
     formLayout->addRow("Id", id);
@@ -62,6 +70,7 @@ NewActivity::NewActivity(QWidget* parent) {
     id = new QLineEdit(this);
     title = new QLineEdit(this);
     date = new QDateEdit(this);
+    date->setMinimumDate(QDate(QDate::currentDate()));
     time = new QTimeEdit(this);
     duration = new QTimeEdit(this);
     place = new QLineEdit(this);
@@ -88,6 +97,7 @@ NewProgrammation::NewProgrammation(QWidget* parent) {
     events = new QListWidget(this);
     schedule = new QTimeEdit(this);
     date = new QDateEdit(this);
+    date->setMinimumDate(QDate(QDate::currentDate()));
 
     formLayout = new QFormLayout(this);
     formLayout->addRow("Evenements", events);

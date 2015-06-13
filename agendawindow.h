@@ -109,11 +109,10 @@ public:
     explicit AgendaWindow();
 signals:
 private slots:
-    void changer_semaine(const unsigned int&);
+    void changer_semaine();
     void placer_evenement(Activite* a);
     void placer_evenement(TacheU* t);
     void charger_agenda();
-    void deplacer_tache(const Tache *t);
     void sauvegarder_agenda();
     void demander_programmer();
     void ajouter_projet();
@@ -137,7 +136,6 @@ public:
     //fonctions virtuelles pures de QGraphicsItem à implémenter
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    virtual void keyPressEvent(QKeyEvent *event);
 };
 
 class ItemTache : public QGraphicsItem {
@@ -149,7 +147,6 @@ public:
     //fonctions virtuelles pures de QGraphicsItem à implémenter
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    virtual void keyPressEvent(QKeyEvent *event);
 };
 
 #endif // AGENDAWINDOW_H

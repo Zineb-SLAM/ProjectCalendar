@@ -21,11 +21,11 @@ const QString Activite::toString() const {
 }
 
 void Rdv::Afficher_Activite () const {
-    QTextStream f = stdout(cout);
-    f << getId() << getTitre() << getDuree() << getLieu() << personne;
+    //QTextStream f = stdout(cout);
+    //f << getId() << getTitre() << getDuree() << getLieu() << personne;
 }
 
-void Rdv::Afficher_Activite () const {
-    QTextStream f = stdout(cout);
-    f << getId() << getTitre() << getDuree() << getLieu();
+void Reunion::Afficher_Activite () const {
+    //QTextStream f = stdout(cout);
+    //f << getId() << getTitre() << getDuree() << getLieu();
 }
