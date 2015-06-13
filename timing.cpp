@@ -7,7 +7,7 @@ using namespace TIME;
 
 //******************************************************************************************
 void Date::setDate(unsigned short int j, unsigned short int m, unsigned int a) {
-    // initialisation de la date, renvoie vrai si la date est valide
+    //<!initialisation de la date, renvoie vrai si la date est valide
     if (a>=0&&a<=3000) annee=a; else throw TimeException("erreur: annee invalide");
     if (m>=1&&m<=12) mois=m; else throw TimeException("erreur: mois invalide");
     switch(m){
@@ -18,7 +18,7 @@ void Date::setDate(unsigned short int j, unsigned short int m, unsigned int a) {
 }
 
 void Date::setDateAujourdhui() {
-    // initialisation de la date avec la date d'aujourd'hui
+   //<! initialisation de la date avec la date d'aujourd'hui
     time_t rawtime;
     struct tm * timeinfo;
     time ( &rawtime );

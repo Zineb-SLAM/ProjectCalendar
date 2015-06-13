@@ -133,6 +133,7 @@ AgendaWindow::AgendaWindow() :
     liste_taches = new QTextEdit(this);
     liste_taches->textCursor().insertText(TM.afficherTachesAProgrammer());
     liste_taches->setReadOnly(1);
+
     addDockWidget(Qt::LeftDockWidgetArea, taches);
     taches->setWidget(liste_taches);
 
@@ -160,6 +161,13 @@ void AgendaWindow::createActions() {
     creer_tache = new QAction("Creer une tache", this);
     connect(creer_tache, SIGNAL(triggered()), this, SLOT(ajouter_tache()));
 
+    Ajouter_tache_a_composite= new QAction("Ajouter Tache a composite", this);
+    connect(Ajouter_tache_a_composite, SIGNAL(triggered()), this, SLOT(ajouter_tache_a_composite()));
+
+    Ajouter_Precedence=new QAction("Ajouter Precedence", this);
+    connect(Ajouter_Precedence, SIGNAL(triggered()), this, SLOT(ajouter_precedence()));
+
+
     tout_afficher = new QAction("Afficher toutes les taches", this);
     connect(tout_afficher, SIGNAL(triggered()), this, SLOT(afficher()));
 
@@ -167,8 +175,11 @@ void AgendaWindow::createActions() {
     connect(creer_activite, SIGNAL(triggered()), this, SLOT(ajouter_activite()));
 
 
-    Rechercher_Projet=new QAction("Rechercher Un Projet", this);
+    Rechercher_Projet=new QAction("Rechercher un  Projet", this);
     connect(Rechercher_Projet, SIGNAL(triggered()), this, SLOT(recherche_projet()));
+
+    Ajouter_tache_a_projet=new QAction("Ajouter Tache a Projet", this);
+    connect(Ajouter_tache_a_projet, SIGNAL(triggered()), this, SLOT(ajouter_tache_a_projet()));
 
     Rechercher_Tache=new QAction("Rechercher Une Tache", this);
     connect(Rechercher_Tache, SIGNAL(triggered()), this, SLOT(recherche_tache()));
@@ -188,9 +199,13 @@ void AgendaWindow::createMenus() {
     menu_tache = menuBar()->addMenu("Tache");
     menu_tache->addAction(creer_tache);
     menu_tache->addAction(programmer_tache);
+    menu_tache->addAction(Ajouter_tache_a_composite);
+    menu_tache->addAction(Ajouter_Precedence);
+
 
     menu_projet = menuBar()->addMenu("Projet");
     menu_projet->addAction(creer_projet);
+    menu_projet->addAction(Ajouter_tache_a_projet);
 
     menu_activite = menuBar()->addMenu("Activite");
     menu_activite->addAction(creer_activite);
@@ -306,17 +321,44 @@ void AgendaWindow::ajouter_projet() {
     this->liste_projets->setHtml(PM.afficherTitreProjets()); //mise à jour du texte du dock widget des tâches à programmer
 
 }
+void AgendaWindow::ajouter_tache_a_projet()
+{
+    bool ok,ok2;
+    QString id = QInputDialog::getText(this,"Tache","Entrez l'id du Projet :", QLineEdit::Normal,"valeur", &ok);
+    QString id2 = QInputDialog::getText(this,"Tache","Entrez l'id de la Tache:", QLineEdit::Normal,"valeur", &ok2);
+         try
+         {
+             if (ok && ok2 && !id.isEmpty() && !id2.isEmpty())
+             {
+                  Projet* P = PM.getProjet(id);
+                  Tache* T=TM.getTache(id2);
+                   PM.ajouterTacheAProjet(P,T);//<! ProjetManager gère le Projet donc c'est lui qui appelera la fonction d'ajout dans Projet qui verifira aussi que la tache n'existe pas préalablement dans le projet
+                   QMessageBox msgBox;
+                   msgBox.setText("Tache Ajoutee a Projet!");
+                   msgBox.exec();
+             }
+          }
 
-void AgendaWindow::ajouter_tache() {
+         catch (CalendarException ce) {
+                 QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);}
+
+             catch (std::exception e) {
+                    QMessageBox::information(0,"Erreur",e.what(),QMessageBox::Ok);}
+}
+
+void AgendaWindow::ajouter_tache()
+{
     QString *id;
     QString *title;
     Duree *duration;
     Date *dispo;
     Date *deadl;
     QString *t;
+    bool b;
     NewTask *fenetre_tache = new NewTask(this);
     try {
-        if(fenetre_tache->exec()) {
+        if(fenetre_tache->exec())
+        {
             id = new QString(fenetre_tache->getId().text());
             title = new QString(fenetre_tache->getTitle().text());
             //h = new Horaire(fenetre_programmation->getSchedule().time().hour(), fenetre_programmation->getSchedule().time().minute());
@@ -325,16 +367,91 @@ void AgendaWindow::ajouter_tache() {
             dispo = new Date(fenetre_tache->getDisponibility().date().day(),fenetre_tache->getDisponibility().date().month(),fenetre_tache->getDisponibility().date().year());
             deadl = new Date(fenetre_tache->getDeadline().date().day(),fenetre_tache->getDeadline().date().month(),fenetre_tache->getDeadline().date().year());
             t = new QString(fenetre_tache->getType().currentText());
+            b= fenetre_tache->getPreemtive().isChecked();
         }
         if(t == QString("unitaire"))
-            TM.ajouterTacheU(*id,*title,*duration,*dispo,*deadl);
+        {
+
+            TM.ajouterTacheU(*id,*title,*duration,*dispo,*deadl,b);
+            QMessageBox msgBox;
+            msgBox.setText("Tache Unitaire Ajoutee!");
+            msgBox.exec();
+
+        }
         else
+        {
             TM.ajouterTacheC(*id,*title,*duration,*dispo,*deadl);
-        this->liste_taches->setHtml(TM.afficherTachesAProgrammer()); //mise à jour du texte du dock widget des tâches à programmer
-    } catch (CalendarException ce) {
+            TM.ajouterTacheU(*id,*title,*duration,*dispo,*deadl,b);
+            QMessageBox msgBox;
+            msgBox.setText("Tache Composite Ajoutee!");
+            msgBox.exec();
+       // this->liste_taches->setHtml(TM.afficherTachesAProgrammer()); //mise à jour du texte du dock widget des tâches à programmer
+
+        }
+    }
+    catch (CalendarException ce) {
         QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);
         }
 }
+
+ void AgendaWindow::ajouter_precedence()
+ {
+     bool ok,ok2;
+     QString id = QInputDialog::getText(this,"Tache","Entrez l'id de la Tache A PRECEDER :", QLineEdit::Normal,"valeur", &ok);
+          try
+          {
+              if (ok && !id.isEmpty())
+              {
+                     TacheU* t = dynamic_cast<TacheU*>(TM.getTache(id));
+                    this->liste_taches->setHtml(TM.afficherTachesAProgrammer()); //mise à jour du texte du dock widget des tâches à programmer
+                    QString id2 = QInputDialog::getText(this,"Tache","Entrez l'id de la Tache Qui Precede :", QLineEdit::Normal,"valeur", &ok2);
+                     TacheU* preced = dynamic_cast<TacheU*>(TM.getTache(id2));
+                    if(ok2 && !id2.isEmpty())
+                        TM.ajouterPrecedenceTache(t,preced);
+                    QMessageBox msgBox;
+                    msgBox.setText("Precedence Ajoutee!");
+                    msgBox.exec();
+
+              }
+
+           }
+
+          catch (CalendarException ce) {
+                  QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);}
+
+              catch (std::exception e) {
+                     QMessageBox::information(0,"Erreur",e.what(),QMessageBox::Ok);}
+
+
+ }
+
+ void AgendaWindow::ajouter_tache_a_composite()
+ {
+     bool ok,ok2;
+     QString id = QInputDialog::getText(this,"Tache","Entrez l'id de la Tache Composite :", QLineEdit::Normal,"valeur", &ok);
+     QString id2 = QInputDialog::getText(this,"Tache","Entrez l'id de la Tache:", QLineEdit::Normal,"valeur", &ok2);
+          try
+          {
+              if (ok && ok2 && !id.isEmpty() && !id2.isEmpty())
+              {
+                   TacheC* C = dynamic_cast<TacheC*>(TM.getTache(id));
+                    //this->liste_taches->setHtml(TM.afficherTachesAProgrammer()); //mise à jour du texte du dock widget des tâches à programmer
+                    Tache* comp=TM.getTache(id2);
+                    TM.ajouter_Tache_a_composite(C,comp);
+                    QMessageBox msgBox;
+                    msgBox.setText("Tache Ajoutee a Composite!");
+                    msgBox.exec();
+
+              }
+
+           }
+
+          catch (CalendarException ce) {
+                  QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);}
+
+              catch (std::exception e) {
+                     QMessageBox::information(0,"Erreur",e.what(),QMessageBox::Ok);}
+ }
 
 void AgendaWindow::ajouter_activite() {
     QString *type;
