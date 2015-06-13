@@ -366,15 +366,16 @@ void afficher_proprietes(Tache* t) {
 }
 
 QRectF ItemActivite::boundingRect() const {
+    const int PEN = 1;
     int minutes = a->getDuree().getDureeEnMinutes();
     qreal hauteur = minutes * (25/60);
-    return QRectF(-50,-(hauteur/2),100,hauteur);
+    return QRectF(-50 - PEN,(hauteur/2) + PEN, 100 + PEN, hauteur + PEN);
 }
 
 void ItemActivite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
     int minutes = a->getDuree().getDureeEnMinutes();
     qreal hauteur = minutes * (25/60);
-    painter->drawRoundedRect(-50,-(hauteur/2),100,hauteur,5,5);
+    painter->drawRoundedRect(-50,(hauteur/2), 100, hauteur, 5, 5);
     painter->drawText(boundingRect(), Qt::AlignCenter, a->getTitre());
 }
 
@@ -387,13 +388,13 @@ void ItemActivite::keyPressEvent(QKeyEvent *event) {
 QRectF ItemTache::boundingRect() const {
     int minutes = t->getDuree().getDureeEnMinutes();
     qreal hauteur = minutes * (25/60);
-    return QRectF(-50,-(hauteur/2),100,hauteur);
+    return QRectF(-50,(hauteur/2),100,hauteur);
 }
 
 void ItemTache::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
     int minutes = t->getDuree().getDureeEnMinutes();
     qreal hauteur = minutes * (25/60);
-    painter->drawRoundedRect(-50,-(hauteur/2),100,hauteur,5,5);
+    painter->drawRoundedRect(-50,(hauteur/2),100,hauteur,5,5);
     painter->drawText(boundingRect(), Qt::AlignCenter, t->getTitre());
 }
 
