@@ -62,11 +62,14 @@ public:
     static void libererInstance();
     vectProg& getTabprogs() { return tabprogs; } //!< Retourne le Tableau de Programmation
     Programmation* trouverProgrammation(const Event* t); //!< Retourne La Programmation de l'Evenement passé en paramètre
-    //!< Retourne la programmation d'un Evenement ) partir de son Id.
-    void ajouterProgrammation(TacheU* t, const Date& d, const Horaire& h);//!< Programme l'objet Tache en Créant l'objet Programmation correspondant et rennvoie cet objet à la méthode addprog
-    void ajouterProgrammation(Activite* a, const Date& d, const Horaire& h); //!< Programme l'objet une Activite en Créant  l'objet Programmation correspondant et rennvoie cet objet à la méthode addprog
+    //! Appel du Constructeur de Programmation
+    void ajouterProgrammation(TacheU* t, const Date& d, const Horaire& h);
+    void ajouterProgrammation(Activite* a, const Date& d, const Horaire& h);
+    //!< Programme l'objet Tache Unitaire/Evenement en Créant l'objet Programmation correspondant et rennvoie cet objet à la méthode addprog
+
+
     void addprog(Programmation* p); //!< Methode Appelee par ajouterProgrammation qui ajoute la programmation d'un Evenement au Vector de ProgrammationManager
-    Programmation* getProg(const QString& id_evt);
+    Programmation* getProg(const QString& id_evt);//!< Retourne la programmation d'un Evenement ) partir de son Id.
     QTextStream& afficher(QTextStream& f,const Event* t)
     {
        Programmation* a= trouverProgrammation(t);

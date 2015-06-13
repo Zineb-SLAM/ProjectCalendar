@@ -52,7 +52,7 @@ namespace TIME {
         Date operator+(unsigned int nb) const; //<!Retourne la date de dans nb jours
         static Date fromString(QString s);
         static QString toString();
-        const QDate& toQDate() const;
+        const QDate& toQDate() const;//!< convertit l'objet Date en QDate pour pouvoir utiliser ses fonctions.
     };
 
 //******************************************************************************************

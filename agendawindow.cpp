@@ -375,9 +375,11 @@ void AgendaWindow::ajouter_activite() {
     QString h = (H<10)?"0"+QString::number(H):""+QString::number(H);
     QString m = (M<10)?"0"+QString::number(M):""+QString::number(M);
     QString* duree = new QString(h+" H "+m);
-   QString* disponibilite = new QString(t->getDisponibilite().toString());
-   QString* echeance = new  QString(t->getEcheance().toString());
-    message+="Duree : "; message+= duree ;
+ const QDate& dated=t->getDisponibilite().toQDate();
+   QString* disponibilite= new QString(dated.toString() );
+    const QDate& datee=t->getEcheance().toQDate();
+  QString* echeance = new  QString(datee.toString());
+    message+="\n Duree : "; message+= duree ;
     message+="\n Diponibilite "; message+=disponibilite;
     message+="\n Echeance "; message+=echeance;
     message+="\n";
@@ -395,33 +397,23 @@ void AgendaWindow::ajouter_activite() {
             }
                     else message+="\n Tache Non Preemptive";
 
-
-
          message+=(" \n Taches Precedentes:");
          for ( std::vector<TacheU *>::iterator it = tempTask->getPrecedence().begin(); it != tempTask->getPrecedence().end(); ++it)
-         {
             message += " "+(*it)->getId();
-            }
+             message +="\n \n";
 
-         message +="\n \n";
-         message+=(" Taches Suivantes: ");
+             message+=(" Taches Suivantes: ");
          for (std::vector<TacheU *>::iterator it = tempTask->getSuivante().begin(); it != tempTask->getSuivante().end(); ++it)
-         {
            message += " "+(*it)->getId();
-           }
           message +="\n";
-
      }
      else
      {
-          TacheC* tempTask = dynamic_cast<TacheC*>(t);
+            TacheC* tempTask = dynamic_cast<TacheC*>(t);
           message+=(" Taches : ");
             for(std::vector<Tache *>::iterator it= tempTask->getCTaches().begin();it!= tempTask->getCTaches().end();it++)
-                     {
                          message += " "+(*it)->getId();
-                     }
            message +="\n";
-
      }
 
      QMessageBox msgBox;
