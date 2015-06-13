@@ -99,7 +99,7 @@ class AgendaWindow : public QMainWindow
     QSpinBox *choix_annee;
     QHBoxLayout *semaine;
 
-    //treeViewView
+    //ViewView
     QStandardItemModel* projectsTreeV;
 
     void createActions();
@@ -118,13 +118,14 @@ private slots:
     void ajouter_projet();
     void ajouter_tache();
     void afficher();
-    void TreeViewProjet();
     void ajouter_activite();
     void recherche_projet();
     void recherche_tache();
     void recherche_programmation();
 
+
 public slots:
+      void TreeViewProjet();
 };
 
 class ItemActivite : public QGraphicsItem {

@@ -52,13 +52,15 @@ namespace TIME {
         Date operator+(unsigned int nb) const; //<!Retourne la date de dans nb jours
         static Date fromString(QString s);
         static QString toString();
+        const QString& String() const;
         const QDate& toQDate() const;//!< convertit l'objet Date en QDate pour pouvoir utiliser ses fonctions.
     };
 
 //******************************************************************************************
     /*! \class Duree
             \brief Classe permettant de manipuler des durees
-            L'utilisation de cette classe nécessite des dates valides au sens commun du terme.
+            L'utilisation de cette classe néc
+essite des dates valides au sens commun du terme.
             Déclenchement d'exception dans le cas contraire
     */
     class Duree{

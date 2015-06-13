@@ -49,15 +49,14 @@ void TacheU::ajouterPrecedence(TacheU* t )
     {
         if((*it)->getId()==this->id) throw CalendarException("Impossible Cette Tache precede Deja La Tache t ");
     }
-
-    if((this->disponibilite<t->echeance) && ((this->disponibilite)-(t->echeance))<this->duree.getJour())
+    if((t->disponibilite<this->disponibilite || t->disponibilite==this->disponibilite) && (t->echeance<this->disponibilite || t->echeance==this->disponibilite))
     {
-
+            std::cout<<"Precedence ajoute";
              this->precedence.push_back(t);
              t->suivante.push_back(this);
     }
     else
-        throw CalendarException("Impossoble d'ajouter precedence : contrainte de Precedence non verifie");
+        throw CalendarException("Impossible d'ajouter precedence : contrainte de Precedence non verifie");
 
 }
 void TacheU::supprimerPrecedence(const QString& id)

@@ -90,13 +90,21 @@ Date Date::operator+(unsigned int nb_jours) const {
     return d;
 }
 
+const QString& Date::String() const
+{
+     QString str= QString::number(this->getAnnee());
+    str+="/";str+= QString::number(this->getMois());
+    str+="/";str+= QString::number(this->getJour());
+    return str;
+}
+
 Date Date::fromString(QString s) {
     Date d;
     //conversion QString YYYY-MM-DD en Date
     return d;
 }
 
-QString Date::toString() {
+ QString Date::toString() {
     QString s;
     //conversion Date en QString YYYY-MM-DD
    return s;
