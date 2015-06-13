@@ -90,9 +90,15 @@ AgendaWindow::AgendaWindow() :
     spacer_semaine = new QSpacerItem(50,0,QSizePolicy::Expanding,QSizePolicy::Preferred);
     s = new QLabel("Semaine", this);
     choix_semaine = new QSpinBox(this);
+    choix_semaine->setRange(1,53);
+    a = new QLabel("Annee", this);
+    choix_annee = new QSpinBox(this);
+    choix_annee->setRange(2015,3000);
     semaine->addItem(spacer_semaine);
     semaine->addWidget(s);
     semaine->addWidget(choix_semaine);
+    semaine->addWidget(a);
+    semaine->addWidget(choix_annee);
 
     //couche agenda
     spacer = new QSpacerItem(20,0,QSizePolicy::Expanding,QSizePolicy::Preferred);
@@ -126,6 +132,9 @@ AgendaWindow::AgendaWindow() :
     liste_taches->setReadOnly(1);
     addDockWidget(Qt::LeftDockWidgetArea, taches);
     taches->setWidget(liste_taches);
+
+    connect(choix_semaine, SIGNAL(valueChanged()), this, SLOT(changer_semaine()));
+    connect(choix_annee, SIGNAL(valueChanged()), this, SLOT(changer_semaine()));
 
     createActions();
     createMenus();
@@ -174,8 +183,21 @@ void AgendaWindow::createMenus() {
 
 //fonctions des slots
 
-void AgendaWindow::changer_semaine(const unsigned int& s) {
-
+void AgendaWindow::changer_semaine() {
+    //ProgrammationManager& ProgM = ProgrammationManager::getInstance();
+    int s = choix_semaine->value();
+    int a = choix_annee->value();
+    for(std::vector<Programmation *>::iterator it = ProgM.getTabprogs().begin(); it != ProgM.getTabprogs().end(); it++) {
+        if((*it)->getDate().toQDate().weekNumber(&a) == s)
+            if(typeid((*it)->getEvent()).name() == "Activite *") {
+                Event *temp = const_cast<Event *>((*it)->getEvent());
+                placer_evenement(dynamic_cast<Activite *>(temp));
+            }
+            else {
+                Event *temp = const_cast<Event *>((*it)->getEvent());
+                placer_evenement(dynamic_cast<TacheU *>(temp));
+            }
+    }
 }
 
 /*void AgendaWindow::placer_tache(Tache* t) {
@@ -192,9 +214,10 @@ void AgendaWindow::placer_evenement(Activite* a) {
     unsigned int debutM = ProgM.trouverProgrammation(a)->getHoraire().getMinute();
     int nbMinutes = (60 * debutH) + debutM;
     qreal y = (nbMinutes * -25) / 60;
-    activite->setPos(x,y);
+    activite->setPos(scene->sceneRect().left()+x,scene->sceneRect().top()+y);
     scene->addItem(activite);
     activite->setFocus();
+    activite->paint(&QPainter(),&QStyleOptionGraphicsItem(),visu);
 }
 
 void AgendaWindow::placer_evenement(TacheU *t) {
@@ -205,12 +228,8 @@ void AgendaWindow::placer_evenement(TacheU *t) {
     unsigned int debutH = ProgM.trouverProgrammation(t)->getHoraire().getHeure();
     unsigned int debutM = ProgM.trouverProgrammation(t)->getHoraire().getMinute();
     qreal y = (60 * debutH) + debutM;
-    tache->setPos(x,y);
+    tache->setPos(scene->sceneRect().left()+x,scene->sceneRect().top()+y);
     tache->setFocus();
-}
-
-void AgendaWindow::deplacer_tache(const Tache *t) {
-
 }
 
 void AgendaWindow::charger_agenda() {

@@ -86,10 +86,12 @@ class AgendaWindow : public QMainWindow
     QSpacerItem *spacer; //espace entre les heures et la table
     QSpacerItem *spacer2;
 
-    //couche semaine
+    //couche semaine et années
     QSpacerItem *spacer_semaine;
     QLabel *s;
     QSpinBox *choix_semaine;
+    QLabel *a;
+    QSpinBox *choix_annee;
     QHBoxLayout *semaine;
 
     //treeViewView
@@ -102,11 +104,9 @@ public:
     explicit AgendaWindow();
 signals:
 private slots:
-    void changer_semaine(const unsigned int& s);
-    //void placer_tache(Tache* t);
+    void changer_semaine();
     void placer_evenement(Activite* a);
     void placer_evenement(TacheU* t);
-    void deplacer_tache(const Tache* t);
     void charger_agenda();
     void sauvegarder_agenda();
     void demander_programmer();
