@@ -4,6 +4,7 @@
 #include "timing.h"
 #include "tache.h"
 #include "projet.h"
+#include"show_info.h"
 #include<QTableView>
 #include<QListView>
 #include<QHBoxLayout>
@@ -24,93 +25,110 @@ splitter::splitter (QWidget* parent, Qt::WindowFlags flags): QWidget(parent,flag
     QListWidgetItem *item = new QListWidgetItem();
     item->setData(Qt::DisplayRole,"Mes Projets");
     widget1->addItem(item);
-    connect(widget1, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),this, SLOT(showProjects()));
 
-    widget2 = new TasksPart;
+    connect(widget1, SIGNAL(itemClicked(QListWidgetItem*)),this, SLOT(showProjects()));
+   connect(widget1, SIGNAL(),this, SLOT(showTasks()));
+
+    widget2 = new QListWidget;
     QHBoxLayout* w2Layout = new QHBoxLayout;
     widget2->setLayout(w2Layout);
-    QListWidgetItem *item2 = new QListWidgetItem();
-    item2->setData(Qt::DisplayRole,"Mes Taches de Projets");
-    widget2->addItem(item2);
+
 
     QSplitter *mainSplitter = new QSplitter(this);
     mainSplitter->addWidget(widget1);
     mainSplitter->addWidget(widget2);
 
-
-
     QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(mainSplitter);
+   mainLayout->addWidget(mainSplitter);
+
+    //connect(widget1,SIGNAL(itemClicked(QListWidgetItem*)),this,SLOT(showTasks(QListWidgetItem * item)));
+   // connect(widget1,SIGNAL(itemDoubleClicked(QListWidgetItem*)),this,SLOT(show_project_info(QListWidgetItem * item)));
 
     setLayout(mainLayout);
 }
 
 
-
-TasksPart:: TasksPart(QWidget* parent):QListWidget(parent)
-{
-
-}
-
 void splitter::showProjects()
 {
+
   widget1->clear();
+  //widget2->clear();
  widget1-> setWindowTitle("Affichage des Projets");
+QMessageBox::information(NULL,"QTableView Item Clicked","hello 1");
+
 
     for (std::vector<Projet*>::iterator it = PM.getTab().begin(); it!=PM.getTab().end(); ++it)
     {
         QListWidgetItem *item = new QListWidgetItem();
-         item->setData(Qt::DisplayRole, (*it)->getTitre());
-        // item->setData(Qt::UserRole + 1, (*it)->getId());// Ceci est la description
-         item->setWhatsThis((*it)->getId());
-         widget1->addItem(item);
-         QPushButton *button = new QPushButton("show",widget1);
-         QString text ((*it)->getId());
-         button->setText(text);
+        item->setData(Qt::DisplayRole, (*it)->getTitre());
+        item->setData(Qt::UserRole + 1, (*it)->getId());// Ceci est la description
+        item->setWhatsThis((*it)->getId());
+        widget1->addItem(item);
+        /*QListWidgetItem *item2 = new QListWidgetItem();
+       item2->setData(Qt::DisplayRole,"Mes Taches de Projets");
+        widget2->addItem(item2); */
+
+        widget1->showMaximized();
+
+}
+        /*for (unsigned int i =0;i< (*it)->GetTabProjet().size(); i++)
+        {
+    QListWidgetItem *item3 = new QListWidgetItem();
+    item3->setData(Qt::UserRole + 1, (*it)->getIndice(1)->getTitre());
+    widget2->addItem(item3);
 
 
-        // connect(this,SIGNAL(mousePressEvent(QMouseEvent*)),widget2,SLOT(showTasks(QListWidgetItem * item)));
-
+        //}*/
 
     }
-widget1->showMaximized();
+
+void splitter::show_project_info(QListWidgetItem * item)
+{
+    const QString& s =item->whatsThis();
+    Projet* p= PM.getProjet(s);
+    ProjetInfo info(p);
+    info.show();
+
+
 
 }
 
-void TasksPart::showTasks(QListWidgetItem * item)
+void  splitter::showTasks()
 {
-    clear();
-    ProjetManager& PM= ProjetManager::getInstance();
-    QListWidgetItem *item2 = new QListWidgetItem();
-    item2->setData(Qt::DisplayRole,"teeeest");
-    addItem(item2);
-    const QString& s =item->whatsThis();
+    QMessageBox::information(NULL,"QTableView Item Clicked","hello 2");
+   widget2->clear();
+    for (std::vector<Projet*>::iterator it = PM.getTab().begin(); it!=PM.getTab().end(); ++it)
+    {
+        for (unsigned int i =0;i< (*it)->GetTabProjet().size(); i++)
+
+        {
+            QListWidgetItem *item2 = new QListWidgetItem();
+           item2->setData(Qt::DisplayRole, (*it)->getIndice(i)->getId());// Ceci est le titre
+           item2->setData(Qt::UserRole + 1, (*it)->getIndice(i)->getTitre());// Ceci est la description
+           widget2-> addItem(item2);
+        }
+    }
+
+
+
+
+  /*  const QString& s =item->whatsThis();
     Projet* p= PM.getProjet(s);
     this->setWindowTitle("Taches du Projet "+p->getId());
-    QMessageBox::information(NULL,"QTableView Item Clicked",s);
 
     for (std::vector<Tache*>::iterator it = p->GetTabProjet().begin(); it!=p->GetTabProjet().end(); ++it)
     {
         QListWidgetItem *item2 = new QListWidgetItem();
          item2->setData(Qt::DisplayRole, (*it)->getId());// Ceci est le titre
          item2->setData(Qt::UserRole + 1, (*it)->getTitre());// Ceci est la description
-         addItem(item2);
-    }
-
-    /*for (unsigned int i =0;i< p->GetTabProjet().size(); i++)
-    {
-        QListWidgetItem *item = new QListWidgetItem();
-         item->setData(Qt::DisplayRole,p->getIndice(i)->getId());// Ceci est le titre
-         item->setData(Qt::UserRole + 1, p->getIndice(i)->getTitre());// Ceci est la description
-        item->setWhatsThis((p->getIndice(i)->getId()));
-         addItem(item);
+        widget1-> addItem(item2);
     }*/
-     showMaximized();
 
 
+    widget2->showMaximized();
  }
 
-void TasksPart::showTask(QListWidgetItem * item)
+void  splitter::showTask(QListWidgetItem * item)
 {
     TacheManager& M=  TacheManager::getInstance();
     const QString& s =item->whatsThis();
@@ -126,7 +144,7 @@ void TasksPart::showTask(QListWidgetItem * item)
              item->setData(Qt::DisplayRole, (*it)->getId());// Ceci est le titre
              item->setData(Qt::UserRole + 1, (*it)->getTitre());// Ceci est la description
              item->setWhatsThis(((*it)->getId()));
-             addItem(item);
+             widget2->addItem(item);
         }
 
     }

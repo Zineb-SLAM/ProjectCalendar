@@ -125,16 +125,16 @@ void TacheManager::libererInstance(){
     handler.instance=0;
 }
 
-TacheU& TacheManager::ajouterTacheU(const QString& id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, const bool& preempt, const bool& prog){
+TacheU* TacheManager::ajouterTacheU(const QString& id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, const bool& preempt, const bool& prog){
     TacheU* newt = new TacheU(id,t,dur,dispo,deadline,preempt,prog);
     addItem(newt);
-    return *newt;
+    return newt;
 }
 
-TacheC& TacheManager::ajouterTacheC(const QString& id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadl) {
+TacheC* TacheManager::ajouterTacheC(const QString& id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadl) {
     TacheC* newt = new TacheC(id,t,dur,dispo,deadl);
     addItem(newt);
-    return *newt;
+    return newt;
 }
 
 void TacheManager::load(const QString& f)

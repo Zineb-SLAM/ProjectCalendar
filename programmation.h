@@ -14,6 +14,9 @@ using namespace std;
 using namespace TIME;
 
 class Programmation
+        /*! \class Programmation
+                \brief Classe permettant de programmer un evenement avec un date et un horaire
+        */
 {
     friend class ProgrammationManager;
     const Event* event;
@@ -36,10 +39,15 @@ QTextStream& operator<<(QTextStream& fout, const Programmation* t);
 
 class ProgrammationManager
 {
+    /*! \class ProgrammationManager
+            \brief Classe contenant toutes les programmations des evenemnts , cette classe
+            gère la création et la destructions des programmations des Evenements
+    */
+
     typedef std::vector<Programmation*> vectProg;
     vectProg tabprogs;
-    ProgrammationManager(const ProgrammationManager& e);
-    ProgrammationManager& operator=(const ProgrammationManager& e);
+    ProgrammationManager(const ProgrammationManager& e);//!< Methode Privé: ProgrammationManager etant un singelton, il faut empecher la construction par recopie d'un autre objet ProgrammationManager
+    ProgrammationManager& operator=(const ProgrammationManager& e);//!<Operateur Privé: ProgrammationManager etant un singelton, il faut empecher la construction d'un autre objet ProgrammationManager par le biais de l'operateur =
     struct Handler
     {
         ProgrammationManager* instance;
@@ -52,17 +60,19 @@ public:
     ~ProgrammationManager();
     static ProgrammationManager& getInstance();
     static void libererInstance();
-    Programmation* trouverProgrammation(const Event* t);
+    vectProg& getTabprogs() { return tabprogs; } //!< Retourne le Tableau de Programmation
+    Programmation* trouverProgrammation(const Event* t); //!< Retourne La Programmation de l'Evenement passé en paramètre
+    //!< Retourne la programmation d'un Evenement ) partir de son Id.
+    void ajouterProgrammation(TacheU* t, const Date& d, const Horaire& h);//!< Programme l'objet Tache en Créant l'objet Programmation correspondant et rennvoie cet objet à la méthode addprog
+    void ajouterProgrammation(Activite* a, const Date& d, const Horaire& h); //!< Programme l'objet une Activite en Créant  l'objet Programmation correspondant et rennvoie cet objet à la méthode addprog
+    void addprog(Programmation* p); //!< Methode Appelee par ajouterProgrammation qui ajoute la programmation d'un Evenement au Vector de ProgrammationManager
     Programmation* getProg(const QString& id_evt);
-    void ajouterProgrammation(TacheU* t, const Date& d, const Horaire& h);
-    void ajouterProgrammation(Activite* a, const Date& d, const Horaire& h);
-    void addprog(Programmation* p);
     QTextStream& afficher(QTextStream& f,const Event* t)
     {
        Programmation* a= trouverProgrammation(t);
       return a->afficher(f);
     }
-    vectProg& getTabprogs() { return tabprogs; }
+
 };
 
 

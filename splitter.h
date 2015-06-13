@@ -18,31 +18,13 @@ class splitter;
 }
 
 
-class TasksPart: public QListWidget
-{
-    Q_OBJECT
-public:
-     TasksPart(QWidget* parent=0);
-     //~splitter();
-
-private:
-
-public slots:
-     void showTasks(QListWidgetItem* item);
-     //void showTasks();
-     void showTask(QListWidgetItem * item);
-
-
-};
-
-
-
 
 class splitter : public QWidget
 {
     Q_OBJECT
      QListWidget* widget1;
-     TasksPart* widget2;
+     QListWidget* widget2;
+
      ProjetManager& PM;
 
 public:
@@ -54,6 +36,9 @@ private:
 
 public slots:
       void showProjects();
+     void show_project_info(QListWidgetItem * item);
+     void showTasks();
+      void showTask(QListWidgetItem* item);
 
      };
 

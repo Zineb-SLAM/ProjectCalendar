@@ -12,6 +12,22 @@
 #include<QDialog>
 #include<QFormLayout>
 
+class ProjetInfoId : public QDialog
+{
+    Q_OBJECT
+
+    QLabel* id;
+    QLabel* titre;
+    QLabel* disponibilite;
+    QLabel* echeance;
+    QLabel* taches;
+   QFormLayout* formLayout;
+
+public:
+    ProjetInfoId(const QString& id,QWidget* parent=0,Qt::WindowFlags f = 0);
+
+};
+
 class ProjetInfo : public QDialog
 {
     Q_OBJECT
@@ -24,7 +40,7 @@ class ProjetInfo : public QDialog
    QFormLayout* formLayout;
 
 public:
-    ProjetInfo(const QString& id,QWidget* parent=0,Qt::WindowFlags f = 0);
+    ProjetInfo(Projet* p,QWidget* parent=0,Qt::WindowFlags f = 0);
 
 };
 
@@ -46,7 +62,7 @@ class TacheInfo : public QDialog {
     QFormLayout* formLayout;
 
 public:
-    TacheInfo(Tache* t,QWidget* parent=0);
+    TacheInfo(Tache* t,QWidget* parent=0,Qt::WindowFlags f = 0);
 
 };
 

@@ -28,6 +28,7 @@ class AgendaWindow : public QMainWindow
     QMenu *menu_tache;
     QMenu *menu_projet;
     QMenu *menu_activite;
+    QMenu *menu_Rechercher;
 
     //actions
     QAction *programmer_tache;
@@ -37,6 +38,10 @@ class AgendaWindow : public QMainWindow
     QAction *creer_tache;
     QAction *tout_afficher;
     QAction *creer_activite;
+    QAction *Rechercher_Projet;
+    QAction *Rechercher_Tache;
+    QAction *Rechercher_Programmation;
+    //QAction *Rechercher_Programmation;
 
     //couche jours
     QLabel *lundi;
@@ -104,10 +109,11 @@ public:
     explicit AgendaWindow();
 signals:
 private slots:
-    void changer_semaine();
+    void changer_semaine(const unsigned int&);
     void placer_evenement(Activite* a);
     void placer_evenement(TacheU* t);
     void charger_agenda();
+    void deplacer_tache(const Tache *t);
     void sauvegarder_agenda();
     void demander_programmer();
     void ajouter_projet();
@@ -115,6 +121,9 @@ private slots:
     void afficher();
     void TreeViewProjet();
     void ajouter_activite();
+    void recherche_projet();
+    void recherche_tache();
+    void recherche_programmation();
 
 public slots:
 };

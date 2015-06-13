@@ -172,7 +172,7 @@ void ProgrammationManager::ajouterProgrammation(TacheU* t, const Date& d, const 
                          }
                    }
 
-                else if ((prog->getDate()==d) && ((*(prog->getHoraire().getFin((*it)->getDuree())))<h) || (d>prog->getDate()))
+                else if ((prog->getDate()==d) && ((*(prog->getHoraire().getFin((*it)->getDuree())))<h) || (prog->getDate()<d))
                     throw CalendarException("Votre Programmation ne respecte pas le principe de Precedence");
 
           }
@@ -196,6 +196,15 @@ void ProgrammationManager::addprog(Programmation* p)
 {
     
     tabprogs.push_back(p);
+}
+Programmation* ProgrammationManager::getProg(const QString& id_evt)
+{
+    for(vectProg::iterator it= tabprogs.begin(); it!=tabprogs.end();it++)
+    {
+        if((*it)->getEvent()->getId()==id_evt) return (*it);
+    }
+    return 0;
+
 }
 
 QTextStream& Programmation::afficher(QTextStream& fout) const

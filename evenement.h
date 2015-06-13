@@ -32,7 +32,7 @@ class Activite: public Event
     Duree duree;
     QString lieu;
 public:
-    Activite(const QString& i, const QString& t, const Duree d, const QString& l):id(i), titre(t), duree(d), lieu(l) {}
+    Activite(const QString& i, const QString& t, const Duree d, const QString& l="UTC"):id(i), titre(t), duree(d), lieu(l) {}
     const QString& getId() const { return id; }
     const QString& getTitre() const { return titre; }
     void setTitre(const QString& t ) { this->titre=t; }

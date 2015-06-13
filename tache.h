@@ -61,6 +61,7 @@ class TacheU : public Tache , public Event {
     unsigned int progression;
     vector<TacheU*> precedence;
     vector<TacheU*> suivante;// La prograssion est evaluee de 1 a 100 si la progression est 100 le projet va alors considerer la tache comme completed
+
     //méthodes
     void setDuree(const Duree& d); //redéfinition
     void setPreemptive() { preemptive = true;}
@@ -145,8 +146,8 @@ public:
     static TacheManager& getInstance();
     static void libererInstance();
     tabtaches& getTabTaches() { return taches; }
-    TacheU& ajouterTacheU(const QString &id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, const bool& preempt=false, const bool& prog=false);
-    TacheC& ajouterTacheC(const QString& id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadl);
+    TacheU* ajouterTacheU(const QString &id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, const bool& preempt=false, const bool& prog=false);
+    TacheC* ajouterTacheC(const QString& id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadl);
     template <class T> void ajouterTacheATacheC(const TacheC& tacheC, const T& tacheAjout) {
         tacheC.addTasktoC(tacheAjout);
     }
