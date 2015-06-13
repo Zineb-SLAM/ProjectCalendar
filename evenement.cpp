@@ -19,3 +19,13 @@ const QString Activite::toString() const {
     f >> str;
     return str;
 }
+
+void Rdv::Afficher_Activite () const {
+    QTextStream f = stdout(cout);
+    f << getId() << getTitre() << getDuree() << getLieu() << personne;
+}
+
+void Rdv::Afficher_Activite () const {
+    QTextStream f = stdout(cout);
+    f << getId() << getTitre() << getDuree() << getLieu();
+}
