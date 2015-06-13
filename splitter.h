@@ -16,12 +16,29 @@ namespace Ui
 class splitter;
 }
 
+class TasksPart: public QListWidget
+{
+    Q_OBJECT
+public:
+     TasksPart(QWidget *parent = 0);
+     //~splitter();
+
+private:
+
+public slots:
+
+    void showTasks(QListWidgetItem* item);
+    void showTak(Tache * t);
+
+};
+
+
 class splitter : public QDialog
 {
     Q_OBJECT
      ProjetManager& PM;
      QListWidget* widget1;
-     QListWidget* widget2;
+     TasksPart* widget2;
 
 public:
      splitter(QWidget *parent = 0, Qt::WindowFlags flags=0);
@@ -30,14 +47,14 @@ public:
 private:
 
 
-    void showTak(Tache * t);
 
-private slots:
+public slots:
     void showProjects();
-  //void onwidget1ItemClicked(QListWidgetItem* item);
+
 
 
 };
+
 
 
 

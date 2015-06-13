@@ -5,11 +5,10 @@
 using namespace std;
 
 
-/*int main()
+int main(int argc, char* argv[])
 {
 
-
-   TacheManager& tacheM = TacheManager::getInstance();
+ TacheManager& tacheM = TacheManager::getInstance();
     TacheU& t1=tacheM.ajouterTacheU("t1", "tache numéro 1", Duree(50), Date(4,5,2015), Date(6,5,2015), true,false);
     TacheU& t2=tacheM.ajouterTacheU("t2", "tache 2", Duree(15), Date(6,6,2015), Date(6,6,2015),true,false);
     TacheU& t3=tacheM.ajouterTacheU("t3", "tache 3", Duree(3,30), Date(6,6,2015), Date(6,6,2015));
@@ -20,10 +19,9 @@ using namespace std;
     TacheU& t8=tacheM.ajouterTacheU("t8", "tache 8", Duree(5,00), Date(9,6,2015), Date(6,6,2015));
     QTextStream stdoutQt(stdout);
     tacheM.afficherTaches(stdoutQt);
-    Tache* t = tacheM.getTache("t1");
+    //Tache* t = tacheM.getTache("t1");
     ProjetManager& projetM = ProjetManager::getInstance();
-        try
-    {
+        //try{
         //projetM.getProjet("p2");
         projetM.creerProjet("p1","LO21",Date(28,2,2015),Date(1,10,2015));
         projetM.afficherTitreProjets(stdoutQt);
@@ -31,6 +29,9 @@ using namespace std;
         projetM.creerProjet("p2","NF17",Date(3,4,2015),Date(20,7,2015));
         projetM.afficherTitreProjets(stdoutQt);
         Projet* p2=projetM.getProjet("p2");
+        projetM.afficherTitreProjets(stdoutQt);
+         projetM.creerProjet("p3","NF16",Date(25,05,2015),Date(28,12,2015));
+        Projet* p3=projetM.getProjet("p3");
         bool existe = projetM.ProjetExists("p34");
         if(!existe) stdoutQt << "le projet n'existe pas" << endl;
         projetM.afficherTitreProjets(stdoutQt);
@@ -41,17 +42,48 @@ using namespace std;
         projetM.ajouterTacheAProjet(p2, &t8);
         projetM.ajouterTacheAProjet(p2, &t1);
         projetM.ajouterTacheAProjet(p2, &t3);
+
+    stdoutQt<<"Affichage des taches du projet 1"<<endl;
+
+    for (unsigned int i =0;i< p1->GetTabProjet().size(); i++)
+    {
+        stdoutQt<<"Tache:";
+        stdoutQt<<p1->getIndice(i)->getTitre();
+        stdoutQt<<endl;
     }
 
-      catch(CalendarException e) { stdoutQt << "erreur" << e.getInfo(); }
-    catch(TimeException t) { stdoutQt << "erreur TIME" << t.GetInfo(); }
-    /*QApplication app(argc, argv);
+
+
+
+  //}
+    //catch(CalendarException e) { stdoutQt << "erreur" << e.getInfo(); }
+    //catch(TimeException t) { stdoutQt << "erreur TIME" << t.GetInfo(); }
+
+    //*******************************************Liberer**********************************************************************
+
+
+    QApplication app(argc, argv);
     splitter w;
     w.show();
     return app.exec();
+    /*projetM.removeProject("p1");
+     projetM.libererInstance();
+     tacheM.libererInstance();
+     projetM.libererInstance();*/
+}
+
+
+
     //tacheM.ajouterPrecedenceTache(&t1,&t2);
     //tacheM.ajouterPrecedenceTache(&t2,&t3);
-    //tacheM.ajouterPrecedenceTache(&t3,&t4);*/
+    //tacheM.ajouterPrecedenceTache(&t3,&t4);*./
+
+    //*******************************************Liberer**********************************************************************
+   /* projetM.removeProject("p1");
+    projetM.libererInstance();
+    tacheM.libererInstance();
+    projetM.libererInstance();*/
+
 
 
     //*******************************************Projet**********************************************************************
@@ -94,9 +126,9 @@ using namespace std;
     pM.libererInstance();
 
 return 0;
-}*/
+}
 
-int main(int argc, char* argv[]) {
+/*int main(int argc, char* argv[]) {
    try {
     QApplication app(argc,argv);
     AgendaWindow fenetre;
@@ -106,13 +138,7 @@ int main(int argc, char* argv[]) {
         QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);
       }
     catch (std::exception e) { QMessageBox::information(0,"Erreur",e.what(),QMessageBox::Ok);}
-}
-
-
-/*int main(int argc, char *argv[])
-{
-    QApplication app(argc, argv);
-    splitter w;
-    w.show();
-    return app.exec();
 }*/
+
+
+

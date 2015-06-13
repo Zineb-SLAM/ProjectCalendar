@@ -26,18 +26,26 @@ void Projet::removeTache(Tache*t) {
     }
 }
 
-void Projet::addTache(Tache* t) {
+void Projet::addTache(Tache* t)
+{
     if(isTacheDansProjet(t))
         throw CalendarException ("La tache appartient deja au projet");
     tachesProjet.push_back(t);
 }
 
-const Tache *Projet::getTache(const QString& id) const {
+
+const Tache *Projet::getTache(const QString& id) const
+{
+
     tabtaches::const_iterator it = tachesProjet.begin();
     while (it != tachesProjet.end() && (*it)->getId() != id)
-        it++;
+    {
+
     if (it != tachesProjet.end())
         return *it;
+     it++;
+    }
+
     throw CalendarException("La tache n'appartient pas au projet");
 }
 
@@ -72,7 +80,7 @@ void ProjetManager::libererInstance() {
 
 bool ProjetManager::ProjetExists(const QString &id) {
     for (tabprojets::iterator it = projets.begin(); it!=projets.end(); ++it) {
-        if ((*it)->id == id)
+        if ((*it)->getId() == id)
             return true;
     }
     return false;
@@ -80,7 +88,7 @@ bool ProjetManager::ProjetExists(const QString &id) {
 
 Projet* ProjetManager::getProjet(const QString& id) {
     for (tabprojets::iterator it = projets.begin(); it!=projets.end(); ++it) {
-        if ((*it)->id == id)
+        if ((*it)->getId() == id)
             return *it;
     }
     throw CalendarException("Le projet n'existe pas");
@@ -93,7 +101,8 @@ void ProjetManager::creerProjet(const QString& id, const QString& t, const Date&
     projets.push_back(newp);
 }
 
-void ProjetManager::ajouterTacheAProjet(Projet* p, Tache* t) {
+void ProjetManager::ajouterTacheAProjet(Projet* p, Tache* t)
+{
     //vérifier les échances des taches avant d'ajouter au projet
     p->addTache(t);
 }

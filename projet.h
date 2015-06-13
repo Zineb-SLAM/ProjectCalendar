@@ -46,6 +46,9 @@ public:
     tabtaches& GetTabProjet(){ return tachesProjet;}
     const bool& isTermine() const { return termine; }
     const Tache* getTache(const QString& id) const;
+
+    const Tache* getIndice(unsigned int i) { return tachesProjet[i];}
+
     bool isTacheDansProjet(Tache* t);
     void afficher(QTextStream& f) const;
 };
