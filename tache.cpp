@@ -97,6 +97,14 @@ const QString TacheU::toString() const {
 
 //******************************************************************************************
 
+void TacheC::addTasktoC(Tache* t)
+{
+    for(vectcomp::const_iterator it= tachescomp.begin(); it!=tachescomp.end();++it)
+    {
+       if((*it)->getId()==t->getId()) throw CalendarException ("La Tache Exsite Deja");
+    }
+ tachescomp.push_back(t);
+}
 const QString TacheC::toString() const {
     QTextStream f;
     QString str;
@@ -134,6 +142,11 @@ TacheC* TacheManager::ajouterTacheC(const QString& id, const QString& t, const D
     TacheC* newt = new TacheC(id,t,dur,dispo,deadl);
     addItem(newt);
     return newt;
+}
+
+void TacheManager::ajouter_Tache_a_composite(TacheC* C,Tache* t)
+{
+    C->addTasktoC(t);
 }
 
 void TacheManager::load(const QString& f)

@@ -44,6 +44,7 @@ class NewTask : public QDialog {
     QDateEdit* deadline;
     QComboBox* taskType;
     QListWidget* predecessors;
+    QCheckBox *preemtive;
 
     QFormLayout* formLayout;
 
@@ -56,6 +57,7 @@ public:
     const QDateEdit& getDisponibility() const { return *disponibility; }
     const QDateEdit& getDeadline() const { return *deadline; }
     const QListWidget& getPredecessors() const { return *predecessors; }
+    const QCheckBox& getPreemtive() const { return *preemtive; }
 public slots:
     //void addNewTask();
 };

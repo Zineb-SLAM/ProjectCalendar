@@ -20,7 +20,8 @@ int main(int argc, char* argv[])
     TacheU* t9=tacheM.ajouterTacheU("9", "Relationnel", Duree(2,00), Date(03,03,2015), Date(13,03,2015));
     TacheU* t10=tacheM.ajouterTacheU("10", "Tests IA02 ", Duree(2,00), Date(12,06,2015), Date(14,06,2015));
     TacheU* t11=tacheM.ajouterTacheU("11", "Revisions LO21", Duree(24,00), Date(15,06,2015), Date(21,06,2015),true,false);
-     TacheU* t12=tacheM.ajouterTacheU("12", "Final LO21", Duree(2,00), Date(21,06,2015), Date(21,06,2015));
+    TacheU* t12=tacheM.ajouterTacheU("12", "Final LO21", Duree(2,00), Date(21,06,2015), Date(21,06,2015));
+    //TacheC* tc13=tacheM.ajouterTacheC("13", "Rapport LO21", Duree(8,00), Date(15,03,2015), Date(20,06,2015));
     QTextStream stdoutQt(stdout);
     tacheM.afficherTaches(stdoutQt);
     //Tache* t = tacheM.getTache("t1");

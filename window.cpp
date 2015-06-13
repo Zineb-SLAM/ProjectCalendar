@@ -43,7 +43,9 @@ NewTask::NewTask(QWidget* parent) {
     taskType->addItem("unitaire");
     taskType->addItem("composite");
     predecessors = new QListWidget(this);
-    for(vector<Tache *>::iterator it = TM.getTabTaches().begin(); it != TM.getTabTaches().end(); it++) {
+    preemtive = new QCheckBox("Preemptive", this);
+    for(vector<Tache *>::iterator it = TM.getTabTaches().begin(); it != TM.getTabTaches().end(); it++)
+    {
         new QListWidgetItem((*it)->getTitre(), predecessors);
     }
 
@@ -53,9 +55,11 @@ NewTask::NewTask(QWidget* parent) {
     formLayout->addRow("Duree", duration);
     formLayout->addRow("Disponibilite", disponibility);
     formLayout->addRow("Echeance", deadline);
+    formLayout->addWidget(preemtive);
     formLayout->addRow("Type de la tache", taskType);
     formLayout->addRow("Predecesseurs", predecessors);
     formLayout->addWidget(buttonBox);
+
     setLayout(formLayout);
 
     connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));

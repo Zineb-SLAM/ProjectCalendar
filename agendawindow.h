@@ -35,12 +35,16 @@ class AgendaWindow : public QMainWindow
     QAction *charger;
     QAction *exporter;
     QAction *creer_projet;
+    QAction *Ajouter_tache_a_projet;
     QAction *creer_tache;
+    QAction *Ajouter_Precedence;
+    QAction *Ajouter_tache_a_composite;
     QAction *tout_afficher;
     QAction *creer_activite;
     QAction *Rechercher_Projet;
     QAction *Rechercher_Tache;
     QAction *Rechercher_Programmation;
+
     //QAction *Rechercher_Programmation;
 
     //couche jours
@@ -116,7 +120,10 @@ private slots:
     void sauvegarder_agenda();
     void demander_programmer();
     void ajouter_projet();
+    void ajouter_tache_a_projet();
     void ajouter_tache();
+    void ajouter_tache_a_composite();
+    void ajouter_precedence();
     void afficher();
     void ajouter_activite();
     void recherche_projet();

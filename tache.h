@@ -112,7 +112,7 @@ class TacheC : public Tache {
     ~TacheC() { tachescomp.clear(); } //clear() vide le contenu du conteneur
     TacheC(const QString& id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadl): Tache(id,t,dur,dispo,deadl)
     { tachescomp.reserve(10); }
-    template <class T> void addTasktoC(const T& t) { tachescomp.push_back(t); }
+     void addTasktoC(Tache* );
 public:
     const QString toString() const;
     vectcomp& getCTaches(){return tachescomp;}
@@ -141,8 +141,8 @@ class TacheManager
     //méthodes
     TacheManager() { taches.reserve(10); }
     ~TacheManager() { taches.clear(); };
-    TacheManager(const TacheManager& m);
-    TacheManager& operator=(const TacheManager& m);
+    TacheManager(const TacheManager&);
+    TacheManager& operator=(const TacheManager&);
     template <class T> void addItem(T* t) { taches.push_back(t); }
 public:
     static TacheManager& getInstance();
@@ -150,15 +150,13 @@ public:
     tabtaches& getTabTaches() { return taches; }
     TacheU* ajouterTacheU(const QString &id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, const bool& preempt=false, const bool& prog=false);
     TacheC* ajouterTacheC(const QString& id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadl);
-    template <class T> void ajouterTacheATacheC(const TacheC& tacheC, const T& tacheAjout) {
-        tacheC.addTasktoC(tacheAjout);
-    }
-    void load(const QString& f);
-    void save(const QString& f);
+   void ajouter_Tache_a_composite(TacheC* ,Tache* );
+    void load(const QString& );
+    void save(const QString& );
     void afficher(QTextStream& f) const { f << "****TacheManager*****" << endl; }
-    Tache* getTache(const QString& id);
-    TacheU* getTacheU(const QString& id); // ne retourne que les taches Unitaires pour pouvoir les programmer
-    void ajouterPrecedenceTache(TacheU* tAjout,TacheU* tPrecedente);
+    Tache* getTache(const QString&);
+    TacheU* getTacheU(const QString&); // ne retourne que les taches Unitaires pour pouvoir les programmer
+    void ajouterPrecedenceTache(TacheU*,TacheU*);
     QTextStream& afficherTaches(QTextStream& fout);
     const QString& afficherTachesAProgrammer() const;
 
