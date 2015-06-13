@@ -81,8 +81,8 @@ AgendaWindow::AgendaWindow() :
     heures->addWidget(label_23h);
 
     //couche emploi du temps
-    scene = new CustomQGraphicsScene(this);
-    visu = new QGraphicsView(scene, this);
+    scene = new CustomQGraphicsScene();
+    visu = new QGraphicsView(scene);
     visu->setFixedSize(700,600);
     visu->show();
     emploi_du_temps->addItem(jours);
@@ -208,14 +208,14 @@ void AgendaWindow::changer_semaine() {
     int a = choix_annee->value();
     for(std::vector<Programmation *>::iterator it = ProgM.getTabprogs().begin(); it != ProgM.getTabprogs().end(); it++) {
         if((*it)->getDate().toQDate().weekNumber(&a) == s)
-            if(typeid((*it)->getEvent()).name() == "Activite *") {
+            if(!((*it)->getEvent()->cestunetache())) {
                 Event *temp = const_cast<Event *>((*it)->getEvent());
                 placer_evenement(dynamic_cast<Activite *>(temp));
             }
-        else {
-            Event *temp = const_cast<Event *>((*it)->getEvent());
-            placer_evenement(dynamic_cast<TacheU *>(temp));
-        }
+            else {
+                Event *temp = const_cast<Event *>((*it)->getEvent());
+                placer_evenement(dynamic_cast<TacheU *>(temp));
+            }
     }
 }
 

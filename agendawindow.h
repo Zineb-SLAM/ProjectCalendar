@@ -130,9 +130,7 @@ public slots:
 class ItemActivite : public QGraphicsItem {
     Activite* a;
 public:
-    ItemActivite(Activite* act, QGraphicsItem* parent = 0):QGraphicsItem(parent), a(act) {
-        setFlag(QGraphicsItem::ItemIsFocusable);
-    }
+    ItemActivite(Activite* act, QGraphicsItem* parent = 0):QGraphicsItem(parent), a(act) {}
     //fonctions virtuelles pures de QGraphicsItem à implémenter
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -141,9 +139,7 @@ public:
 class ItemTache : public QGraphicsItem {
     Tache* t;
 public:
-    ItemTache(Tache* tache, QGraphicsItem* parent = 0):QGraphicsItem(parent), t(tache) {
-        setFlag(QGraphicsItem::ItemIsFocusable);
-    }
+    ItemTache(Tache* tache, QGraphicsItem* parent = 0):QGraphicsItem(parent), t(tache) {}
     //fonctions virtuelles pures de QGraphicsItem à implémenter
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
