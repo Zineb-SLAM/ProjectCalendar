@@ -20,12 +20,13 @@ const QString Activite::toString() const {
     return str;
 }
 
-void Rdv::Afficher_Activite () const {
-    QTextStream f = stdout(cout);
-    f << getId() << getTitre() << getDuree() << getLieu() << personne;
+void Rdv::Afficher_Activite () const
+{
+  /* QTextStream f = stdout(std::cout);
+    f << getId() << getTitre() << getDuree() << getLieu() << personne;*/
 }
 
-void Rdv::Afficher_Activite () const {
-    QTextStream f = stdout(cout);
-    f << getId() << getTitre() << getDuree() << getLieu();
+void Reunion::Afficher_Activite () const {
+    /*TextStream f = stdout(cout);
+    f << getId() << getTitre() << getDuree() << getLieu();*/
 }

@@ -71,6 +71,8 @@ class TacheU : public Tache , public Event {
     {
         if ((preemptive == false) && (dur.getDureeEnHeures() > 12))
         throw CalendarException("Erreur tache unitaire : une tache non preemptive ne peut pas avoir une durée supérieure à 12h");
+        precedence.reserve(5);
+        suivante.reserve(5);
     }
 
     TacheU(const Tache& t, const bool& pre=false, const bool& prog=false):
@@ -78,8 +80,8 @@ class TacheU : public Tache , public Event {
 public:
     void ajouterPrecedence(TacheU* t );
     void supprimerPrecedence(const QString& id);
-    vector<TacheU*> getPrecedence(){ return precedence;}
-    vector<TacheU*> getSuivante(){ return suivante;}
+    vector<TacheU*>& getPrecedence(){ return precedence;}
+    vector<TacheU*>& getSuivante(){ return suivante;}
     void setProgression(unsigned int i)
     {
         if( i>100) throw CalendarException("Progression invalide la progression doit etre entre 0 et 100");

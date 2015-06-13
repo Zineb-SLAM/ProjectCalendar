@@ -64,6 +64,7 @@ public:
     Programmation* trouverProgrammation(const Event* t); //!< Retourne La Programmation de l'Evenement passé en paramètre
     //! Appel du Constructeur de Programmation
     void ajouterProgrammation(TacheU* t, const Date& d, const Horaire& h);
+    void ajouterProgrammation(TacheU* t, const Date& d, const Horaire& h, const Duree& nb);
     void ajouterProgrammation(Activite* a, const Date& d, const Horaire& h);
     //!< Programme l'objet Tache Unitaire/Evenement en Créant l'objet Programmation correspondant et rennvoie cet objet à la méthode addprog
 

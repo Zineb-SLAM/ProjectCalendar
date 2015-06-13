@@ -338,34 +338,59 @@ void AgendaWindow::ajouter_activite() {
      bool ok;
      QString message= "Id :  ";
      QString id = QInputDialog::getText(this,"Projet","Entrez l'id du Projet :", QLineEdit::Normal,"valeur", &ok);
+     try
+     {
+         if (ok && !id.isEmpty())
+         {
      message+=(id);
      Projet* p = PM.getProjet(id);
       message+="\n Titre : ";
      QString *titre = new QString(p->getTitre());
      message+=(*titre);
-     message+="\n Diponiblite  ";
-     QString *disponibilite = new QString((p->getDisponibilite()).toString());
-       message+=(*disponibilite);
-        message+="\n Echeance est ";
-      QString *echeance = new QString((p->getEcheance()).toString());
-       message+=(*echeance);
-    message+="  \n Taches: ";
+     message+="\n Diponiblite : ";
+     QString dispo= QString::number(p->getDisponibilite().getAnnee());
+    dispo+="/";dispo+= QString::number(p->getDisponibilite().getMois());
+    dispo+="/";dispo+= QString::number(p->getDisponibilite().getJour());
+    QString* disponibilite= new QString(dispo);
+     message+=disponibilite;
+     message+="\n Echeance : ";
+    QString ech= QString::number(p->getEcheance().getAnnee());
+   ech+="/";ech+= QString::number(p->getEcheance().getMois());
+   ech+="/";ech+= QString::number(p->getEcheance().getJour());
+   QString* echeance = new  QString(ech);
+    message+=echeance;
+    message+="\n Taches: ";
 
      for (std::vector<Tache*>::iterator itt = p->GetTabProjet().begin(); itt!=p->GetTabProjet().end(); ++itt)
      {
-       message+= " "+(*itt)->getId();
+       message+= "  "+(*itt)->getId();
+       message+= " : "+(*itt)->getTitre();
+       message+="*****";
      }
 
     QMessageBox msgBox;
     msgBox.setText(message);
     msgBox.exec();
-}
+    }
+     }
+         catch (CalendarException ce) {
+                 QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);}
+
+             catch (std::exception e) {
+                    QMessageBox::information(0,"Erreur",e.what(),QMessageBox::Ok);}
+
+     }
+
 
  void AgendaWindow::recherche_tache()
  {
      bool ok;
       QString message= "Id : ";
      QString id = QInputDialog::getText(this,"Tache","Entrez l'id de la Tache Recherchee :", QLineEdit::Normal,"valeur", &ok);
+     try
+     {
+         if (ok && !id.isEmpty())
+         {
      Tache* t= TM.getTache(id);
        message+= id;
      QString* titre = new QString(t->getTitre());
@@ -375,13 +400,17 @@ void AgendaWindow::ajouter_activite() {
     QString h = (H<10)?"0"+QString::number(H):""+QString::number(H);
     QString m = (M<10)?"0"+QString::number(M):""+QString::number(M);
     QString* duree = new QString(h+" H "+m);
- const QDate& dated=t->getDisponibilite().toQDate();
-   QString* disponibilite= new QString(dated.toString() );
-    const QDate& datee=t->getEcheance().toQDate();
-  QString* echeance = new  QString(datee.toString());
+    QString dispo= QString::number(t->getDisponibilite().getAnnee());
+   dispo+="/";dispo+= QString::number(t->getDisponibilite().getMois());
+   dispo+="/";dispo+= QString::number(t->getDisponibilite().getJour());
+   QString* disponibilite= new QString(dispo);
+   QString ech= QString::number(t->getEcheance().getAnnee());
+  ech+="/";ech+= QString::number(t->getEcheance().getMois());
+  ech+="/";ech+= QString::number(t->getEcheance().getJour());
+  QString* echeance = new  QString(ech);
     message+="\n Duree : "; message+= duree ;
-    message+="\n Diponibilite "; message+=disponibilite;
-    message+="\n Echeance "; message+=echeance;
+    message+="\n Diponibilite : "; message+=disponibilite;
+    message+="\n Echeance : "; message+=echeance;
     message+="\n";
      if (t->getTypeTache()) //unitaire
      {
@@ -395,17 +424,21 @@ void AgendaWindow::ajouter_activite() {
                 message+="\n Progression: ";
                 message+=tempTask->getProgression();
             }
-                    else message+="\n Tache Non Preemptive";
+         else message+="\n Tache Non Preemptive";
 
-         message+=(" \n Taches Precedentes:");
+         message+=("\n\n Taches Precedentes:");
          for ( std::vector<TacheU *>::iterator it = tempTask->getPrecedence().begin(); it != tempTask->getPrecedence().end(); ++it)
-            message += " "+(*it)->getId();
-             message +="\n \n";
-
+         {    message+= "  "+(*it)->getId();
+             message+= " : "+(*it)->getTitre();
+             message+="*****";
+         }
+        message +="\n\n";
              message+=(" Taches Suivantes: ");
          for (std::vector<TacheU *>::iterator it = tempTask->getSuivante().begin(); it != tempTask->getSuivante().end(); ++it)
-           message += " "+(*it)->getId();
-          message +="\n";
+         {    message+= "  "+(*it)->getId();
+             message+= " : "+(*it)->getTitre();
+             message+="*****";
+         }
      }
      else
      {
@@ -419,6 +452,14 @@ void AgendaWindow::ajouter_activite() {
      QMessageBox msgBox;
      msgBox.setText(message);
      msgBox.exec();
+     }
+   }
+     catch (CalendarException ce) {
+             QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);}
+
+         catch (std::exception e) {
+                QMessageBox::information(0,"Erreur",e.what(),QMessageBox::Ok);}
+
  }
 
  void AgendaWindow::recherche_programmation()
@@ -426,15 +467,23 @@ void AgendaWindow::ajouter_activite() {
      bool ok;
      QString message= "Id : ";
      const QString&  id = QInputDialog::getText(this,"Programmation","Entrez l'id de l'Evenement Recherche' :", QLineEdit::Normal,"valeur", &ok);
-      Programmation* ev=ProgM.getProg(id);
+     try
+     {
+     if (ok && !id.isEmpty())
+     {
+     Programmation* ev=ProgM.getProg(id);
       message+=id;
        message+="\n Titre :";
        message+=ev->getEvent()->getTitre();
        message+="\n Date ";
-       message+=ev->getDate().toString();
+       QString d= QString::number(ev->getDate().getAnnee());
+      d+="/";d+= QString::number(ev->getDate().getMois());
+      d+="/";d+= QString::number(ev->getDate().getJour());
+      QString* date= new QString(d);
+       message+=date;
        message+="\n Horaire ";
-       unsigned int hh = ev->getEvent()->getDuree().getHeure();
-       unsigned int mm = ev->getEvent()->getDuree().getMinute();
+       unsigned int hh = ev->getHoraire().getHeure();
+       unsigned int mm = ev->getHoraire().getMinute();
       QString h1 = (hh<10)?"0"+QString::number(hh):""+QString::number(hh);
       QString m1 = (mm<10)?"0"+QString::number(mm):""+QString::number(mm);
       QString* horaire = new QString(h1+" H "+m1);
@@ -457,7 +506,9 @@ void AgendaWindow::ajouter_activite() {
         {
             message+="\n Tache Preemptive";
             message+="\n Progression: ";
-            message+=tempTask->getProgression();
+            QString p = QString::number(tempTask->getProgression());
+            message+=p;
+            message+="%";
         }
                 else message+="\n Tache Non Preemptive";
 
@@ -474,8 +525,14 @@ void AgendaWindow::ajouter_activite() {
      QMessageBox msgBox;
      msgBox.setText(message);
      msgBox.exec();
+     }
+ }
 
+     catch (CalendarException ce) {
+             QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);}
 
+         catch (std::exception e) {
+                QMessageBox::information(0,"Erreur",e.what(),QMessageBox::Ok);}
 
  }
 
