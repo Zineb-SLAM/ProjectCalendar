@@ -30,6 +30,7 @@ class AgendaWindow : public QMainWindow
     QMenu *menu_projet;
     QMenu *menu_activite;
     QMenu *menu_Rechercher;
+    QMenu *menu_arbre;
 
     //actions
     QAction *programmer_tache;

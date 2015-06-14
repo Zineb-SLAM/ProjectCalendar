@@ -208,8 +208,6 @@ void AgendaWindow::createMenus() {
     menu_options->addAction(charger);
     menu_options->addAction(exporter);
     menu_options->addAction(exporterTxt);
-    menu_options->addAction(Afficher_projets);
-    menu_options->addAction(Afficher_taches);
 
     menu_tache = menuBar()->addMenu("Tache");
     menu_tache->addAction(creer_tache);
@@ -232,7 +230,9 @@ void AgendaWindow::createMenus() {
     menu_activite->addAction(Rechercher_Tache);
     menu_activite->addAction(Rechercher_Programmation);
 
-
+    menu_arbre = menuBar()->addMenu("Arborescence");
+    menu_arbre->addAction(Afficher_projets);
+    menu_arbre->addAction(Afficher_taches);
 }
 
 //fonctions des slots
@@ -878,7 +878,7 @@ void AgendaWindow::afficher_projets()
          // I display a project
 
       QStandardItem* item=new QStandardItem(QString(message));
-      item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+      item->setEditable(false);
       parentItem->appendRow(item);
       Projet* p = (*it);
       // I display every project's tasks
@@ -890,7 +890,7 @@ void AgendaWindow::afficher_projets()
                   message2+=" : ";
                   message2+=(*itp)->getTitre();
                   QStandardItem* itemp = new QStandardItem(message2);
-                  //itemp->setFlags(itemp->flags() & ~Qt::ItemIsEditable);
+                  itemp->setEditable(false);
                   item->appendRow(itemp);
 
               }
@@ -930,7 +930,7 @@ void AgendaWindow::afficher_taches()
     message+=" : ";
     message+=(*it)->getTitre();
      QStandardItem* item=new QStandardItem(QString(message));
-     item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+     item->setEditable(false);
      parentItem->appendRow(item);
      if(!(*it)->getTypeTache())
      {
@@ -946,7 +946,7 @@ void AgendaWindow::afficher_taches()
                  message2+=(*itp)->getTitre();
 
                  QStandardItem* itemp = new QStandardItem(message2);
-                 //itemp->setFlags(itemp->flags() & ~Qt::ItemIsEditable);
+                 itemp->setEditable(false);
                  item->appendRow(itemp);
 
              }
