@@ -33,13 +33,12 @@ AgendaWindow::AgendaWindow() :
     jours->addWidget(dimanche);
 
     //couche heures
-    h = new QLabel("Horaire",this);
     label_00h = new QLabel("00h", this);
     label_01h = new QLabel("01h", this);
     label_02h = new QLabel("02h", this);
     label_03h = new QLabel("03h", this);
-    label_05h = new QLabel("04h", this);
-    label_04h = new QLabel("05h", this);
+    label_04h = new QLabel("04h", this);
+    label_05h = new QLabel("05h", this);
     label_06h = new QLabel("06h", this);
     label_07h = new QLabel("07h", this);
     label_08h = new QLabel("08h", this);
@@ -58,7 +57,6 @@ AgendaWindow::AgendaWindow() :
     label_21h = new QLabel("21h", this);
     label_22h = new QLabel("22h", this);
     label_23h = new QLabel("23h", this);
-    heures->addWidget(h);
     heures->addWidget(label_00h);
     heures->addWidget(label_01h);
     heures->addWidget(label_02h);
@@ -84,10 +82,12 @@ AgendaWindow::AgendaWindow() :
     heures->addWidget(label_22h);
     heures->addWidget(label_23h);
 
+
     //couche emploi du temps
-    scene = new CustomQGraphicsScene(this);
-    visu = new QGraphicsView(scene, this);
-    visu->setFixedSize(700,600);
+    scene = new CustomQGraphicsScene();
+    scene->setSceneRect(0,0,700,600);
+    visu = new QGraphicsView(scene);
+    //visu->setSceneRect(0,12.5,700,600);
     visu->show();
     emploi_du_temps->addItem(jours);
     emploi_du_temps->addWidget(visu);
@@ -140,8 +140,8 @@ AgendaWindow::AgendaWindow() :
     addDockWidget(Qt::LeftDockWidgetArea, taches);
     taches->setWidget(liste_taches);
 
-    connect(choix_semaine, SIGNAL(valueChanged()), this, SLOT(changer_semaine()));
-    connect(choix_annee, SIGNAL(valueChanged()), this, SLOT(changer_semaine()));
+    connect(choix_semaine, SIGNAL(valueChanged(int)), this, SLOT(changer_semaine()));
+    connect(choix_annee, SIGNAL(valueChanged(int)), this, SLOT(changer_semaine()));
 
     createActions();
     createMenus();
@@ -152,8 +152,11 @@ void AgendaWindow::createActions() {
     charger = new QAction("Charger",this);
     connect(charger, SIGNAL(triggered()), this, SLOT(charger_agenda()));
 
-    exporter = new QAction("Exporter",this);
+    exporter = new QAction("Exporter en XML",this);
     connect(exporter, SIGNAL(triggered()), this, SLOT(sauvegarder_agenda()));
+
+   // exporterTxt = new QAction("Exporter en txt", this);
+    //connect(exporterTxt, SIGNAL(triggered()), this, SLOT(sauvegarder_txt()));
 
     programmer_tache = new QAction("Programmer",this);
     connect(programmer_tache, SIGNAL(triggered()), this, SLOT(demander_programmer()));
@@ -170,13 +173,8 @@ void AgendaWindow::createActions() {
     Ajouter_Precedence=new QAction("Ajouter Precedence", this);
     connect(Ajouter_Precedence, SIGNAL(triggered()), this, SLOT(ajouter_precedence()));
 
-
-    tout_afficher = new QAction("Afficher toutes les taches", this);
-    connect(tout_afficher, SIGNAL(triggered()), this, SLOT(afficher()));
-
     creer_activite = new QAction("Creer une activite", this);
     connect(creer_activite, SIGNAL(triggered()), this, SLOT(ajouter_activite()));
-
 
     Rechercher_Projet=new QAction("Rechercher un  Projet", this);
     connect(Rechercher_Projet, SIGNAL(triggered()), this, SLOT(recherche_projet()));
@@ -203,6 +201,7 @@ void AgendaWindow::createMenus() {
     menu_options = menuBar()->addMenu("Options");
     menu_options->addAction(charger);
     menu_options->addAction(exporter);
+    //menu_options->addAction(exporter_txt);
     menu_options->addAction(tout_afficher);
     menu_options->addAction(Afficher_projets);
 
@@ -224,69 +223,154 @@ void AgendaWindow::createMenus() {
     menu_activite = menuBar()->addMenu("Rechercher");
     menu_activite->addAction(Rechercher_Projet);
     menu_activite->addAction(Rechercher_Tache);
+<<<<<<< HEAD
      menu_activite->addAction(Rechercher_Programmation);
 
+=======
+    menu_activite->addAction(Rechercher_Programmation);
+>>>>>>> origin/master
 }
 
 //fonctions des slots
 
 void AgendaWindow::changer_semaine() {
+    //préparation de la scène
     scene->clear();
+    scene->update();
     int s = choix_semaine->value();
     int a = choix_annee->value();
+    //pour chaque tache programmée, on vérifie qu'elle correspond à la même semaine et même année que les valeurs récupérées
     for(std::vector<Programmation *>::iterator it = ProgM.getTabprogs().begin(); it != ProgM.getTabprogs().end(); it++) {
-        if((*it)->getDate().toQDate().weekNumber(&a) == s)
-            if(typeid((*it)->getEvent()).name() == "Activite *") {
+        int temp = (*it)->getDate().getAnnee();
+        int *year = &temp;
+        if((s == (*it)->getDate().toQDate().weekNumber(&temp)) && (a == (*it)->getDate().getAnnee()))
+            if(!((*it)->getEvent()->cestunetache())) { //si c'est une activité
                 Event *temp = const_cast<Event *>((*it)->getEvent());
                 placer_evenement(dynamic_cast<Activite *>(temp));
             }
-        else {
-            Event *temp = const_cast<Event *>((*it)->getEvent());
-            placer_evenement(dynamic_cast<TacheU *>(temp));
-        }
+            else { //si c'est une tache
+                Event *temp = const_cast<Event *>((*it)->getEvent());
+                placer_evenement(dynamic_cast<TacheU *>(temp));
+            }
     }
 }
 
-/*void AgendaWindow::placer_tache(Tache* t) {
-    ItemTache *tache = new ItemTache(t);
-    scene->addItem(tache);
-    tache->setFocus();
-}*/
-
 void AgendaWindow::placer_evenement(Activite* a) {
-    ItemActivite *activite = new ItemActivite(a);
     QDate date_prog = ProgM.getProg(a->getId())->getDate().toQDate();
+    Programmation* prog = ProgM.trouverProgrammation(a);
     int jour = date_prog.dayOfWeek() - 1; //lundi : 0, mardi : 1...
     qreal x = jour * 100;
-    unsigned int debutH = ProgM.trouverProgrammation(a)->getHoraire().getHeure();
-    unsigned int debutM = ProgM.trouverProgrammation(a)->getHoraire().getMinute();
-    int nbMinutes = (60 * debutH) + debutM;
-    qreal y = (nbMinutes * -25) / 60;
-    scene->addItem(activite);
-    activite->setPos(scene->sceneRect().left()+x,scene->sceneRect().top()+y);
+    bool sur2Jours = false;
+    Horaire *fin = prog->getHoraire().getFin(a->getDuree(), sur2Jours);
+    try {
+    //si un événement a une durée sur 2 jours, il faut afficher le début sur 1 jour et la suite sur l'autre donc on place 2 blocs
+    if (sur2Jours == true) {
+        Horaire minuit(0,0);
+        Duree *d2 = minuit.entre2(*fin);
+        Duree d1(a->getDuree().getDureeEnMinutes() - d2->getDureeEnMinutes()); //a->getDuree() - d2;
+        if(a->estUnRdv()) {
+            //on crée les 2 parties du rdv
+            Rdv *a1 = new Rdv(a->getId(), a->getTitre(), d1, a->getLieu(), "");
+            Rdv *a2 = new Rdv(a->getId(), a->getTitre(), *d2, a->getLieu(), "");
+            ItemActivite *part1 = new ItemActivite(a1);
+            ItemActivite *part2 = new ItemActivite(a2);
+            scene->addItem(part1);
+            scene->addItem(part2);
+            unsigned int debutH = prog->getHoraire().getHeure();
+            unsigned int debutM = prog->getHoraire().getMinute();
+            int nbMinutesAvant = (60 * debutH) + debutM;
+            qreal y = (nbMinutesAvant * 25) / 60;
+            part1->setPos(scene->sceneRect().left()+x,scene->sceneRect().top()+y);
+            part2->setPos(scene->sceneRect().left()+x+100,scene->sceneRect().top());
+
+        }
+        else {
+            //on crée les 2 parties de la réunion
+            Reunion *a1 = new Reunion(a->getId(), a->getTitre(), d1, a->getLieu());
+            Reunion *a2 = new Reunion(a->getId(), a->getTitre(), *d2, a->getLieu());
+            ItemActivite *part1 = new ItemActivite(a1);
+            ItemActivite *part2 = new ItemActivite(a2);
+            scene->addItem(part1);
+            scene->addItem(part2);
+            unsigned int debutH = prog->getHoraire().getHeure();
+            unsigned int debutM = prog->getHoraire().getMinute();
+            int nbMinutesAvant = (60 * debutH) + debutM;
+            qreal y = (nbMinutesAvant * 25) / 60;
+            part1->setPos(scene->sceneRect().left()+x,scene->sceneRect().top()+y);
+            part2->setPos(scene->sceneRect().left()+x+100,scene->sceneRect().top());
+        }
+    }
+    else { //sinon on place un seul item
+            ItemActivite *activite = new ItemActivite(a);
+            unsigned int debutH = prog->getHoraire().getHeure();
+            unsigned int debutM = prog->getHoraire().getMinute();
+            int nbMinutesAvant = (60 * debutH) + debutM;
+            qreal y = (nbMinutesAvant * 25) / 60;
+            scene->addItem(activite);
+            activite->setPos(scene->sceneRect().left()+x,scene->sceneRect().top()+y);
+    }
+    } catch (CalendarException ce) {
+            QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);
+      }
 }
 
 void AgendaWindow::placer_evenement(TacheU *t) {
-    ItemTache *tache = new ItemTache(t);
     QDate date_prog = ProgM.getProg(t->getId())->getDate().toQDate();
+    Programmation * prog = ProgM.trouverProgrammation(t);
     int jour = date_prog.dayOfWeek() - 1; //lundi : 0, mardi : 1...
     qreal x = jour * 100;
-    unsigned int debutH = ProgM.trouverProgrammation(t)->getHoraire().getHeure();
-    unsigned int debutM = ProgM.trouverProgrammation(t)->getHoraire().getMinute();
-    qreal y = (60 * debutH) + debutM;
-    scene->addItem(tache);
-    tache->setPos(scene->sceneRect().left()+x,scene->sceneRect().top()+y);
+    bool sur2Jours = false;
+    Horaire *fin = prog->getHoraire().getFin(t->getDuree(),sur2Jours);
+    try { //si un événement a une durée sur 2 jours, il faut afficher le début sur 1 jour et la suite sur l'autre donc on place 2 blocs
+        if (sur2Jours == true) {
+            //on crée les 2 blocs
+            Horaire minuit(0,0);
+            Duree *d2 = minuit.entre2(*fin);
+            Duree d1(t->getDuree().getDureeEnMinutes() - d2->getDureeEnMinutes());
+            TacheU *t1 = TM.ajouterTacheU(t->getId(), t->getTitre(), d1, t->getDisponibilite(), t->getEcheance());
+            TacheU *t2 = TM.ajouterTacheU(t->getId(), t->getTitre(), *d2, t->getDisponibilite(), t->getEcheance());
+            ItemTache *part1 = new ItemTache(t1);
+            ItemTache *part2 = new ItemTache(t2);
+            scene->addItem(part1);
+            scene->addItem(part2);
+            unsigned int debutH = prog->getHoraire().getHeure();
+            unsigned int debutM = prog->getHoraire().getMinute();
+            int nbMinutesAvant = (60 * debutH) + debutM;
+            qreal y = (nbMinutesAvant * 25) / 60;
+            part1->setPos(scene->sceneRect().left()+x,scene->sceneRect().top()+y);
+            part2->setPos(scene->sceneRect().left()+x+100,scene->sceneRect().top());
+        }
+        else { //sinon on place un seul bloc
+            ItemTache *tache = new ItemTache(t);
+            unsigned int debutH = ProgM.trouverProgrammation(t)->getHoraire().getHeure();
+            unsigned int debutM = ProgM.trouverProgrammation(t)->getHoraire().getMinute();
+            int nbMinutes = (60 * debutH) + debutM;
+            qreal y = (nbMinutes * 25) / 60;
+            scene->addItem(tache);
+            tache->setPos(scene->sceneRect().left()+x,scene->sceneRect().top()+y);
+        }
+    } catch (CalendarException ce) {
+        QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);
+        }
 }
 
 void AgendaWindow::charger_agenda() {
     QString chemin = QFileDialog::getOpenFileName();
-    PM.load(chemin);
+    if (!chemin.isEmpty())
+        PM.load(chemin);
 }
 
 void AgendaWindow::sauvegarder_agenda() {
     QString chemin = QFileDialog::getSaveFileName();
-    PM.save(chemin);
+    if (!chemin.isEmpty())
+        PM.save(chemin);
 }
+
+/*void AgendaWindow::sauvegarder_txt() {
+    QString chemin = QFileDialog::getSaveFileName();
+    if (!chemin.isEmpty())
+        PM.saveTxt(chemin);
+}*/
 
 void AgendaWindow::demander_programmer() {
     bool ok;
@@ -300,12 +384,14 @@ void AgendaWindow::demander_programmer() {
             if(fenetre_programmation->exec()) {
                 h = new Horaire(fenetre_programmation->getSchedule().time().hour(), fenetre_programmation->getSchedule().time().minute());
                 d = new Date(fenetre_programmation->getDate().date().day(),fenetre_programmation->getDate().date().month(),fenetre_programmation->getDate().date().year());
+                ProgM.ajouterProgrammation(t,*d,*h);
+                int temp = d->getAnnee();
+                int *year = &temp;
+                if((choix_semaine->value() == d->toQDate().weekNumber(year)) && (choix_annee->value() == d->getAnnee())) {
+                    QMessageBox::information(0,"coucou","même semaine et annee",QMessageBox::Ok);
+                    placer_evenement(t);
+                }
             }
-            ProgM.ajouterProgrammation(t,*d,*h);
-            int temp = d->getAnnee();
-            int *year = &temp;
-            if((choix_semaine->value() == d->toQDate().weekNumber(year)) && (choix_annee->value() == d->getAnnee()))
-                placer_evenement(t);
         }
     } catch (CalendarException ce) {
         QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);
@@ -319,14 +405,14 @@ void AgendaWindow::ajouter_projet() {
     Date *disponibility;
     Date *deadline;
     NewProject *fenetre_projet = new NewProject(this);
-    if(fenetre_projet->exec()) {
-        id = new QString(fenetre_projet->getId().text());
-        title = new QString(fenetre_projet->getTitle().text());
-        disponibility = new Date(fenetre_projet->getDisponibility().date().day(), fenetre_projet->getDisponibility().date().month(), fenetre_projet->getDisponibility().date().year());
-        deadline = new Date(fenetre_projet->getDeadline().date().day(), fenetre_projet->getDeadline().date().month(), fenetre_projet->getDeadline().date().year());
-    }
     try {
-        PM.creerProjet(*id,*title,*disponibility,*deadline);
+        if(fenetre_projet->exec()) {
+            id = new QString(fenetre_projet->getId().text());
+            title = new QString(fenetre_projet->getTitle().text());
+            disponibility = new Date(fenetre_projet->getDisponibility().date().day(), fenetre_projet->getDisponibility().date().month(), fenetre_projet->getDisponibility().date().year());
+            deadline = new Date(fenetre_projet->getDeadline().date().day(), fenetre_projet->getDeadline().date().month(), fenetre_projet->getDeadline().date().year());
+            PM.creerProjet(*id,*title,*disponibility,*deadline);
+        }
     } catch (CalendarException ce) {
         QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);
         }
@@ -380,25 +466,25 @@ void AgendaWindow::ajouter_tache()
             deadl = new Date(fenetre_tache->getDeadline().date().day(),fenetre_tache->getDeadline().date().month(),fenetre_tache->getDeadline().date().year());
             t = new QString(fenetre_tache->getType().currentText());
             b= fenetre_tache->getPreemtive().isChecked();
-        }
-        if(t == QString("unitaire"))
-        {
+            if(t == QString("unitaire"))
+            {
 
-            TM.ajouterTacheU(*id,*title,*duration,*dispo,*deadl,b);
-            QMessageBox msgBox;
-            msgBox.setText("Tache Unitaire Ajoutee!");
-            msgBox.exec();
+                TM.ajouterTacheU(*id,*title,*duration,*dispo,*deadl,b);
+                QMessageBox msgBox;
+                msgBox.setText("Tache Unitaire Ajoutee!");
+                msgBox.exec();
 
-        }
-        else
-        {
-            TM.ajouterTacheC(*id,*title,*duration,*dispo,*deadl);
-            TM.ajouterTacheU(*id,*title,*duration,*dispo,*deadl,b);
-            QMessageBox msgBox;
-            msgBox.setText("Tache Composite Ajoutee!");
-            msgBox.exec();
-       // this->liste_taches->setHtml(TM.afficherTachesAProgrammer()); //mise à jour du texte du dock widget des tâches à programmer
+            }
+            else
+            {
+                TM.ajouterTacheC(*id,*title,*duration,*dispo,*deadl);
+                TM.ajouterTacheU(*id,*title,*duration,*dispo,*deadl,b);
+                QMessageBox msgBox;
+                msgBox.setText("Tache Composite Ajoutee!");
+                msgBox.exec();
+           // this->liste_taches->setHtml(TM.afficherTachesAProgrammer()); //mise à jour du texte du dock widget des tâches à programmer
 
+            }
         }
     }
     catch (CalendarException ce) {
@@ -486,16 +572,23 @@ void AgendaWindow::ajouter_activite() {
             type = new QString(fenetre_activite->getType().currentText());
             place = new QString(fenetre_activite->getPlace().text());
             people = new QString(fenetre_activite->getPeople().text());
+            if(type == QString("RDV"))
+                activite =  new Rdv(*id,*title,*duration,*place,*people);
+            else
+                activite =  new Reunion(*id,*title,*duration,*place);
+            ProgM.ajouterProgrammation(activite, *date, *time);
+            int temp = date->getAnnee();
+            int *year = &temp;
+            if((choix_semaine->value() == date->toQDate().weekNumber(year)) && (choix_annee->value() == date->getAnnee())) {
+                placer_evenement(activite);
+            }
         }
-        if(type == QString("RDV"))
-            activite =  new Rdv(*id,*title,*duration,*place,*people);
-        else
-            activite =  new Reunion(*id,*title,*duration,*place);
-        ProgM.ajouterProgrammation(activite, *date, *time);
-        placer_evenement(activite);
     } catch (CalendarException ce) {
         QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);
         }
+      catch (std::exception e) {
+        QMessageBox::information(0,"Erreur",e.what(),QMessageBox::Ok);
+    }
 }
 
  void AgendaWindow::supprimer_tache()
@@ -547,22 +640,22 @@ void AgendaWindow::ajouter_activite() {
          {
      message+=(id);
      Projet* p = PM.getProjet(id);
-      message+="\n Titre : ";
+     message+="\n Titre : ";
      QString *titre = new QString(p->getTitre());
      message+=(*titre);
      message+="\n Diponiblite : ";
      QString dispo= QString::number(p->getDisponibilite().getAnnee());
-    dispo+="/";dispo+= QString::number(p->getDisponibilite().getMois());
-    dispo+="/";dispo+= QString::number(p->getDisponibilite().getJour());
-    QString* disponibilite= new QString(dispo);
+     dispo+="/";dispo+= QString::number(p->getDisponibilite().getMois());
+     dispo+="/";dispo+= QString::number(p->getDisponibilite().getJour());
+     QString* disponibilite= new QString(dispo);
      message+=disponibilite;
      message+="\n Echeance : ";
-    QString ech= QString::number(p->getEcheance().getAnnee());
-   ech+="/";ech+= QString::number(p->getEcheance().getMois());
-   ech+="/";ech+= QString::number(p->getEcheance().getJour());
-   QString* echeance = new  QString(ech);
-    message+=echeance;
-    message+="\n Taches: ";
+     QString ech= QString::number(p->getEcheance().getAnnee());
+     ech+="/";ech+= QString::number(p->getEcheance().getMois());
+     ech+="/";ech+= QString::number(p->getEcheance().getJour());
+     QString* echeance = new  QString(ech);
+     message+=echeance;
+     message+="\n Taches: ";
 
      for (std::vector<Tache*>::iterator itt = p->GetTabProjet().begin(); itt!=p->GetTabProjet().end(); ++itt)
      {
@@ -595,31 +688,31 @@ void AgendaWindow::ajouter_activite() {
          if (ok && !id.isEmpty())
          {
      Tache* t= TM.getTache(id);
-       message+= id;
+     message+= id;
      QString* titre = new QString(t->getTitre());
      message+=("\n Titre : "); message+=(*titre);
      unsigned int H = t->getDuree().getHeure();
      unsigned int M = t->getDuree().getMinute();
-    QString h = (H<10)?"0"+QString::number(H):""+QString::number(H);
-    QString m = (M<10)?"0"+QString::number(M):""+QString::number(M);
-    QString* duree = new QString(h+" H "+m);
-    QString dispo= QString::number(t->getDisponibilite().getAnnee());
-   dispo+="/";dispo+= QString::number(t->getDisponibilite().getMois());
-   dispo+="/";dispo+= QString::number(t->getDisponibilite().getJour());
-   QString* disponibilite= new QString(dispo);
-   QString ech= QString::number(t->getEcheance().getAnnee());
-  ech+="/";ech+= QString::number(t->getEcheance().getMois());
-  ech+="/";ech+= QString::number(t->getEcheance().getJour());
-  QString* echeance = new  QString(ech);
-    message+="\n Duree : "; message+= duree ;
-    message+="\n Diponibilite : "; message+=disponibilite;
-    message+="\n Echeance : "; message+=echeance;
-    message+="\n";
+     QString h = (H<10)?"0"+QString::number(H):""+QString::number(H);
+     QString m = (M<10)?"0"+QString::number(M):""+QString::number(M);
+     QString* duree = new QString(h+" H "+m);
+     QString dispo= QString::number(t->getDisponibilite().getAnnee());
+     dispo+="/";dispo+= QString::number(t->getDisponibilite().getMois());
+     dispo+="/";dispo+= QString::number(t->getDisponibilite().getJour());
+     QString* disponibilite= new QString(dispo);
+     QString ech= QString::number(t->getEcheance().getAnnee());
+     ech+="/";ech+= QString::number(t->getEcheance().getMois());
+     ech+="/";ech+= QString::number(t->getEcheance().getJour());
+     QString* echeance = new  QString(ech);
+     message+="\n Duree : "; message+= duree ;
+     message+="\n Diponibilite : "; message+=disponibilite;
+     message+="\n Echeance : "; message+=echeance;
+     message+="\n";
      if (t->getTypeTache()) //unitaire
      {
           QString* type = new QString("Unitaire");
-           message+=("\n Type : ");message+=(*type);
-            TacheU* tempTask = dynamic_cast<TacheU*>(t);
+          message+=("\n Type : ");message+=(*type);
+          TacheU* tempTask = dynamic_cast<TacheU*>(t);
 
             if(tempTask->isPreemptive())
             {
@@ -631,12 +724,13 @@ void AgendaWindow::ajouter_activite() {
 
          message+=("\n\n Taches Precedentes:");
          for ( std::vector<TacheU *>::iterator it = tempTask->getPrecedence().begin(); it != tempTask->getPrecedence().end(); ++it)
-         {    message+= "  "+(*it)->getId();
+         {
+             message+= "  "+(*it)->getId();
              message+= " : "+(*it)->getTitre();
              message+="*****";
          }
-        message +="\n\n";
-             message+=(" Taches Suivantes: ");
+         message +="\n\n";
+         message+=(" Taches Suivantes: ");
          for (std::vector<TacheU *>::iterator it = tempTask->getSuivante().begin(); it != tempTask->getSuivante().end(); ++it)
          {    message+= "  "+(*it)->getId();
              message+= " : "+(*it)->getTitre();
@@ -645,11 +739,11 @@ void AgendaWindow::ajouter_activite() {
      }
      else
      {
-            TacheC* tempTask = dynamic_cast<TacheC*>(t);
-          message+=(" Taches : ");
-            for(std::vector<Tache *>::iterator it= tempTask->getCTaches().begin();it!= tempTask->getCTaches().end();it++)
-                         message += " "+(*it)->getId();
-           message +="\n";
+         TacheC* tempTask = dynamic_cast<TacheC*>(t);
+         message+=(" Taches : ");
+         for(std::vector<Tache *>::iterator it= tempTask->getCTaches().begin();it!= tempTask->getCTaches().end();it++)
+            message += " "+(*it)->getId();
+         message +="\n";
      }
 
      QMessageBox msgBox;
@@ -675,31 +769,31 @@ void AgendaWindow::ajouter_activite() {
      if (ok && !id.isEmpty())
      {
      Programmation* ev=ProgM.getProg(id);
-      message+=id;
-       message+="\n Titre :";
-       message+=ev->getEvent()->getTitre();
-       message+="\n Date ";
-       QString d= QString::number(ev->getDate().getAnnee());
-      d+="/";d+= QString::number(ev->getDate().getMois());
-      d+="/";d+= QString::number(ev->getDate().getJour());
-      QString* date= new QString(d);
-       message+=date;
-       message+="\n Horaire ";
-       unsigned int hh = ev->getHoraire().getHeure();
-       unsigned int mm = ev->getHoraire().getMinute();
-      QString h1 = (hh<10)?"0"+QString::number(hh):""+QString::number(hh);
-      QString m1 = (mm<10)?"0"+QString::number(mm):""+QString::number(mm);
-      QString* horaire = new QString(h1+" H "+m1);
-      message+=horaire;
-      ev->getHoraire().getHeure();
-       message+="\n Duree: ";
-       unsigned int H = ev->getEvent()->getDuree().getHeure();
-       unsigned int M = ev->getEvent()->getDuree().getMinute();
-      QString h = (H<10)?"0"+QString::number(H):""+QString::number(H);
-      QString m = (M<10)?"0"+QString::number(M):""+QString::number(M);
-      QString* duree = new QString(h+" H "+m);
-       message+= duree;
-        Event* temp = const_cast<Event*>(ev->getEvent());//!< On force la Conversion de l'objet Event en un Event non const pour pouvoir faire un dynamic cast ultérieurement
+     message+=id;
+     message+="\n Titre :";
+     message+=ev->getEvent()->getTitre();
+     message+="\n Date ";
+     QString d= QString::number(ev->getDate().getAnnee());
+     d+="/";d+= QString::number(ev->getDate().getMois());
+     d+="/";d+= QString::number(ev->getDate().getJour());
+     QString* date= new QString(d);
+     message+=date;
+     message+="\n Horaire ";
+     unsigned int hh = ev->getHoraire().getHeure();
+     unsigned int mm = ev->getHoraire().getMinute();
+     QString h1 = (hh<10)?"0"+QString::number(hh):""+QString::number(hh);
+     QString m1 = (mm<10)?"0"+QString::number(mm):""+QString::number(mm);
+     QString* horaire = new QString(h1+" H "+m1);
+     message+=horaire;
+     ev->getHoraire().getHeure();
+     message+="\n Duree: ";
+     unsigned int H = ev->getEvent()->getDuree().getHeure();
+     unsigned int M = ev->getEvent()->getDuree().getMinute();
+     QString h = (H<10)?"0"+QString::number(H):""+QString::number(H);
+     QString m = (M<10)?"0"+QString::number(M):""+QString::number(M);
+     QString* duree = new QString(h+" H "+m);
+     message+= duree;
+     Event* temp = const_cast<Event*>(ev->getEvent());//!< On force la Conversion de l'objet Event en un Event non const pour pouvoir faire un dynamic cast ultérieurement
      if( ev->getEvent()->cestunetache())
      {
 
@@ -739,6 +833,7 @@ void AgendaWindow::ajouter_activite() {
 
  }
 
+<<<<<<< HEAD
 
 void AgendaWindow::afficher_projets()
  {
@@ -788,33 +883,82 @@ void afficher_proprietes(Tache* t) {
     message.setInformativeText(t->toString());
     message.exec();
 }
+=======
+ //******************************************************************************************
+>>>>>>> origin/master
 
 QRectF ItemActivite::boundingRect() const {
-    const int PEN = 1;
     int minutes = a->getDuree().getDureeEnMinutes();
-    qreal hauteur = minutes * (25/60);
-    return QRectF(-50 - PEN,(hauteur/2) + PEN, 100 + PEN, hauteur + PEN);
+    qreal hauteur = minutes *25/60;
+    return QRectF(0,-13.5,100,hauteur);
 }
 
 void ItemActivite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-    int minutes = a->getDuree().getDureeEnMinutes();
-    qreal hauteur = minutes * (25/60);
-    painter->drawRoundedRect(-50,(hauteur/2), 100, hauteur, 5, 5);
-    painter->drawText(boundingRect(), Qt::AlignCenter, a->getTitre());
+    QRectF rec = boundingRect();
+    QBrush brush(Qt::blue);
+    painter->fillRect(rec,brush);
+    painter->drawRect(rec);
+    painter->drawText(rec, Qt::AlignCenter, a->getTitre()+" "+a->getId());
 }
+
+//******************************************************************************************
 
 QRectF ItemTache::boundingRect() const {
     int minutes = t->getDuree().getDureeEnMinutes();
-    qreal hauteur = minutes * (25/60);
-    return QRectF(-50,(hauteur/2),100,hauteur);
+    qreal hauteur = minutes *25/60;
+    return QRectF(0,-13.5,100,hauteur);
 }
 
 void ItemTache::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-    int minutes = t->getDuree().getDureeEnMinutes();
-    qreal hauteur = minutes * (25/60);
-    painter->drawRoundedRect(-50,(hauteur/2),100,hauteur,5,5);
-    painter->drawText(boundingRect(), Qt::AlignCenter, t->getTitre());
+    QRectF rec = boundingRect();
+    QBrush brush(Qt::red);
+    painter->fillRect(rec,brush);
+    painter->drawRect(rec);
+    painter->drawText(rec, Qt::AlignCenter, t->getTitre()+" "+t->getId());
 }
 
+<<<<<<< HEAD
+=======
+//******************************************************************************************
+
+void AgendaWindow::TreeViewProjet()
+{
+    QStandardItem* parent = projectsTreeV->invisibleRootItem();
+
+    for (std::vector<Projet*>::const_iterator it =PM.getInstance().getTab().begin() ; it!= PM.getInstance().getTab().end() ;it++ )
+    {
+        QStandardItem* item = new QStandardItem((*it)->getId());
+        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+        parent->appendRow(item);
+>>>>>>> origin/master
 
 
+<<<<<<< HEAD
+=======
+        for (std::vector<Tache*>::const_iterator itp = p->GetTabProjet().begin(); itp != p->GetTabProjet().end() ;itp++)
+        {
+            QStandardItem* itemp = new QStandardItem((*itp)->getId());
+            itemp->setFlags(itemp->flags() & ~Qt::ItemIsEditable);
+            itemp->appendRow(itemp);
+
+
+        }
+    }
+}
+
+ActiviteInfo::ActiviteInfo(Activite *a, QWidget *parent, Qt::WindowFlags f) {
+    this->setWindowTitle("Activite "+a->getId());
+    id = new QLabel(a->getId(), this);
+    titre = new QLabel(a->getTitre(), this);
+    duree = new QLabel(a->getDuree().toString(), this);
+    lieu = new QLabel(a->getLieu(), this);
+    formLayout = new QFormLayout(this);
+
+    formLayout->addRow("id : ", id);
+    formLayout->addRow("titre : ", titre);
+    formLayout->addRow("duree : ", duree);
+    formLayout->addRow("Lieu : ", this);
+
+    setLayout(formLayout);
+}
+>>>>>>> origin/master

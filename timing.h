@@ -52,7 +52,7 @@ namespace TIME {
         Date operator+(unsigned int nb) const; //<!Retourne la date de dans nb jours
         static Date fromString(QString s);
         static QString toString();
-        const QString& String() const;
+        QString& String() const;
         const QDate& toQDate() const;//!< convertit l'objet Date en QDate pour pouvoir utiliser ses fonctions.
     };
 
@@ -83,6 +83,7 @@ essite des dates valides au sens commun du terme.
         unsigned int getHeure() const { return nb_minutes/60; }
         unsigned int getJour() const{ double x = getHeure()/24; return floor(x); }//<!Retourne la duree en jours pour les taches prremptv
         void afficher(QTextStream& f) const; //<!Affiche la duree sous le format hhHmm
+<<<<<<< HEAD
         Duree& operator+(const Duree& d)
         {
             unsigned int total=this->getDureeEnMinutes()+d.getDureeEnMinutes();
@@ -98,6 +99,9 @@ essite des dates valides au sens commun du terme.
           return this->nb_minutes<d.getDureeEnMinutes();
 
         }
+=======
+        QString& toString() const;
+>>>>>>> origin/master
     };
 
 
@@ -121,18 +125,11 @@ essite des dates valides au sens commun du terme.
         void afficher(QTextStream& f) const; //<!Affiche l'horaire sous le format hhHmm
         unsigned short int getHeure() const { return heure; } //<!Retourne l'heure de l'horaire
         unsigned short int getMinute() const { return minute; } //<!Retourne les minutes de l'horaire
-        Horaire* getFin(const Duree& d)const
-        {
-            Horaire* h= new Horaire(this->heure,this->minute);
-            unsigned int total=minute+d.getDureeEnMinutes();
-            unsigned int hour = total/60;
-            unsigned int min= total%60;
-            h->heure+=hour;
-            h->minute=min;
-            return h;
-        }
+        Horaire* getFin(const Duree& d)const;
+        Horaire* getFin(const Duree& d, bool& sur2Jours)const;
         bool operator<(const Horaire& h) const; //<! h1<h2 retourne true si h1 est avant h2 dans le temps
         bool operator==(const Horaire& h) const;  //<! h1<h2 retourne true si h1 est au meme temps que h2 dans le temps
+        Duree* entre2(const Horaire& h);
     private:
         unsigned short int  heure;
         unsigned short int  minute;

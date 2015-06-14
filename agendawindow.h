@@ -35,6 +35,7 @@ class AgendaWindow : public QMainWindow
     QAction *programmer_tache;
     QAction *charger;
     QAction *exporter;
+    //QAction *exporter_txt;
     QAction *creer_projet;
     QAction *Ajouter_tache_a_projet;
     QAction *creer_tache;
@@ -116,13 +117,13 @@ private slots:
     void placer_evenement(TacheU* t);
     void charger_agenda();
     void sauvegarder_agenda();
+    //void sauvegarder_txt();
     void demander_programmer();
     void ajouter_projet();
     void ajouter_tache_a_projet();
     void ajouter_tache();
     void ajouter_tache_a_composite();
     void ajouter_precedence();
-    void afficher();
     void ajouter_activite();
     void recherche_projet();
     void recherche_tache();
@@ -130,15 +131,18 @@ private slots:
     void afficher_projets();
     void supprimer_tache();
 
+<<<<<<< HEAD
 
+=======
+public slots:
+      void TreeViewProjet();
+>>>>>>> origin/master
 };
 
 class ItemActivite : public QGraphicsItem {
     Activite* a;
 public:
-    ItemActivite(Activite* act, QGraphicsItem* parent = 0):QGraphicsItem(parent), a(act) {
-        setFlag(QGraphicsItem::ItemIsFocusable);
-    }
+    ItemActivite(Activite* act, QGraphicsItem* parent = 0):QGraphicsItem(parent), a(act) {}
     //fonctions virtuelles pures de QGraphicsItem à implémenter
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -147,12 +151,22 @@ public:
 class ItemTache : public QGraphicsItem {
     Tache* t;
 public:
-    ItemTache(Tache* tache, QGraphicsItem* parent = 0):QGraphicsItem(parent), t(tache) {
-        setFlag(QGraphicsItem::ItemIsFocusable);
-    }
+    ItemTache(Tache* tache, QGraphicsItem* parent = 0):QGraphicsItem(parent), t(tache) {}
     //fonctions virtuelles pures de QGraphicsItem à implémenter
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+};
+
+class ActiviteInfo : public QMessageBox {
+    QLabel* id;
+    QLabel* titre;
+    QLabel* duree;
+    QLabel* lieu;
+
+    QFormLayout* formLayout;
+
+public:
+    ActiviteInfo(Activite *a, QWidget *parent=0, Qt::WindowFlags f=0);
 };
 
 #endif // AGENDAWINDOW_H

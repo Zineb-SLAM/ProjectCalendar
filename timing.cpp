@@ -90,28 +90,30 @@ Date Date::operator+(unsigned int nb_jours) const {
     return d;
 }
 
-const QString& Date::String() const
+QString& Date::String() const
 {
-     QString str= QString::number(this->getAnnee());
-    str+="/";str+= QString::number(this->getMois());
-    str+="/";str+= QString::number(this->getJour());
-    return str;
+    QString d = QString::number(getAnnee());
+    d+="/"; d+= QString::number(getMois());
+    d+="/"; d+= QString::number(getJour());
+    QString* str = new QString(d);
+    return *str;
 }
 
 Date Date::fromString(QString s) {
-    Date d;
-    //conversion QString YYYY-MM-DD en Date
+    QDate date = QDate::fromString(s,"YYYY-MM-DD");
+    Date d(date.day(), date.month(), date.year());
     return d;
 }
 
- QString Date::toString() {
+QString Date::toString() {
     QString s;
-    //conversion Date en QString YYYY-MM-DD
-   return s;
+    //QDate date = this->toQDate();
+    //s = date.toString("YYY-MM-DD");
+    return s;
 }
 
 const QDate& Date::toQDate() const {
-    QDate *d = new QDate(jour, mois, annee);
+    QDate *d = new QDate(annee,mois,jour);
     return *d;
 }
 
@@ -127,6 +129,16 @@ void Duree::afficher(QTextStream& f) const {
     f<<nb_minutes%60;
     f.setFieldWidth(0);
     f.setPadChar(' ');
+}
+
+QString& Duree::toString() const {
+   unsigned int H = getHeure();
+   unsigned int M = getMinute();
+   QString h = (H<10)?"0"+QString::number(H):""+QString::number(H);
+   QString m = (M<10)?"0"+QString::number(M):""+QString::number(M);
+   QString str = h+"H"+m;
+   QString *d = new QString(str);
+   return *d;
 }
 
 QTextStream& operator<<(QTextStream& f, const Duree& d)
@@ -178,6 +190,46 @@ bool Horaire::operator==(const Horaire& h) const {
     if (minute==h.minute) return true;
     return true;
 }
+
+Horaire* Horaire::getFin(const Duree& d)const
+{
+    Horaire* h= new Horaire(this->heure,this->minute);
+    unsigned int total=minute+d.getDureeEnMinutes();
+    unsigned int hour = total/60;
+    unsigned int min= total%60;
+    h->heure+=hour;
+    h->minute=min;
+    return h;
+}
+
+Horaire* Horaire::getFin(const Duree& d, bool& sur2Jours)const
+{
+    sur2Jours = false;
+    unsigned int minutes = getMinute() + d.getMinute();
+    unsigned int hour = getHeure() + d.getHeure();
+    if (minutes > 60) {
+        hour += minutes / 60;
+        minutes = minutes % 60;
+    }
+    if (hour > 24) {
+        sur2Jours = true;
+        hour = hour % 24;
+    }
+    Horaire* h= new Horaire(hour,minutes);
+    return h;
+}
+
+Duree *Horaire::entre2(const Horaire& h) {
+    int heures = h.getHeure() - this->getHeure();
+    int minutes = h.getMinute() - this->getMinute();
+    if (minutes < 0) {
+        heures--;
+        minutes = 60 + minutes;
+    }
+    Duree *d = new Duree(heures, minutes);
+    return d;
+}
+
 
 QTextStream& operator<<(QTextStream& f, const Horaire& d)
 {

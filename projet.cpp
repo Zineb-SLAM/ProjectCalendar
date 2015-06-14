@@ -172,14 +172,13 @@ void ProjetManager::load(const QString& f) {
         if(token == QXmlStreamReader::StartDocument) continue;
         // If token is StartElement, we'll see if we can read it.
         if(token == QXmlStreamReader::StartElement) {
-            // If it's named taches, we'll go to the next.
-            if(xml.name() == "taches") continue;
-            // If it's named tache, we'll dig the information from there.
-            if(xml.name() == "tache") {
-                qDebug()<<"new tache\n";
+            // If it's named projets, we'll go to the next.
+            if(xml.name() == "projets") continue;
+            // If it's named projet, we'll dig the information from there.
+            if(xml.name() == "projet") {
+                qDebug()<<"new projet\n";
                 QString identificateur;
                 QString titre;
-                Duree duree;
                 Date disponibilite;
                 Date echeance;
                 
@@ -192,7 +191,7 @@ void ProjetManager::load(const QString& f) {
                 while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "projet")) {
                     if(xml.tokenType() == QXmlStreamReader::StartElement) {
                         // We've found id.
-                        if(xml.name() == "id") {
+                        if(xml.name() == "identificateur") {
                             xml.readNext();
                             identificateur=xml.text().toString();
                             //qDebug()<<"id="<<id<<"\n";
@@ -215,6 +214,10 @@ void ProjetManager::load(const QString& f) {
                             echeance=Date::fromString(xml.text().toString());
                             //qDebug()<<"echeance="<<echeance.toString()<<"\n";
                         }
+                        // We've found tache.
+                        if(xml.name() == "taches") {
+                            xml.readNext();
+                        }
                         
                     }
                     // ...and next...
@@ -235,27 +238,65 @@ void ProjetManager::load(const QString& f) {
 }
 
 void ProjetManager::save(const QString& f) {
-    file=f;
+    QString file=f;
     QFile newfile( file);
     if (!newfile.open(QIODevice::WriteOnly | QIODevice::Text))
     throw CalendarException(QString("erreur sauvegarde projets  : ouverture fichier xml"));
     QXmlStreamWriter stream(&newfile);
     stream.setAutoFormatting(true);
     stream.writeStartDocument();
-    stream.writeStartElement("taches");
+    stream.writeStartElement("projets");
     for(unsigned int i=0; i<projets.size(); i++) {
-        stream.writeStartElement("tache");
-        //stream.writeAttribute("preemptive", (taches[i]->isPreemptive())?"true":"false");// isPreemtive dans Taches??
+        stream.writeStartElement("projet");
         stream.writeTextElement("identificateur",projets[i]->getId());
         stream.writeTextElement("titre",projets[i]->getTitre());
-        stream.writeTextElement("disponibilite",projets[i]->getDisponibilite().toString());
-        stream.writeTextElement("echeance",projets[i]->getEcheance().toString());
+        stream.writeTextElement("disponibilite",projets[i]->getDisponibilite().String());
+        stream.writeTextElement("echeance",projets[i]->getEcheance().String());
+        stream.writeStartElement("taches");
+        Projet::tabtaches taches = projets[i]->GetTabProjet();
+        for(unsigned int i=0; i<taches.size(); i++) {
+            stream.writeStartElement("tache");
+            stream.writeTextElement("id",taches[i]->getId());
+            stream.writeTextElement("titre", taches[i]->getTitre());
+            stream.writeTextElement("duree", taches[i]->getDuree().toString());
+            stream.writeTextElement("disponibilite",taches[i]->getDisponibilite().String());
+            stream.writeTextElement("echeance",taches[i]->getEcheance().String());
+            stream.writeEndElement();
+        }
+        stream.writeEndElement();
         stream.writeEndElement();
     }
     stream.writeEndElement();
     stream.writeEndDocument();
     newfile.close();
 }
+
+void ProjetManager::saveTxt(const QString& f) {
+    QString file=f;
+    QFile newfile( file);
+    if (!newfile.open(QIODevice::WriteOnly | QIODevice::Text))
+        throw CalendarException(QString("erreur sauvegarde projets  : ouverture fichier xml"));
+    QTextStream stream(&newfile);
+    stream << "Export des projets" << endl << endl;
+    for(unsigned int i=0; i<projets.size(); i++) {
+        stream << "Projet " << projets[i]->getId() << endl;
+        stream << " titre : " << projets[i]->getTitre() << endl;
+        stream << " disponibilite : " << projets[i]->getDisponibilite().toString() << endl;
+        stream << " echeance : " << projets[i]->getEcheance().toString() << endl;
+        stream << " taches" << endl;
+        Projet::tabtaches taches = projets[i]->GetTabProjet();
+        for(unsigned int i=0; i<taches.size(); i++) {
+            stream << "     tache " << taches[i]->getId() << endl;
+            stream << "         titre " << taches[i]->getTitre() << endl;
+            stream << "         duree " << taches[i]->getDuree().toString() << endl;
+            stream << "         disponibilite " << taches[i]->getDisponibilite().toString() << endl;
+            stream << "         echeance " << taches[i]->getEcheance().toString() << endl;
+        }
+        stream << endl;
+    }
+    newfile.close();
+}
+
 
 void ProjetManager::afficherTitreProjets(QTextStream& fout) const {
     fout << "projets" << endl;

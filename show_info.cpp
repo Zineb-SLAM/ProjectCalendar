@@ -10,12 +10,12 @@
 ProjetInfoId::ProjetInfoId(const QString& i,QWidget *parent,Qt::WindowFlags f) : QDialog(parent,f)
 {
     ProjetManager& PM=ProjetManager::getInstance();
-     Projet* p = PM.getProjet(i);
-      QString temp = "";
-     id = new QLabel( p->getId(),this);
-     titre = new QLabel(p->getTitre(),this);
-     disponibilite = new QLabel((p->getDisponibilite()).toString(),this);
-     echeance = new QLabel((p->getEcheance()).toString(),this);
+    Projet* p = PM.getProjet(i);
+    QString temp = "";
+    id = new QLabel( p->getId(),this);
+    titre = new QLabel(p->getTitre(),this);
+    disponibilite = new QLabel((p->getDisponibilite()).toString(),this);
+    echeance = new QLabel((p->getEcheance()).toString(),this);
 
 
      for (std::vector<Tache*>::iterator itt = p->GetTabProjet().begin(); itt!=p->GetTabProjet().end(); ++itt)
@@ -78,11 +78,7 @@ TacheInfo::TacheInfo(Tache* t,QWidget *parent,Qt::WindowFlags f): QDialog(parent
             temp = "";
              id = new QLabel(tempTask->getId(),this);
              titre = new QLabel(tempTask->getTitre(),this);
-             unsigned int H = tempTask->getDuree().getHeure();
-             unsigned int M = tempTask->getDuree().getMinute();
-            QString h = (H<10)?"0"+QString::number(H):""+QString::number(H);
-            QString m = (M<10)?"0"+QString::number(M):""+QString::number(M);
-            duree = new QLabel(h+" H "+m,this);
+            duree = new QLabel(tempTask->getDuree().toString(),this);
             disponibilite = new QLabel(tempTask->getDisponibilite().toString(),this);
             echeance = new QLabel(tempTask->getEcheance().toString(),this);
             temp = "";
@@ -110,11 +106,7 @@ TacheInfo::TacheInfo(Tache* t,QWidget *parent,Qt::WindowFlags f): QDialog(parent
 
                          id = new QLabel(tempTask->getId(),this);
                          titre = new QLabel(tempTask->getTitre(),this);
-                         unsigned int H = tempTask->getDuree().getHeure();
-                         unsigned int M = tempTask->getDuree().getMinute();
-                        QString h = (H<10)?"0"+QString::number(H):""+QString::number(H);
-                        QString m = (M<10)?"0"+QString::number(M):""+QString::number(M);
-                        duree = new QLabel(h+" H "+m,this);
+                        duree = new QLabel(tempTask->getDuree().toString(),this);
                         disponibilite = new QLabel(tempTask->getDisponibilite().toString(),this);
                         echeance = new QLabel(tempTask->getEcheance().toString(),this);
                          for(std::vector<Tache *>::iterator it= tempTask->getCTaches().begin();it!= tempTask->getCTaches().end();it++)
@@ -138,5 +130,4 @@ TacheInfo::TacheInfo(Tache* t,QWidget *parent,Qt::WindowFlags f): QDialog(parent
 
     setLayout(formLayout);
 }
-
 
