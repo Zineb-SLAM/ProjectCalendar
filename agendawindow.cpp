@@ -200,22 +200,28 @@ void AgendaWindow::createActions() {
     Afficher_taches=new QAction("Afficher Taches", this);
     connect(Afficher_taches, SIGNAL(triggered()), this, SLOT(afficher_taches()));
 
+    Supprimer_activite=new QAction("Supprimer Activité", this);
+    connect(Supprimer_activite, SIGNAL(triggered()), this, SLOT(supprimer_activite()));
 
+    Schedule=new QAction("Affichage des Programmations",this);
+    connect(Schedule,SIGNAL(triggered()),this,SLOT(afficher_schedule()));
 }
 
 void AgendaWindow::createMenus() {
     menu_options = menuBar()->addMenu("Options");
+    menu_options->addAction(Afficher_taches);
+    menu_options->addAction(Afficher_projets);
+    menu_options->addAction(Schedule);
     menu_options->addAction(charger);
     menu_options->addAction(exporter);
     //menu_options->addAction(exporter_txt);
-    menu_options->addAction(Afficher_projets);
-    menu_options->addAction(Afficher_taches);
+
 
     menu_tache = menuBar()->addMenu("Tache");
     menu_tache->addAction(creer_tache);
-    menu_tache->addAction(programmer_tache);
     menu_tache->addAction(Ajouter_tache_a_composite);
     menu_tache->addAction(Ajouter_Precedence);
+    menu_tache->addAction(programmer_tache);
     menu_tache->addAction(Supprimer_tache);
 
 
@@ -226,6 +232,7 @@ void AgendaWindow::createMenus() {
 
     menu_activite = menuBar()->addMenu("Activite");
     menu_activite->addAction(creer_activite);
+    menu_activite->addAction(Supprimer_activite);
 
     menu_activite = menuBar()->addMenu("Rechercher");
     menu_activite->addAction(Rechercher_Projet);
@@ -376,32 +383,52 @@ void AgendaWindow::sauvegarder_agenda() {
         PM.saveTxt(chemin);
 }*/
 
-void AgendaWindow::demander_programmer() {
+void AgendaWindow::demander_programmer()
+{
     bool ok;
     Horaire *h;
     Date *d;
+    Duree* dur;
     QString id = QInputDialog::getText(this,"Programmer","Entrez l'id de la tache à programmer :", QLineEdit::Normal,"valeur", &ok);
-    try {
-        if (ok && !id.isEmpty()) {
+    try
+    {
+        if (ok && !id.isEmpty())
+        {
             TacheU* t = dynamic_cast<TacheU*>(TM.getTache(id));
             NewProgrammation *fenetre_programmation = new NewProgrammation(this);
-            if(fenetre_programmation->exec()) {
+            if(fenetre_programmation->exec())
+            {
                 h = new Horaire(fenetre_programmation->getSchedule().time().hour(), fenetre_programmation->getSchedule().time().minute());
                 d = new Date(fenetre_programmation->getDate().date().day(),fenetre_programmation->getDate().date().month(),fenetre_programmation->getDate().date().year());
-                ProgM.ajouterProgrammation(t,*d,*h);
-                int temp = d->getAnnee();
-                int *year = &temp;
-                if((choix_semaine->value() == d->toQDate().weekNumber(year)) && (choix_annee->value() == d->getAnnee())) {
-                    QMessageBox::information(0,"coucou","même semaine et annee",QMessageBox::Ok);
-                    placer_evenement(t);
+                dur=new Duree(fenetre_programmation->getDuree().time().hour(),fenetre_programmation->getDuree().time().minute());
+               if(t->isPreemptive())
+                {
+                ProgM.ajouterProgrammation(t,*d,*h,*dur);
+                QMessageBox msgBox;
+                msgBox.setText("Tache Unitaire Preemtive Programée!");
+                msgBox.exec();
+               }
+
+                else
+                {
+
+                        ProgM.ajouterProgrammation(t,*d,*h);
+                        QMessageBox msgBox;
+                        msgBox.setText("Tache Unitaire Programée!");
+                        msgBox.exec();
                 }
+
             }
         }
-    } catch (CalendarException ce) {
+    }
+    catch (CalendarException ce) {
         QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);
       }
     catch (std::exception e) { QMessageBox::information(0,"Erreur",e.what(),QMessageBox::Ok);}
-}
+
+
+   }
+
 
 void AgendaWindow::ajouter_projet() {
     QString *id;
@@ -416,6 +443,9 @@ void AgendaWindow::ajouter_projet() {
             disponibility = new Date(fenetre_projet->getDisponibility().date().day(), fenetre_projet->getDisponibility().date().month(), fenetre_projet->getDisponibility().date().year());
             deadline = new Date(fenetre_projet->getDeadline().date().day(), fenetre_projet->getDeadline().date().month(), fenetre_projet->getDeadline().date().year());
             PM.creerProjet(*id,*title,*disponibility,*deadline);
+            QMessageBox msgBox;
+            msgBox.setText("Projet Ajoutee!");
+            msgBox.exec();
         }
     } catch (CalendarException ce) {
         QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);
@@ -479,6 +509,8 @@ void AgendaWindow::ajouter_tache()
                 msgBox.exec();
 
             }
+            else if (t==QString("composite") && b)
+                throw CalendarException("Une Tache Composite n'est pas preemtive");
             else
             {
                 TM.ajouterTacheC(*id,*title,*duration,*dispo,*deadl);
@@ -499,7 +531,7 @@ void AgendaWindow::ajouter_tache()
  void AgendaWindow::ajouter_precedence()
  {
      bool ok,ok2;
-     QString id = QInputDialog::getText(this,"Tache","Entrez l'id de la Tache A PRECEDER :", QLineEdit::Normal,"valeur", &ok);
+     QString id = QInputDialog::getText(this,"Tache","Entrez l'id de la Tache QUI VA ETRE PRECEDEE :", QLineEdit::Normal,"valeur", &ok);
           try
           {
               if (ok && !id.isEmpty())
@@ -614,10 +646,16 @@ void AgendaWindow::ajouter_activite() {
              msgBox2.setText("Tache Supprimée de Projet");
              msgBox2.exec();
 
-             ProgM.remove_programmation(id,0); // c'est une tache qu'on veut supprimer
-             QMessageBox msgBox3;
-             msgBox3.setText("Tache Supprimée de Programmation");
-             msgBox3.exec();
+             Programmation* p=ProgM.getProg(id);
+             if(p->getEvent()->cestunetache())
+             {
+                ProgM.remove_programmation(id); // c'est une tache qu'on veut supprimer
+                QMessageBox msgBox3;
+                msgBox3.setText("Tache Supprimée de Programmation");
+                 msgBox3.exec();
+             }
+             else
+                 throw CalendarException("La Tache n'est pas Programée");
 
 
 
@@ -772,11 +810,11 @@ void AgendaWindow::ajouter_activite() {
      {
      if (ok && !id.isEmpty())
      {
-     Programmation* ev=ProgM.getProg(id);
-     message+=id;
-     message+="\n Titre :";
-     message+=ev->getEvent()->getTitre();
-     message+="\n Date ";
+        Programmation* ev=ProgM.getProg(id);
+         message+=id;
+         message+="\n Titre :";
+         message+=ev->getEvent()->getTitre();
+         message+="\n Date ";
      QString d= QString::number(ev->getDate().getAnnee());
      d+="/";d+= QString::number(ev->getDate().getMois());
      d+="/";d+= QString::number(ev->getDate().getJour());
@@ -862,6 +900,37 @@ void AgendaWindow::supprimer_projet()
 
 }
 
+void AgendaWindow::supprimer_activite()
+{
+    bool ok;
+    QString message= "Id : ";
+    const QString&  id = QInputDialog::getText(this,"Programmation","Entrez l'id de l'Evenement Recherche' :", QLineEdit::Normal,"valeur", &ok);
+    try
+    {
+        if (ok && !id.isEmpty())
+        {
+           Programmation* p=ProgM.getProg(id);
+           if(!(p->getEvent()->cestunetache()))
+           {
+                   ProgM.remove_programmation(id);
+                   QMessageBox msgBox;
+                   msgBox.setText("Programmation Activité supprimée!");
+                   msgBox.exec();
+
+            }
+        }
+      else
+       throw CalendarException("Cette Activité n'existe pas ou n'est pas Programmee");
+    }
+
+
+        catch (CalendarException ce) {
+                QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);}
+
+            catch (std::exception e) {
+                   QMessageBox::information(0,"Erreur",e.what(),QMessageBox::Ok);}
+}
+
 
 void AgendaWindow::afficher_projets()
  {
@@ -930,7 +999,7 @@ void AgendaWindow::afficher_taches()
     message+=" : ";
     message+=(*it)->getTitre();
      QStandardItem* item=new QStandardItem(QString(message));
-     item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+    // item->setFlags(item->flags() & ~Qt::ItemIsEditable);
      parentItem->appendRow(item);
      if(!(*it)->getTypeTache())
      {
@@ -957,6 +1026,61 @@ void AgendaWindow::afficher_taches()
     treeView->setModel(model);
     treeView->show();
 
+
+}
+void AgendaWindow::afficher_schedule()
+{
+    QStandardItemModel* model = new QStandardItemModel;
+    QStandardItem *parentItem= model->invisibleRootItem();
+    for (std::vector<Programmation*>::const_iterator it =ProgM.getInstance().getTabprogs().begin()  ; it!= ProgM.getInstance().getTabprogs().end() ;it++ )
+   {
+        QString message=" ";
+        message=(*it)->getEvent()->getId();
+        message+=" : ";
+        message+=(*it)->getEvent()->getTitre();
+        message+="\n             ";
+        QString date= QString::number((*it)->getDate().getAnnee());
+        date+="/";date+= QString::number((*it)->getDate().getMois());
+        date+="/";date+= QString::number((*it)->getDate().getJour());
+        QString* voila = new  QString(date);
+        message+="Date :";message+=voila;
+        unsigned int hh = ((*it)->getHoraire().getHeure());
+        unsigned int mm = ((*it)->getHoraire().getMinute());
+        QString h1 = (hh<10)?"0"+QString::number(hh):""+QString::number(hh);
+        QString m1 = (mm<10)?"0"+QString::number(mm):""+QString::number(mm);
+        QString* horaire = new QString(h1+" H "+m1);
+        message+="  --Horaire : "; message+=horaire;
+        if((*it)->getEvent()->cestunetache())
+        {
+            Event* temp=const_cast<Event*>((*it)->getEvent());
+            TacheU* t=dynamic_cast<TacheU*>(temp);
+            if(t->isPreemptive())
+            {
+                unsigned int completed=(t->getDuree().getDureeEnMinutes())*(t->getProgression())/100;
+                unsigned int ce_qui_reste =t->getDuree().getDureeEnMinutes()-completed;
+                Duree d(ce_qui_reste);
+                message+="\n            Il reste :";
+                if(ce_qui_reste>60)
+                {
+                    double d2= d.getDureeEnHeures();
+                    message+= QString::number(d2);
+                    message+="à programmer \n";
+                }
+                message+= QString::number(ce_qui_reste);
+                message+="  minutes à programmer \n";
+
+            }
+
+
+      }
+
+         QStandardItem* item=new QStandardItem(QString(message));
+         parentItem->appendRow(item);
+
+    }
+    QTreeView *treeView=new QTreeView;
+    treeView->setModel(model);
+    treeView->show();
 
 }
 

@@ -50,6 +50,8 @@ class AgendaWindow : public QMainWindow
     QAction *Supprimer_tache;
     QAction* Supprimer_projet;
     QAction* Afficher_taches;
+     QAction* Supprimer_activite;
+     QAction* Schedule;
 
     //couche jours
     QLabel *lundi;
@@ -134,6 +136,8 @@ private slots:
     void supprimer_tache();
     void supprimer_projet();
     void afficher_taches();
+    void supprimer_activite();
+    void afficher_schedule();
 
 
 };

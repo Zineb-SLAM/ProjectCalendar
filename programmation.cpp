@@ -112,6 +112,7 @@ void ProgrammationManager::ajouterProgrammation(TacheU* t, const Date& d, const 
 
 
 void ProgrammationManager::ajouterProgrammation(TacheU* t, const Date& d, const Horaire& h, const Duree& duree)
+// pour une tache preemtive
 {
     if(t->estProgrammee()) throw CalendarException("Cette Tache a Deja ete Complete");
     if(duree.getDureeEnMinutes()>720) throw CalendarException("Entrer Une Duree inferieure a 12H");
@@ -200,40 +201,23 @@ Programmation* ProgrammationManager::getProg(const QString& id_evt)
     {
         if((*it)->getEvent()->getId()==id_evt) return (*it);
     }
-    return 0;
+    throw CalendarException("La Programmation n'existe pas! ");
 
 }
 
-void ProgrammationManager::remove_programmation(const QString& id,bool t=0)
+void ProgrammationManager::remove_programmation(const QString& id)
 {
     Programmation* todelete=getProg(id);
     if(!todelete) throw CalendarException("Cette programmation n'existe pas");
-    if(todelete->getEvent()->cestunetache() && t==0)
-    {
+
         vectProg::iterator position = std::find(tabprogs.begin(), tabprogs.end(),todelete);
-        if (position != tabprogs.end()) //!<  ==tabprogs.end veut dire que l'element n'a pas été trouvé
+        if (position != tabprogs.end()) //!< ==tabprogs.end veut dire que l'element n'a pas été trouvé
         {
             tabprogs.erase(position);
              return;
         }
-        else throw CalendarException ("La Tache a supprimer n'existe pas");
-    }
-    else if(!(todelete->getEvent()->cestunetache()) && t==1)
-    {
+        else throw CalendarException ("La Programmation n'existe pas");
 
-        vectProg::iterator position = std::find(tabprogs.begin(), tabprogs.end(),todelete);
-        if (position != tabprogs.end())
-          {
-            tabprogs.erase(position);
-            return;
-            }
-
-        else
-            throw CalendarException ("L'Activite a Supprimer n'existe pas");
-    }
-
-        else
-            throw CalendarException("L'Activité n'existe pas");
 }
 
 QTextStream& Programmation::afficher(QTextStream& fout) const

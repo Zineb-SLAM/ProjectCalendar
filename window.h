@@ -105,6 +105,7 @@ class NewProgrammation : public QDialog {
 
     QTimeEdit *schedule;
     QDateEdit* date;
+    QTimeEdit* duree;
 
     QFormLayout* formLayout;
 
@@ -112,6 +113,7 @@ public:
     NewProgrammation(QWidget* parent);
     const QTimeEdit& getSchedule() const { return *schedule; }
     const QDateEdit& getDate() const { return *date; }
+    const QTimeEdit& getDuree() const { return *duree;}
 };
 
 #endif // WINDOW_H

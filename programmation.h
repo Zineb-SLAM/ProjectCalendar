@@ -75,7 +75,7 @@ public:
     void addprog(Programmation* p); //!< Methode Appelee par ajouterProgrammation qui ajoute la programmation d'un Evenement au Vector de ProgrammationManager
    //!< Retourne la programmation d'un Evenement ) partir de son Id.
    Programmation* getProg(const QString& id_evt);
-    void remove_programmation(const QString& id, bool t); //!< 0 si ce qu'il doit etre supprimé est une tache , de manière à ce que l'on ne supprime pas une activité de même id
+    void remove_programmation(const QString& id); /*! \fn Comme on peut avoir une tache unitaire et une activité de même id on verifiera dans la fonction que c'est une activité */
     QTextStream& afficher(QTextStream& f,const Event* t)
     {
        Programmation* a= trouverProgrammation(t);
