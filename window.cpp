@@ -101,10 +101,12 @@ NewProgrammation::NewProgrammation(QWidget* parent) {
     schedule = new QTimeEdit(this);
     date = new QDateEdit(this);
     date->setMinimumDate(QDate(QDate::currentDate()));
+    duree=new QTimeEdit(this);
 
     formLayout = new QFormLayout(this);
     formLayout->addRow("Date", date);
     formLayout->addRow("Horaire", schedule);
+    formLayout->addRow("Duree Preemtive",duree);
     formLayout->addWidget(buttonBox);
     setLayout(formLayout);
 

@@ -21,7 +21,8 @@ int main(int argc, char* argv[])
     TacheU* t10=tacheM.ajouterTacheU("10", "Tests IA02 ", Duree(2,00), Date(12,06,2015), Date(14,06,2015));
     TacheU* t11=tacheM.ajouterTacheU("11", "Revisions LO21", Duree(24,00), Date(15,06,2015), Date(21,06,2015),true,false);
     TacheU* t12=tacheM.ajouterTacheU("12", "Final LO21", Duree(2,00), Date(21,06,2015), Date(21,06,2015));
-    //TacheC* tc13=tacheM.ajouterTacheC("13", "Rapport LO21", Duree(8,00), Date(15,03,2015), Date(20,06,2015));
+    TacheU* t13=tacheM.ajouterTacheU("13", "Final NF17", Duree(2,00), Date(19,06,2015), Date(19,06,2015));
+    //TacheC* tc1=tacheM.ajouterTacheC("tc1", "Finaux", Duree(8,00), Date(19,06,2015), Date(25,06,2015));
     QTextStream stdoutQt(stdout);
     tacheM.afficherTaches(stdoutQt);
     //Tache* t = tacheM.getTache("t1");
@@ -72,12 +73,14 @@ int main(int argc, char* argv[])
         Rdv* a= new Rdv("a1","titre1",Duree(03,00),"UTC","Mr");
         pM.ajouterProgrammation(t1,Date(03,04,2015),Horaire(15,30));
         pM.ajouterProgrammation(t8, Date(22,06,2015), Horaire(8,00));
-        pM.ajouterProgrammation(t12, Date(21,02,2015), Horaire(14,30));
+        pM.ajouterProgrammation(t12, Date(21,06,2015), Horaire(14,30));
         pM.ajouterProgrammation(t2, Date(15,04,2015), Horaire(8,15),Duree(10,00));
+        pM.ajouterProgrammation(t2, Date(19,06,2015), Horaire(8,00),Duree(10,00));
         //pM.ajouterProgrammation(t3, Date(21,05,2015), Horaire(10,30));
 
 
-
+    //tacheM.ajouter_Tache_a_composite(tc1 ,t8);
+   // tacheM.ajouter_Tache_a_composite(tc1 ,t12);
     for (std::vector<Projet*>::iterator it = projetM.getTab().begin(); it!=projetM.getTab().end(); ++it)
     {
         stdoutQt<<"Affichage des taches du projet"<<endl;

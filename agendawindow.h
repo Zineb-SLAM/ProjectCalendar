@@ -57,6 +57,8 @@ class AgendaWindow : public QMainWindow {
     QAction *Supprimer_tache; /*! action supprimer une tache */
     QAction* Supprimer_projet; /*! action supprimer un projet */
     QAction* Afficher_taches; /*! action afficher les taches sous forme d'arborescence */
+    QAction* Supprimer_activite;
+    QAction *Schedule;
 
     //couche jours
     QLabel *lundi; /*! label lundi */
@@ -140,8 +142,8 @@ private slots:
     void supprimer_tache(); /*! Supprime une tache */
     void supprimer_projet(); /*! Supprime un projet */
     void afficher_taches(); /*! Affiche les taches sous forme d'arborescence */
-
-
+    void supprimer_activite();
+    void afficher_schedule();
 };
 
 class ItemActivite : public QGraphicsItem {

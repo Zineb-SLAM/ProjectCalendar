@@ -42,7 +42,7 @@ void TacheU::ajouterPrecedence(TacheU* t )
     {
         if((*it)->getId()==this->id) throw CalendarException("Impossible Cette Tache precede Deja La Tache t ");
     }
-    if((t->disponibilite<this->disponibilite || t->disponibilite==this->disponibilite) && (t->echeance<this->disponibilite || t->echeance==this->disponibilite))
+    if((t->disponibilite<this->echeance) || (t->disponibilite==this->echeance && t->echeance==this->echeance))
     {
             std::cout<<"Precedence ajoute";
              this->precedence.push_back(t);
