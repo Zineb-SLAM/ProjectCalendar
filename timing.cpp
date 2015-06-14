@@ -90,24 +90,26 @@ Date Date::operator+(unsigned int nb_jours) const {
     return d;
 }
 
-const QString& Date::String() const
+QString& Date::String() const
 {
-     QString str= QString::number(this->getAnnee());
-    str+="/";str+= QString::number(this->getMois());
-    str+="/";str+= QString::number(this->getJour());
-    return str;
+    QString d = QString::number(getAnnee());
+    d+="/"; d+= QString::number(getMois());
+    d+="/"; d+= QString::number(getJour());
+    QString* str = new QString(d);
+    return *str;
 }
 
 Date Date::fromString(QString s) {
-    Date d;
-    //conversion QString YYYY-MM-DD en Date
+    QDate date = QDate::fromString(s,"YYYY-MM-DD");
+    Date d(date.day(), date.month(), date.year());
     return d;
 }
 
- QString Date::toString() {
+QString Date::toString() {
     QString s;
-    //conversion Date en QString YYYY-MM-DD
-   return s;
+    //QDate date = this->toQDate();
+    //s = date.toString("YYY-MM-DD");
+    return s;
 }
 
 const QDate& Date::toQDate() const {
@@ -127,6 +129,16 @@ void Duree::afficher(QTextStream& f) const {
     f<<nb_minutes%60;
     f.setFieldWidth(0);
     f.setPadChar(' ');
+}
+
+QString& Duree::toString() const {
+   unsigned int H = getHeure();
+   unsigned int M = getMinute();
+   QString h = (H<10)?"0"+QString::number(H):""+QString::number(H);
+   QString m = (M<10)?"0"+QString::number(M):""+QString::number(M);
+   QString str = h+"H"+m;
+   QString *d = new QString(str);
+   return *d;
 }
 
 QTextStream& operator<<(QTextStream& f, const Duree& d)

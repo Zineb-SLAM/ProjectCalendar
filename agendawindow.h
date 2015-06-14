@@ -124,12 +124,10 @@ private slots:
     void ajouter_tache();
     void ajouter_tache_a_composite();
     void ajouter_precedence();
-    void afficher();
     void ajouter_activite();
     void recherche_projet();
     void recherche_tache();
     void recherche_programmation();
-
 
 public slots:
       void TreeViewProjet();
@@ -151,6 +149,18 @@ public:
     //fonctions virtuelles pures de QGraphicsItem à implémenter
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+};
+
+class ActiviteInfo : public QMessageBox {
+    QLabel* id;
+    QLabel* titre;
+    QLabel* duree;
+    QLabel* lieu;
+
+    QFormLayout* formLayout;
+
+public:
+    ActiviteInfo(Activite *a, QWidget *parent=0, Qt::WindowFlags f=0);
 };
 
 #endif // AGENDAWINDOW_H

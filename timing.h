@@ -52,7 +52,7 @@ namespace TIME {
         Date operator+(unsigned int nb) const; //<!Retourne la date de dans nb jours
         static Date fromString(QString s);
         static QString toString();
-        const QString& String() const;
+        QString& String() const;
         const QDate& toQDate() const;//!< convertit l'objet Date en QDate pour pouvoir utiliser ses fonctions.
     };
 
@@ -83,6 +83,7 @@ essite des dates valides au sens commun du terme.
         unsigned int getHeure() const { return nb_minutes/60; }
         unsigned int getJour() const{ double x = getHeure()/24; return floor(x); }//<!Retourne la duree en jours pour les taches prremptv
         void afficher(QTextStream& f) const; //<!Affiche la duree sous le format hhHmm
+        QString& toString() const;
     };
 
 

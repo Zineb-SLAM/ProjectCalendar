@@ -207,14 +207,25 @@ void ProjetManager::save(const QString& f) {
     QXmlStreamWriter stream(&newfile);
     stream.setAutoFormatting(true);
     stream.writeStartDocument();
-    stream.writeStartElement("taches");
+    stream.writeStartElement("projets");
     for(unsigned int i=0; i<projets.size(); i++) {
-        stream.writeStartElement("tache");
-        //stream.writeAttribute("preemptive", (taches[i]->isPreemptive())?"true":"false");// isPreemtive dans Taches??
+        stream.writeStartElement("projet");
         stream.writeTextElement("identificateur",projets[i]->getId());
         stream.writeTextElement("titre",projets[i]->getTitre());
-        stream.writeTextElement("disponibilite",projets[i]->getDisponibilite().toString());
-        stream.writeTextElement("echeance",projets[i]->getEcheance().toString());
+        stream.writeTextElement("disponibilite",projets[i]->getDisponibilite().String());
+        stream.writeTextElement("echeance",projets[i]->getEcheance().String());
+        stream.writeStartElement("taches");
+        Projet::tabtaches taches = projets[i]->GetTabProjet();
+        for(unsigned int i=0; i<taches.size(); i++) {
+            stream.writeStartElement("tache");
+            stream.writeTextElement("id",taches[i]->getId());
+            stream.writeTextElement("titre", taches[i]->getTitre());
+            stream.writeTextElement("duree", taches[i]->getDuree().toString());
+            stream.writeTextElement("disponibilite",taches[i]->getDisponibilite().String());
+            stream.writeTextElement("echeance",taches[i]->getEcheance().String());
+            stream.writeEndElement();
+        }
+        stream.writeEndElement();
         stream.writeEndElement();
     }
     stream.writeEndElement();

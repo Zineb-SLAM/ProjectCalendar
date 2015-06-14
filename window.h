@@ -29,8 +29,6 @@ public:
     const QDateEdit& getDisponibility() const { return *disponibility; }
     const QDateEdit& getDeadline() const { return *deadline; }
     QListWidget* getTasks() { return tasks; }
-public slots:
-    //void addNewProject();
 };
 
 class NewTask : public QDialog {
@@ -58,8 +56,6 @@ public:
     const QDateEdit& getDeadline() const { return *deadline; }
     const QListWidget& getPredecessors() const { return *predecessors; }
     const QCheckBox& getPreemtive() const { return *preemtive; }
-public slots:
-    //void addNewTask();
 };
 
 class NewActivity : public QDialog {
@@ -86,9 +82,6 @@ public:
    const QTimeEdit& getDuration() const { return *duration; }
    const QLineEdit& getPlace() const { return *place; }
    const QLineEdit& getPeople() const { return *people; }
-
-public slots:
-    //void addNewActivity();
 };
 
 class NewProgrammation : public QDialog {
@@ -104,9 +97,6 @@ public:
     NewProgrammation(QWidget* parent);
     const QTimeEdit& getSchedule() const { return *schedule; }
     const QDateEdit& getDate() const { return *date; }
-
-public slots:
-    //void addProgrammation();
 };
 
 #endif // WINDOW_H
