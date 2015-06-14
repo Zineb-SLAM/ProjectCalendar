@@ -22,7 +22,7 @@ class Programmation
     const Event* event;
     Date date;
     Horaire horaire;
-    //constructeurs et destructeur en privé car les Programmations sont gérées par ProgrammationManager
+    /*! constructeurs et destructeur en privé car les Programmations sont gérées par ProgrammationManager */
     Programmation(const Event* e, const Date& d, const Horaire& h):event(e), date(d), horaire(h){}
     Programmation(const Programmation& e);
 public:
@@ -45,6 +45,7 @@ class ProgrammationManager
     */
 
     typedef std::vector<Programmation*> vectProg;
+    /*!  \typedef  VectProg est un vecteur de Programmations*/
     vectProg tabprogs;
     ProgrammationManager(const ProgrammationManager& e);//!< Methode Privé: ProgrammationManager etant un singelton, il faut empecher la construction par recopie d'un autre objet ProgrammationManager
     ProgrammationManager& operator=(const ProgrammationManager& e);//!<Operateur Privé: ProgrammationManager etant un singelton, il faut empecher la construction d'un autre objet ProgrammationManager par le biais de l'operateur =
@@ -52,7 +53,7 @@ class ProgrammationManager
     {
         ProgrammationManager* instance;
         Handler():instance(0){}
-        ~Handler(){ if (instance) delete instance; } // destructeur appel a la fin du programme
+        ~Handler(){ if (instance) delete instance; } /*! L'avantage destructeur avec Handler est que le destructeur sera appelé automatiquement à la fin du programme */
     };
     static Handler handler;
 public:
@@ -62,12 +63,15 @@ public:
     static void libererInstance();
     vectProg& getTabprogs() { return tabprogs; } //!< Retourne le Tableau de Programmation
     Programmation* trouverProgrammation(const Event* t); //!< Retourne La Programmation de l'Evenement passé en paramètre
-
-    //! Appel du Constructeur de Programmation
+    /*! Appel du Constructeur de Programmation*/
     void ajouterProgrammation(TacheU* t, const Date& d, const Horaire& h);
+    /*! \fn  Creer la Programmation de Tache Unitaire en ajoutant la date et l'horaire*/
     void ajouterProgrammation(TacheU* t, const Date& d, const Horaire& h, const Duree& nb);
+     /*! \fn  Creer la Programmation d'une \b Partie seulement d'une tache Unitaire \b Preemtive
+        \param Duree& nb va peremttre de suivre  la progression d'une Tache*/
     void ajouterProgrammation(Activite* a, const Date& d, const Horaire& h);
-    //!< Programme l'objet Tache Unitaire/Evenement en Créant l'objet Programmation correspondant et rennvoie cet objet à la méthode addprog
+    /*! Programme l'objet Tache Unitaire/Evenement en Créant l'objet Programmation
+     * correspondant et rennvoie cet objet à la méthode addprog */
     void addprog(Programmation* p); //!< Methode Appelee par ajouterProgrammation qui ajoute la programmation d'un Evenement au Vector de ProgrammationManager
    //!< Retourne la programmation d'un Evenement ) partir de son Id.
    Programmation* getProg(const QString& id_evt);

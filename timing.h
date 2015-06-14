@@ -77,36 +77,19 @@ essite des dates valides au sens commun du terme.
         Duree(unsigned int m=0):nb_minutes(m) {}
         void setDuree(unsigned int minutes) { nb_minutes=minutes; }
         void setDuree(unsigned int heures, unsigned int minutes) { if (minutes>59) throw TimeException("erreur: initialisation duree invalide"); nb_minutes=heures*60+minutes; }
-        unsigned int getDureeEnMinutes() const { return nb_minutes; } //<!Retourne la duree en minutes
-        double getDureeEnHeures() const { return double(nb_minutes)/60; } //<!Retourne la duree en heures
+        unsigned int getDureeEnMinutes() const { return nb_minutes; }  /*! Retourne la duree en minutes */
+        double getDureeEnHeures() const { return double(nb_minutes)/60; }  /*! Retourne la duree en heures */
         unsigned int getMinute() const { return nb_minutes%60; }
         unsigned int getHeure() const { return nb_minutes/60; }
-        unsigned int getJour() const{ double x = getHeure()/24; return floor(x); }//<!Retourne la duree en jours pour les taches prremptv
-        void afficher(QTextStream& f) const; //<!Affiche la duree sous le format hhHmm
-<<<<<<< HEAD
-        Duree& operator+(const Duree& d)
-        {
-            unsigned int total=this->getDureeEnMinutes()+d.getDureeEnMinutes();
-            this->setDuree(total);
-
-        }
-        Duree& operator =(const Duree& d)
-        {
-            this->setDuree(d.getDureeEnMinutes());
-        }
-        bool operator<(const Duree& d)
-        {
-          return this->nb_minutes<d.getDureeEnMinutes();
-
-        }
-=======
+        unsigned int getJour() const{ double x = getHeure()/24; return floor(x); } /*! Retourne la duree en jours pour les taches prremptv*/
+        void afficher(QTextStream& f) const;  /*! Affiche la duree sous le format hhHmm */
         QString& toString() const;
->>>>>>> origin/master
+
     };
 
 
     QTextStream& operator<<(QTextStream& f, const Duree& d);
-    QTextStream& operator>>(QTextStream& flot, Duree& duree); //lecture format hhHmm
+    QTextStream& operator>>(QTextStream& flot, Duree& duree);  /*! lecture format hhHmm */
 
 //******************************************************************************************
     /*! \class Horaire
@@ -122,14 +105,15 @@ essite des dates valides au sens commun du terme.
             */
         Horaire(unsigned short int  h, unsigned short int  m):heure(h),minute(m) {if (h>23||m>59) throw TimeException("erreur: initialisation horaire invalide");}
         void setHoraire(unsigned short int h, unsigned short int m) { if (h>23||m>59) throw TimeException("erreur: initialisation horaire invalide"); heure=h; minute=m; }
-        void afficher(QTextStream& f) const; //<!Affiche l'horaire sous le format hhHmm
-        unsigned short int getHeure() const { return heure; } //<!Retourne l'heure de l'horaire
-        unsigned short int getMinute() const { return minute; } //<!Retourne les minutes de l'horaire
+        void afficher(QTextStream& f) const;  /*! Affiche l'horaire sous le format hhHmm */
+        unsigned short int getHeure() const { return heure; }  /*! Retourne l'heure de l'horaire */
+        unsigned short int getMinute() const { return minute; }  /*! Retourne les minutes de l'horaire */
         Horaire* getFin(const Duree& d)const;
         Horaire* getFin(const Duree& d, bool& sur2Jours)const;
-        bool operator<(const Horaire& h) const; //<! h1<h2 retourne true si h1 est avant h2 dans le temps
-        bool operator==(const Horaire& h) const;  //<! h1<h2 retourne true si h1 est au meme temps que h2 dans le temps
-        Duree* entre2(const Horaire& h);
+        bool operator<(const Horaire& h) const;  /*! h1<h2 retourne true si h1 est avant h2 dans le temps */
+        bool operator==(const Horaire& h) const;  /*! h1<h2 retourne true si h1 est au meme temps que h2 dans le temps
+                                                     Duree* entre2(const Horaire& h);*/
+        Duree *entre2(const Horaire& h);
     private:
         unsigned short int  heure;
         unsigned short int  minute;
@@ -172,12 +156,13 @@ QTextStream& operator<<(QTextStream& f, const Horaire& d);
             \param f date de fin de l'intervalle. On doit avoir d<=f
             */
         Intervalle(const Date & d, const Date & f);
-        void afficher(QTextStream &f) const; //<! Affiche l'intervalle de dates
-        Date getDebut() const { return debut; } //<! Retourne la date de début de l'intervalle
-        Date getFin() const { return fin; } //<! Retourne la date de fin de l'intervalle
-        int getDuree() const { return fin-debut; } //<! Retourne le nombre de jours s'écoulant entre le début et la fin de l'intervalle
-        bool operator&&(const Intervalle & v) const; //<! I1&&I2 Retourne vrai si il y a intersection entre I1 et I2
-        Intervalle operator+(const Intervalle & i) const; //<! I1+I2 Retourne un intervalle union des 2 intervalles I1 et I2 qui se touchent, ie I2.debut est le jour du lendemain de I1.fin
+        void afficher(QTextStream &f) const;  /*! Affiche l'intervalle de dates */
+        Date getDebut() const { return debut; }  /*! Retourne la date de début de l'intervalle */
+        Date getFin() const { return fin; }  /*! Retourne la date de fin de l'intervalle */
+        int getDuree() const { return fin-debut; }  /*! Retourne le nombre de jours s'écoulant entre le début et la fin de l'intervalle */
+        bool operator&&(const Intervalle & v) const; /*! I1&&I2 Retourne vrai si il y a intersection entre I1 et I2 */
+        Intervalle operator+(const Intervalle & i) const;  /*! I1+I2 Retourne un intervalle union des 2 intervalles I1 et I2 qui se touchent,
+                                                ie I2.debut est le jour du lendemain de I1.fin*/
     };
 
     QTextStream& operator<<(QTextStream& f, const Intervalle& x);

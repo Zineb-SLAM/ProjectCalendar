@@ -33,13 +33,6 @@ void Tache::setEcheance(const Date& e) {
     echeance = e;
 }
 
-/* on a choisi pour l'instant de le faire avec un QUid
- ---- ne pas supprimer (au cas où on en aurait besoin plus tard ----
- void Tache::setId(const QString& str){
- if (TacheManager::getInstance().isTacheExistante((str))) throw CalendarException("erreur TacheManager : tache id déjà existante");
- identificateur=str;
- }
- */
 
 //******************************************************************************************
 
@@ -99,7 +92,7 @@ const QString TacheU::toString() const {
 
 void TacheC::addTasktoC(Tache* t)
 {
-    for(vectcomp::const_iterator it= tachescomp.begin(); it!=tachescomp.end();++it)
+    for(tabtaches::const_iterator it= tachescomp.begin(); it!=tachescomp.end();++it)
     {
        if((*it)->getId()==t->getId()) throw CalendarException ("La Tache Exsite Deja");
     }
@@ -109,7 +102,7 @@ const QString TacheC::toString() const {
     QTextStream f;
     QString str;
     f<<"**Tache Composite** \n";
-    for(vectcomp::const_iterator it= tachescomp.begin(); it!=tachescomp.end();++it) {
+    for(tabtaches::const_iterator it= tachescomp.begin(); it!=tachescomp.end();++it) {
         f<<(*it);
     }
     f>>str;
@@ -149,6 +142,59 @@ void TacheManager::ajouter_Tache_a_composite(TacheC* C,Tache* t)
     C->addTasktoC(t);
 }
 
+void TacheManager::ajouterPrecedenceTache(TacheU* tAjout,TacheU* tPrecedente)
+{
+    tAjout->ajouterPrecedence(tPrecedente);
+}
+
+QTextStream& TacheManager::afficherTaches(QTextStream& fout){
+    for(tabtaches::iterator it = taches.begin(); it != taches.end(); it++)
+        fout << *it;
+    return fout;
+}
+
+const QString& TacheManager::afficherTachesAProgrammer() const {
+    QString* s = new QString(" ");
+    for(tabtaches::const_iterator it = taches.begin(); it != taches.end(); it++) {
+        TacheU* tu = dynamic_cast<TacheU *>(*it);
+        if (!(tu->estProgrammee())) {
+                s->append(" *** ");
+                s->append(tu->getTitre());
+                s->append(" ");
+                s->append(tu->getId());
+                s->append(" *** ");
+            }
+    }
+    return *s;
+}
+
+Tache* TacheManager::getTache(const QString& id){
+    tabtaches::iterator it = taches.begin();
+    while(it!=taches.end() && (*it)->getId() != id) {
+        it++;
+    }
+    if(it!=taches.end()) {
+        return *it;
+    }
+    throw CalendarException("Tache inconnue");
+}
+
+TacheU* TacheManager::getTacheU(const QString& id)
+{
+    tabtaches::iterator it = taches.begin();
+    while(it!=taches.end() && (*it)->getId() != id && (!(*it)->getTypeTache())) {
+        it++;
+    }
+    if(it!=taches.end())
+    {
+        TacheU* tempU = dynamic_cast<TacheU*>(*it);
+        return tempU;
+    }
+    throw CalendarException("Tache Unitaire inexistante");
+
+}
+
+
 void TacheManager::load(const QString& f)
 {
     //qDebug()<<"debut load\n";
@@ -182,7 +228,7 @@ void TacheManager::load(const QString& f)
                 Duree duree;
                 bool preemptive;
                 bool program;
-                
+
                 QXmlStreamAttributes attributes = xml.attributes();
                 /* Let's check that Task has attribute. */
                 if(attributes.hasAttribute("preemptive")) {
@@ -190,7 +236,7 @@ void TacheManager::load(const QString& f)
                     preemptive=(val == "true" ? true : false);
                 }
                 //qDebug()<<"preemptive="<<preemptive<<"\n";
-                
+
                 QXmlStreamAttributes attributes_b = xml.attributes();
                 /* Let's check that Task has attribute. */
                 if(attributes_b.hasAttribute("programmee")) {
@@ -200,8 +246,8 @@ void TacheManager::load(const QString& f)
                 xml.readNext();
                 //We're going to loop over the things because the order might change.
                 //We'll continue the loop until we hit an EndElement named tache.
-                
-                
+
+
                 while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "tache")) {
                     if(xml.tokenType() == QXmlStreamReader::StartElement) {
                         // We've found identificteur.
@@ -210,7 +256,7 @@ void TacheManager::load(const QString& f)
                             identificateur=xml.text().toString();
                             //qDebug()<<"id="<<identificateur<<"\n";
                         }
-                        
+
                         // We've found titre.
                         if(xml.name() == "titre") {
                             xml.readNext();
@@ -241,7 +287,7 @@ void TacheManager::load(const QString& f)
                 }
                 //qDebug()<<"ajout tache "<<identificateur<<"\n";
                 ajouterTacheU(identificateur,titre,duree,disponibilite,echeance,preemptive,program);
-                
+
             }
         }
     }
@@ -280,55 +326,7 @@ void TacheManager::save(const QString& f){
     newfile.close();
 }
 
-Tache* TacheManager::getTache(const QString& id){
-    tabtaches::iterator it = taches.begin();
-    while(it!=taches.end() && (*it)->getId() != id) {
-        it++;
-    }
-    if(it!=taches.end()) {
-        return *it;
-    }
-    throw CalendarException("Tache inconnue");
-}
-TacheU* TacheManager::getTacheU(const QString& id)
-{
-    tabtaches::iterator it = taches.begin();
-    while(it!=taches.end() && (*it)->getId() != id && (!(*it)->getTypeTache())) {
-        it++;
-    }
-    if(it!=taches.end())
-    {
-        TacheU* tempU = dynamic_cast<TacheU*>(*it);
-        return tempU;
-    }
-    throw CalendarException("Tache Unitaire inexistante");
-
-}
 
 
-QTextStream& TacheManager::afficherTaches(QTextStream& fout){
-    for(tabtaches::iterator it = taches.begin(); it != taches.end(); it++)
-        fout << *it;
-    return fout;
-}
-
-const QString& TacheManager::afficherTachesAProgrammer() const {
-    QString* s = new QString(" ");
-    for(tabtaches::const_iterator it = taches.begin(); it != taches.end(); it++) {
-        TacheU* tu = dynamic_cast<TacheU *>(*it);
-        if (!(tu->estProgrammee())) {
-                s->append(" *** ");
-                s->append(tu->getTitre());
-                s->append(" ");
-                s->append(tu->getId());
-                s->append(" *** ");
-            }
-    }
-    return *s;
-}
-void TacheManager::ajouterPrecedenceTache(TacheU* tAjout,TacheU* tPrecedente)
-{
-    tAjout->ajouterPrecedence(tPrecedente);
-}
 
 //******************************************************************************************

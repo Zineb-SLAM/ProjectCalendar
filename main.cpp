@@ -4,7 +4,7 @@
 #include"show_info.h"
 
 using namespace std;
-
+/** \author MARTIN Marie & SLAM Zineb */
 
 int main(int argc, char* argv[])
 {

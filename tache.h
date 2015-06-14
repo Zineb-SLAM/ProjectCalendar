@@ -45,7 +45,9 @@ public:
     const Date getDisponibilite() const { return disponibilite; }
     const Date getEcheance() const { return echeance;}
     virtual const QString toString() const=0;
-    virtual bool getTypeTache()=0;
+    virtual bool getTypeTache()=0; /*! \fn * fonction retounant vrai si la tache est unitaire
+                                           * Elle nous permettera de verifier que la tache est unitaire pour la programmer ou y ajouter des précédences.
+                                           */
 };
 
 QTextStream& operator<<(QTextStream& fout, const Tache* const t);
@@ -54,17 +56,23 @@ QTextStream& operator<<(QTextStream& fout, const Tache* const t);
 
 class TacheU : public Tache , public Event {
     /*! \class TacheU
-     \brief Classe permettant de manipuler des tâches unitaires
-     */
+     \brief Classe héritant de Tache permettant de manipuler des tâches unitaires
+     \param progression >0 et <100 : permettant de suivre la progression des taches preemtives après leur programmation, puisqu'on peut programmer une tache preemtive à plusieurs reprises
+     \param precedence est un vector contenant toutes les taches qui précèdent la tache
+     \param suivante est vector contenant toutes les taches qui viennent après la tache
+    */
     friend class TacheManager;
+    typedef vector<TacheU*> tabtachesU;
+     /*!  \typedef  tabtachesU est un vecteur de Taches Unitaires*/
     //attributs
     bool preemptive;
     unsigned int progression;
-    vector<TacheU*> precedence;
-    vector<TacheU*> suivante;// La prograssion est evaluee de 1 a 100 si la progression est 100 le projet va alors considerer la tache comme completed
+
+    tabtachesU precedence;
+    tabtachesU suivante;//
 
     //méthodes
-    void setDuree(const Duree& d); //redéfinition
+    void setDuree(const Duree& d);
     void setPreemptive() { preemptive = true;}
     inline void setNonPreemptive();
 protected:
@@ -75,15 +83,15 @@ protected:
         throw CalendarException("Erreur tache unitaire : une tache non preemptive ne peut pas avoir une durée supérieure à 12h");
         precedence.reserve(5);
         suivante.reserve(5);
-    }
+    }  //! Constructeur à partir de minute
 
-    TacheU(const Tache& t, const bool& pre=false, const bool& prog=false):
+    TacheU(const Tache& t, const bool& pre=false, const bool& prog=false): /*! \param programmation false */
     Tache(t.getId(), t.getTitre(),t.getDuree(),t.getDisponibilite(),t.getEcheance()), Event(prog), preemptive(pre),progression(0) {}
 public:
     void ajouterPrecedence(TacheU* t );
     void supprimerPrecedence(const QString& id);
-    vector<TacheU*>& getPrecedence(){ return precedence;}
-    vector<TacheU*>& getSuivante(){ return suivante;}
+    tabtachesU& getPrecedence(){ return precedence;}
+    tabtachesU& getSuivante(){ return suivante;}
     void setProgression(unsigned int i)
     {
         if( i>100) throw CalendarException("Progression invalide la progression doit etre entre 0 et 100");
@@ -104,12 +112,13 @@ public:
 
 class TacheC : public Tache {
     /*! \class TacheC
-     \brief Classe permettant de manipuler des tâches composites
+     \brief Classe héritant de Tache permettant de manipuler des tâches composites
      */
     friend class TacheManager;
-    typedef std::vector<Tache *> vectcomp;
+    typedef std::vector<Tache *> tabtaches;
+    /*!  \typedef  tabtaches est un vecteur de Taches*/
     //attributs
-    vectcomp tachescomp;
+    tabtaches tachescomp;
     //méthodes
     ~TacheC() { tachescomp.clear(); } //clear() vide le contenu du conteneur
     TacheC(const QString& id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadl): Tache(id,t,dur,dispo,deadl)
@@ -117,7 +126,7 @@ class TacheC : public Tache {
      void addTasktoC(Tache* );
 public:
     const QString toString() const;
-    vectcomp& getCTaches(){return tachescomp;}
+    tabtaches& getCTaches(){return tachescomp;}
    bool getTypeTache(){ return false;}
 };
 
@@ -130,6 +139,7 @@ class TacheManager
      */
     friend class NewProject;
     typedef std::vector<Tache*> tabtaches;
+    /*!  \typedef  tabtaches est un vecteur de Taches */
     struct Handler
     {
         TacheManager* instance;
@@ -151,15 +161,17 @@ public:
     static void libererInstance();
     tabtaches& getTabTaches() { return taches; }
     TacheU* ajouterTacheU(const QString &id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, const bool& preempt=false, const bool& prog=false);
+    //! Construction d'une tache Unitaire en faisant appel au constructeur de Tache Unitaire
     TacheC* ajouterTacheC(const QString& id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadl);
+    //! Construction d'une tache Composite en faisant appel au constructeur de Tache Composite
    void ajouter_Tache_a_composite(TacheC* ,Tache* );
-    void load(const QString& );
-    void save(const QString& );
-    void afficher(QTextStream& f) const { f << "****TacheManager*****" << endl; }
-    Tache* getTache(const QString&);
-    TacheU* getTacheU(const QString&); // ne retourne que les taches Unitaires pour pouvoir les programmer
-    void ajouterPrecedenceTache(TacheU*,TacheU*);
-    void remove_Task(const QString& id)
+   void load(const QString& ); //! Chager un fichier xml contenant des taches
+   void save(const QString& );
+   void afficher(QTextStream& f) const { f << "****TacheManager*****" << endl; }
+   Tache* getTache(const QString&);
+   TacheU* getTacheU(const QString&); // ne retourne que les taches Unitaires pour pouvoir les programmer
+   void ajouterPrecedenceTache(TacheU*,TacheU*);
+   void remove_Task(const QString& id)
     {
         Tache* todelete=getTache(id);
         tabtaches::iterator position = std::find(taches.begin(), taches.end(), todelete);
@@ -168,7 +180,7 @@ public:
 
         }
     QTextStream& afficherTaches(QTextStream& fout);
-    const QString& afficherTachesAProgrammer() const;
+    const QString& afficherTachesAProgrammer() const;//! Affiche les Taches qui ne sont pas programmées
 
 };
 

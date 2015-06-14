@@ -36,6 +36,8 @@ void Projet::remove_Task(Tache* todelete)
 
 }
 
+
+
 void ProjetManager::remove_Task(QString &id)
 {
     for(tabprojets::iterator it=projets.begin();it!=projets.end();it++)
@@ -62,14 +64,16 @@ void Projet::addTache(Tache* t)
         heures_totales+=(*it)->getDuree().getDureeEnHeures();
 
     double duree_projet=(echeance-disponibilite)*24;
+    if(duree_projet>heures_totales) tachesProjet.push_back(t);
 
-    if(duree_projet<heures_totales)
+    else
         throw CalendarException("Vous avez Depassé la Durée Total du Projet");
-    tachesProjet.push_back(t);
+
+
 }
 
 
-const Tache *Projet::getTache(const QString& id) const
+const Tache* Projet::getTache(const QString& id) const
 {
 
     tabtaches::const_iterator it = tachesProjet.begin();

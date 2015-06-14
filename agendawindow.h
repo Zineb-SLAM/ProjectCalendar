@@ -48,6 +48,8 @@ class AgendaWindow : public QMainWindow
     QAction *Rechercher_Programmation;
     QAction *Afficher_projets;
     QAction *Supprimer_tache;
+    QAction* Supprimer_projet;
+    QAction* Afficher_taches;
 
     //couche jours
     QLabel *lundi;
@@ -130,13 +132,10 @@ private slots:
     void recherche_programmation();
     void afficher_projets();
     void supprimer_tache();
+    void supprimer_projet();
+    void afficher_taches();
 
-<<<<<<< HEAD
 
-=======
-public slots:
-      void TreeViewProjet();
->>>>>>> origin/master
 };
 
 class ItemActivite : public QGraphicsItem {

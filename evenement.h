@@ -18,7 +18,7 @@ public:
     bool estProgrammee() const { return programmee; }
     void setProgrammee() { programmee = true; }
     void setNonProgrammee() { programmee = false; }
-    virtual bool cestunetache() const =0;
+    virtual bool cestunetache() const =0;/*! pour savoir si l'evenement est une tache Unitaire ou un Evenement */
     virtual const QString& getId() const=0;
     virtual const Duree& getDuree() const=0;
     virtual const QString& getTitre() const=0;

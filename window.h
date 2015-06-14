@@ -12,6 +12,10 @@
 
 
 class NewProject: public QDialog {
+    /*! \class NewProject
+            \brief Formulaire permettant de creer un projet , à la creation un projet est vide
+
+    */
     Q_OBJECT
     QDialogButtonBox* buttonBox;
     //QPushButton *valider;
@@ -34,6 +38,9 @@ public:
 };
 
 class NewTask : public QDialog {
+    /*! \class NewTask
+            \brief Formulaire permettant d'inserer les attributs de l'objet tache et le creer
+    */
     Q_OBJECT
     QDialogButtonBox* buttonBox;
 
@@ -61,6 +68,9 @@ public:
 };
 
 class NewActivity : public QDialog {
+    /*! \class NewProject
+            \brief Formulaire permettant de creer une Activité
+    */
     Q_OBJECT
     QDialogButtonBox* buttonBox;
     QComboBox* type;// RDV or Meeting
@@ -87,6 +97,9 @@ public:
 };
 
 class NewProgrammation : public QDialog {
+    /*! \class NewProject
+            \brief Formulaire permettant de de Programmer un  Evenement (Activité ou Tache Unitaire)
+    */
     Q_OBJECT
     QDialogButtonBox* buttonBox;
 

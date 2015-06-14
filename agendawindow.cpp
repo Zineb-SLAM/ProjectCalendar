@@ -194,6 +194,12 @@ void AgendaWindow::createActions() {
     Supprimer_tache=new QAction("Supprimer Tache", this);
     connect(Supprimer_tache, SIGNAL(triggered()), this, SLOT(supprimer_tache()));
 
+    Supprimer_projet=new QAction("Supprimer Projet", this);
+    connect(Supprimer_projet, SIGNAL(triggered()), this, SLOT(supprimer_projet()));
+
+    Afficher_taches=new QAction("Afficher Taches", this);
+    connect(Afficher_taches, SIGNAL(triggered()), this, SLOT(afficher_taches()));
+
 
 }
 
@@ -202,20 +208,21 @@ void AgendaWindow::createMenus() {
     menu_options->addAction(charger);
     menu_options->addAction(exporter);
     //menu_options->addAction(exporter_txt);
-    menu_options->addAction(tout_afficher);
     menu_options->addAction(Afficher_projets);
+    menu_options->addAction(Afficher_taches);
 
     menu_tache = menuBar()->addMenu("Tache");
     menu_tache->addAction(creer_tache);
     menu_tache->addAction(programmer_tache);
     menu_tache->addAction(Ajouter_tache_a_composite);
     menu_tache->addAction(Ajouter_Precedence);
-     menu_tache->addAction(Supprimer_tache);
+    menu_tache->addAction(Supprimer_tache);
 
 
     menu_projet = menuBar()->addMenu("Projet");
     menu_projet->addAction(creer_projet);
     menu_projet->addAction(Ajouter_tache_a_projet);
+    menu_projet->addAction(Supprimer_projet);
 
     menu_activite = menuBar()->addMenu("Activite");
     menu_activite->addAction(creer_activite);
@@ -223,12 +230,9 @@ void AgendaWindow::createMenus() {
     menu_activite = menuBar()->addMenu("Rechercher");
     menu_activite->addAction(Rechercher_Projet);
     menu_activite->addAction(Rechercher_Tache);
-<<<<<<< HEAD
-     menu_activite->addAction(Rechercher_Programmation);
-
-=======
     menu_activite->addAction(Rechercher_Programmation);
->>>>>>> origin/master
+
+
 }
 
 //fonctions des slots
@@ -832,19 +836,48 @@ void AgendaWindow::ajouter_activite() {
                 QMessageBox::information(0,"Erreur",e.what(),QMessageBox::Ok);}
 
  }
+void AgendaWindow::supprimer_projet()
+{
+    bool ok;
+    QString message= "Id : ";
+    const QString&  id = QInputDialog::getText(this,"Projet","Entrez l'id du Projet à supprimer :", QLineEdit::Normal,"valeur", &ok);
+    try
+    {
+     if (ok && !id.isEmpty())
+        {
+         PM.removeProject(id);
+         QMessageBox msgBox;
+         msgBox.setText("Projet Supprimé!");
+         msgBox.exec();
 
-<<<<<<< HEAD
+        }
+
+    }
+
+    catch (CalendarException ce) {
+            QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);}
+
+        catch (std::exception e) {
+               QMessageBox::information(0,"Erreur",e.what(),QMessageBox::Ok);}
+
+}
+
 
 void AgendaWindow::afficher_projets()
  {
+
 
      QStandardItemModel* model = new QStandardItemModel;
      QStandardItem *parentItem= model->invisibleRootItem();
      for (std::vector<Projet*>::const_iterator it =PM.getInstance().getTab().begin()  ; it!= PM.getInstance().getTab().end() ;it++ )
     {
+         QString message;
+         message=(*it)->getId();
+         message+=" : ";
+         message+=(*it)->getTitre();
          // I display a project
 
-      QStandardItem* item=new QStandardItem(QString((*it)->getTitre()));
+      QStandardItem* item=new QStandardItem(QString(message));
       item->setFlags(item->flags() & ~Qt::ItemIsEditable);
       parentItem->appendRow(item);
       Projet* p = (*it);
@@ -852,7 +885,11 @@ void AgendaWindow::afficher_projets()
 
               for (std::vector<Tache*>::const_iterator itp = p->GetTabProjet().begin(); itp != p->GetTabProjet().end() ;itp++)
               {
-                  QStandardItem* itemp = new QStandardItem((*itp)->getTitre());
+                  QString message2;
+                  message2=(*itp)->getId();
+                  message2+=" : ";
+                  message2+=(*itp)->getTitre();
+                  QStandardItem* itemp = new QStandardItem(message2);
                   //itemp->setFlags(itemp->flags() & ~Qt::ItemIsEditable);
                   item->appendRow(itemp);
 
@@ -862,13 +899,9 @@ void AgendaWindow::afficher_projets()
      QTreeView *treeView=new QTreeView;
      treeView->setModel(model);
      treeView->show();
-     //while(1<2);
+
 
  }
-
-void AgendaWindow::afficher() {
-    //insérer toutes les taches existantes dans l'agenda
-}
 
 void afficher_proprietes(Activite *a) {
     QMessageBox message;
@@ -883,9 +916,53 @@ void afficher_proprietes(Tache* t) {
     message.setInformativeText(t->toString());
     message.exec();
 }
-=======
+
+
+void AgendaWindow::afficher_taches()
+{
+    QStandardItemModel* model = new QStandardItemModel;
+    QStandardItem *parentItem= model->invisibleRootItem();
+    for (std::vector<Tache*>::const_iterator it =TM.getInstance().getTabTaches().begin()  ; it!= TM.getInstance().getTabTaches().end() ;it++ )
+   {
+        // I display a Task
+    QString message=" ";
+    message=(*it)->getId();
+    message+=" : ";
+    message+=(*it)->getTitre();
+     QStandardItem* item=new QStandardItem(QString(message));
+     item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+     parentItem->appendRow(item);
+     if(!(*it)->getTypeTache())
+     {
+         TacheC* p=dynamic_cast<TacheC*>(*it);
+
+     // I display every composite task's tasks
+
+             for (std::vector<Tache*>::const_iterator itp = p->getCTaches().begin(); itp != p->getCTaches().end() ;itp++)
+             {
+                 QString message2;
+                 message2=(*itp)->getId();
+                 message2+=" : ";
+                 message2+=(*itp)->getTitre();
+
+                 QStandardItem* itemp = new QStandardItem(message2);
+                 //itemp->setFlags(itemp->flags() & ~Qt::ItemIsEditable);
+                 item->appendRow(itemp);
+
+             }
+    }
+    }
+
+    QTreeView *treeView=new QTreeView;
+    treeView->setModel(model);
+    treeView->show();
+
+
+}
+
+
  //******************************************************************************************
->>>>>>> origin/master
+
 
 QRectF ItemActivite::boundingRect() const {
     int minutes = a->getDuree().getDureeEnMinutes();
@@ -917,34 +994,10 @@ void ItemTache::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     painter->drawText(rec, Qt::AlignCenter, t->getTitre()+" "+t->getId());
 }
 
-<<<<<<< HEAD
-=======
+
 //******************************************************************************************
 
-void AgendaWindow::TreeViewProjet()
-{
-    QStandardItem* parent = projectsTreeV->invisibleRootItem();
 
-    for (std::vector<Projet*>::const_iterator it =PM.getInstance().getTab().begin() ; it!= PM.getInstance().getTab().end() ;it++ )
-    {
-        QStandardItem* item = new QStandardItem((*it)->getId());
-        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
-        parent->appendRow(item);
->>>>>>> origin/master
-
-
-<<<<<<< HEAD
-=======
-        for (std::vector<Tache*>::const_iterator itp = p->GetTabProjet().begin(); itp != p->GetTabProjet().end() ;itp++)
-        {
-            QStandardItem* itemp = new QStandardItem((*itp)->getId());
-            itemp->setFlags(itemp->flags() & ~Qt::ItemIsEditable);
-            itemp->appendRow(itemp);
-
-
-        }
-    }
-}
 
 ActiviteInfo::ActiviteInfo(Activite *a, QWidget *parent, Qt::WindowFlags f) {
     this->setWindowTitle("Activite "+a->getId());
@@ -961,4 +1014,4 @@ ActiviteInfo::ActiviteInfo(Activite *a, QWidget *parent, Qt::WindowFlags f) {
 
     setLayout(formLayout);
 }
->>>>>>> origin/master
+
