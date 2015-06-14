@@ -126,7 +126,7 @@ AgendaWindow::AgendaWindow() :
     projets = new QDockWidget(this);
     projets->setWindowTitle("Projets"); //donne un titre au dock
     liste_projets = new QTextEdit(this);
-    liste_projets->textCursor().insertText(PM.afficherTitreProjets());
+    liste_projets->textCursor().insertText(PM.afficherTitreProjets()+"\n");
     liste_projets->setReadOnly(1); //en lecture seulement
     addDockWidget(Qt::LeftDockWidgetArea,projets);
     projets->setWidget(liste_projets);
@@ -155,8 +155,8 @@ void AgendaWindow::createActions() {
     exporter = new QAction("Exporter en XML",this);
     connect(exporter, SIGNAL(triggered()), this, SLOT(sauvegarder_agenda()));
 
-   // exporterTxt = new QAction("Exporter en txt", this);
-    //connect(exporterTxt, SIGNAL(triggered()), this, SLOT(sauvegarder_txt()));
+    exporterTxt = new QAction("Exporter en txt", this);
+    connect(exporterTxt, SIGNAL(triggered()), this, SLOT(sauvegarder_txt()));
 
     programmer_tache = new QAction("Programmer",this);
     connect(programmer_tache, SIGNAL(triggered()), this, SLOT(demander_programmer()));
@@ -207,7 +207,7 @@ void AgendaWindow::createMenus() {
     menu_options = menuBar()->addMenu("Options");
     menu_options->addAction(charger);
     menu_options->addAction(exporter);
-    //menu_options->addAction(exporter_txt);
+    menu_options->addAction(exporterTxt);
     menu_options->addAction(Afficher_projets);
     menu_options->addAction(Afficher_taches);
 
@@ -370,11 +370,11 @@ void AgendaWindow::sauvegarder_agenda() {
         PM.save(chemin);
 }
 
-/*void AgendaWindow::sauvegarder_txt() {
+void AgendaWindow::sauvegarder_txt() {
     QString chemin = QFileDialog::getSaveFileName();
     if (!chemin.isEmpty())
         PM.saveTxt(chemin);
-}*/
+}
 
 void AgendaWindow::demander_programmer() {
     bool ok;
@@ -967,7 +967,7 @@ void AgendaWindow::afficher_taches()
 QRectF ItemActivite::boundingRect() const {
     int minutes = a->getDuree().getDureeEnMinutes();
     qreal hauteur = minutes *25/60;
-    return QRectF(0,-13.5,100,hauteur);
+    return QRectF(0,0,100,hauteur);
 }
 
 void ItemActivite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
@@ -983,7 +983,7 @@ void ItemActivite::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 QRectF ItemTache::boundingRect() const {
     int minutes = t->getDuree().getDureeEnMinutes();
     qreal hauteur = minutes *25/60;
-    return QRectF(0,-13.5,100,hauteur);
+    return QRectF(0,0,100,hauteur);
 }
 
 void ItemTache::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
