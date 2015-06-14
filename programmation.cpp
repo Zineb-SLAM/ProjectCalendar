@@ -20,15 +20,7 @@ void ProgrammationManager::libererInstance() {
     if (handler.instance!=0) delete handler.instance;
     handler.instance=0;
 }
- /*Programmation* ProgrammationManager::getProg(const QString& id_evt)
- {
-     for(vector<Programmation*>::iterator it=tabprogs.begin(); it!=tabprogs.end();it++)
-     {
-        if((*it)->getEvent())
-     }
 
- }*/
-//Programmation* ProgrammationManager::trouverProgrammation(const Programmation* e)
 Programmation* ProgrammationManager::trouverProgrammation(const Event* e)
 {
     if(!e->estProgrammee()) throw CalendarException ("la tache n'est pas programmee");

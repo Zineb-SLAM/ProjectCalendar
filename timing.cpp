@@ -141,6 +141,13 @@ QString& Duree::toString() const {
    return *d;
 }
 
+Duree& Duree::fromString(const QString& str) {
+    QTime time = QTime::fromString(str,"hhHmm");
+    Duree d(time.hour(), time.minute());
+    return d;
+}
+
+
 QTextStream& operator<<(QTextStream& f, const Duree& d)
 { d.afficher(f);
     return f;
@@ -228,6 +235,12 @@ Duree *Horaire::entre2(const Horaire& h) {
     }
     Duree *d = new Duree(heures, minutes);
     return d;
+}
+
+Horaire& Horaire::fromString(const QString& str) {
+    QTime time = QTime::fromString(str,"hhHmm");
+    Horaire h(time.hour(), time.minute());
+    return h;
 }
 
 

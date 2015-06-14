@@ -1,14 +1,9 @@
 #include "agendawindow.h"
 #include "window.h"
-#include"show_info.h"
-
-
 
 AgendaWindow::AgendaWindow() :
     TM(TacheManager::getInstance()), PM(ProjetManager::getInstance()), ProgM(ProgrammationManager::getInstance())
 {
-
-
     jours = new QHBoxLayout;
     heures = new QVBoxLayout;
     emploi_du_temps = new QVBoxLayout;
@@ -149,8 +144,8 @@ AgendaWindow::AgendaWindow() :
 }
 
 void AgendaWindow::createActions() {
-    charger = new QAction("Charger",this);
-    connect(charger, SIGNAL(triggered()), this, SLOT(charger_agenda()));
+    //charger = new QAction("Charger",this);
+    //connect(charger, SIGNAL(triggered()), this, SLOT(charger_agenda()));
 
     exporter = new QAction("Exporter en XML",this);
     connect(exporter, SIGNAL(triggered()), this, SLOT(sauvegarder_agenda()));
@@ -205,7 +200,7 @@ void AgendaWindow::createActions() {
 
 void AgendaWindow::createMenus() {
     menu_options = menuBar()->addMenu("Options");
-    menu_options->addAction(charger);
+    //menu_options->addAction(charger);
     menu_options->addAction(exporter);
     menu_options->addAction(exporterTxt);
 
@@ -358,11 +353,11 @@ void AgendaWindow::placer_evenement(TacheU *t) {
         }
 }
 
-void AgendaWindow::charger_agenda() {
+/*void AgendaWindow::charger_agenda() {
     QString chemin = QFileDialog::getOpenFileName();
     if (!chemin.isEmpty())
         PM.load(chemin);
-}
+}*/
 
 void AgendaWindow::sauvegarder_agenda() {
     QString chemin = QFileDialog::getSaveFileName();
@@ -392,7 +387,7 @@ void AgendaWindow::demander_programmer() {
                 int temp = d->getAnnee();
                 int *year = &temp;
                 if((choix_semaine->value() == d->toQDate().weekNumber(year)) && (choix_annee->value() == d->getAnnee())) {
-                    QMessageBox::information(0,"coucou","même semaine et annee",QMessageBox::Ok);
+                    QMessageBox::information(0,"Operation reussie","La tache va etre affichee.",QMessageBox::Ok);
                     placer_evenement(t);
                 }
             }
@@ -496,8 +491,10 @@ void AgendaWindow::ajouter_tache()
         }
 }
 
- void AgendaWindow::ajouter_precedence()
+void AgendaWindow::ajouter_precedence()
  {
+    /*! \fn ajouter_precedence
+     * */
      bool ok,ok2;
      QString id = QInputDialog::getText(this,"Tache","Entrez l'id de la Tache A PRECEDER :", QLineEdit::Normal,"valeur", &ok);
           try
@@ -996,22 +993,3 @@ void ItemTache::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 
 
 //******************************************************************************************
-
-
-
-ActiviteInfo::ActiviteInfo(Activite *a, QWidget *parent, Qt::WindowFlags f) {
-    this->setWindowTitle("Activite "+a->getId());
-    id = new QLabel(a->getId(), this);
-    titre = new QLabel(a->getTitre(), this);
-    duree = new QLabel(a->getDuree().toString(), this);
-    lieu = new QLabel(a->getLieu(), this);
-    formLayout = new QFormLayout(this);
-
-    formLayout->addRow("id : ", id);
-    formLayout->addRow("titre : ", titre);
-    formLayout->addRow("duree : ", duree);
-    formLayout->addRow("Lieu : ", this);
-
-    setLayout(formLayout);
-}
-

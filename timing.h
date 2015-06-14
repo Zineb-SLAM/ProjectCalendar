@@ -84,7 +84,7 @@ essite des dates valides au sens commun du terme.
         unsigned int getJour() const{ double x = getHeure()/24; return floor(x); } /*! Retourne la duree en jours pour les taches prremptv*/
         void afficher(QTextStream& f) const;  /*! Affiche la duree sous le format hhHmm */
         QString& toString() const;
-
+        static Duree& fromString(const QString &str);
     };
 
 
@@ -103,7 +103,7 @@ essite des dates valides au sens commun du terme.
         /*! \param h heure avec 0<=h<=23
             \param m minute avec 0<=m<=59
             */
-        Horaire(unsigned short int  h, unsigned short int  m):heure(h),minute(m) {if (h>23||m>59) throw TimeException("erreur: initialisation horaire invalide");}
+        Horaire(unsigned short int  h=0, unsigned short int  m=0):heure(h),minute(m) {if (h>23||m>59) throw TimeException("erreur: initialisation horaire invalide");}
         void setHoraire(unsigned short int h, unsigned short int m) { if (h>23||m>59) throw TimeException("erreur: initialisation horaire invalide"); heure=h; minute=m; }
         void afficher(QTextStream& f) const;  /*! Affiche l'horaire sous le format hhHmm */
         unsigned short int getHeure() const { return heure; }  /*! Retourne l'heure de l'horaire */
@@ -114,6 +114,7 @@ essite des dates valides au sens commun du terme.
         bool operator==(const Horaire& h) const;  /*! h1<h2 retourne true si h1 est au meme temps que h2 dans le temps
                                                      Duree* entre2(const Horaire& h);*/
         Duree *entre2(const Horaire& h);
+        static Horaire &fromString(const QString& str);
     private:
         unsigned short int  heure;
         unsigned short int  minute;

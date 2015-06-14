@@ -18,7 +18,9 @@ class Programmation
                 \brief Classe permettant de programmer un evenement avec un date et un horaire
         */
 {
+    //amitiés
     friend class ProgrammationManager;
+    //attributs
     const Event* event;
     Date date;
     Horaire horaire;

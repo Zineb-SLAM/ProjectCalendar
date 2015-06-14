@@ -11,7 +11,11 @@ using namespace TIME;
 
 class Event  // CLASSE ABSTRAITE
 {
-    bool programmee;
+    /*! \class Event
+            \brief Classe permettant de créer des événements
+            Un objet Event est soit un objet Tache, soit un objet Activite
+    */
+    bool programmee; //!<attribut programmee vaut TRUE si Event est programmé, FALSE sinon
     
 public:
     Event(const bool& p=false):programmee(p){}
@@ -27,6 +31,10 @@ public:
 
 class Activite: public Event
 {
+    /*! \class Activite
+            \brief Classe permettant de créer des activités
+            Un objet Activite est soit un objet Rdv, soit un objet Reunion
+    */
     QString id;
     QString titre;
     Duree duree;
@@ -48,6 +56,10 @@ public:
 
 class Rdv : public Activite
 {
+    /*! \class Rdv
+            \brief Classe permettant de créer des rendez-vous
+            Elle hérite de Activite
+    */
     QString personne;
 public:
     Rdv(const QString& i, const QString& t, const Duree d, const QString& l, const QString& p):Activite(i,t,d,l), personne(p) {}
@@ -57,9 +69,12 @@ public:
 
 class Reunion : public Activite
 {
-    //QString outils;
+    /*! \class Reunion
+            \brief Classe permettant de créer des réunion
+            Elle hérite de Activite
+    */
 public:
-    Reunion(const QString& i, const QString& t, const Duree d, const QString& l/*, const QString& o*/):Activite(i,t,d,l)/*,outils(o)*/{}
+    Reunion(const QString& i, const QString& t, const Duree d, const QString& l):Activite(i,t,d,l){}
     void Afficher_Activite () const;
     bool estUnRdv() const { return false; }
 };

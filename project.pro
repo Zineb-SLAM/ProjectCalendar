@@ -14,7 +14,6 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-    calendar.cpp \
     timing.cpp \
     tache.cpp \
     projet.cpp \
@@ -22,8 +21,7 @@ SOURCES += main.cpp\
     evenement.cpp \
     agendawindow.cpp \
     programmation.cpp \
-    customscene.cpp \
-    projetwindow.cpp
+    customscene.cpp
 
 HEADERS  += \
     calendar.h \
@@ -34,9 +32,7 @@ HEADERS  += \
     evenement.h \
     agendawindow.h \
     programmation.h \
-    customscene.h \
-    projetwindow.h
+    customscene.h
 
 FORMS += \
-    projetwindow.ui \
     splitter.ui

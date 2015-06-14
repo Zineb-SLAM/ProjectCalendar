@@ -157,8 +157,8 @@ class TacheManager
     TacheManager& operator=(const TacheManager&);
     template <class T> void addItem(T* t) { taches.push_back(t); }
 public:
-    static TacheManager& getInstance();
-    static void libererInstance();
+    static TacheManager& getInstance(); //!< Donne l'instance unique de TacheManager
+    static void libererInstance(); //!< Libère l'instance unique de TacheManager
     tabtaches& getTabTaches() { return taches; }
     TacheU* ajouterTacheU(const QString &id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, const bool& preempt=false, const bool& prog=false);
     //! Construction d'une tache Unitaire en faisant appel au constructeur de Tache Unitaire
