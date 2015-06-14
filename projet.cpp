@@ -322,11 +322,12 @@ void ProjetManager::afficherProjets(QTextStream& fout) const {
 }
 
 const QString& ProjetManager::afficherTitreProjets() const {
-    QString* s = new QString(" ");
+    QString* s = new QString("");
     for(tabprojets::const_iterator it = projets.begin(); it != projets.end(); it++) {
-        s->append(" *** ");
+        s->append((*it)->id);
+        s->append("   ");
         s->append((*it)->titre);
-        s->append(" *** ");
+        s->append("\n");
     }
     return *s;
 }

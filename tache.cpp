@@ -154,15 +154,14 @@ QTextStream& TacheManager::afficherTaches(QTextStream& fout){
 }
 
 const QString& TacheManager::afficherTachesAProgrammer() const {
-    QString* s = new QString(" ");
+    QString* s = new QString("");
     for(tabtaches::const_iterator it = taches.begin(); it != taches.end(); it++) {
         TacheU* tu = dynamic_cast<TacheU *>(*it);
         if (!(tu->estProgrammee())) {
-                s->append(" *** ");
-                s->append(tu->getTitre());
-                s->append(" ");
                 s->append(tu->getId());
-                s->append(" *** ");
+                s->append("   ");
+                s->append(tu->getTitre());
+                s->append("\n");
             }
     }
     return *s;
