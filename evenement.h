@@ -43,6 +43,7 @@ public:
     virtual void Afficher_Activite () const =0;
     bool  cestunetache() const { return false; }
     const QString toString() const;
+    virtual bool estUnRdv() const=0;
 };
 
 class Rdv : public Activite
@@ -51,6 +52,7 @@ class Rdv : public Activite
 public:
     Rdv(const QString& i, const QString& t, const Duree d, const QString& l, const QString& p):Activite(i,t,d,l), personne(p) {}
     void Afficher_Activite () const;
+    bool estUnRdv() const { return true; }
 };
 
 class Reunion : public Activite
@@ -59,6 +61,7 @@ class Reunion : public Activite
 public:
     Reunion(const QString& i, const QString& t, const Duree d, const QString& l/*, const QString& o*/):Activite(i,t,d,l)/*,outils(o)*/{}
     void Afficher_Activite () const;
+    bool estUnRdv() const { return false; }
 };
 
 //******************************************************************************************

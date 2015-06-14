@@ -14,6 +14,8 @@
 class NewProject: public QDialog {
     Q_OBJECT
     QDialogButtonBox* buttonBox;
+    //QPushButton *valider;
+    //QPushButton *annuler;
     QLineEdit* identifier;
     QLineEdit* title;
     QDateEdit* disponibility;

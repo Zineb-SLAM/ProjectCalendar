@@ -34,6 +34,7 @@ class AgendaWindow : public QMainWindow
     QAction *programmer_tache;
     QAction *charger;
     QAction *exporter;
+    //QAction *exporter_txt;
     QAction *creer_projet;
     QAction *Ajouter_tache_a_projet;
     QAction *creer_tache;
@@ -118,6 +119,7 @@ private slots:
     void placer_evenement(TacheU* t);
     void charger_agenda();
     void sauvegarder_agenda();
+    //void sauvegarder_txt();
     void demander_programmer();
     void ajouter_projet();
     void ajouter_tache_a_projet();

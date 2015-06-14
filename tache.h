@@ -66,6 +66,7 @@ class TacheU : public Tache , public Event {
     void setDuree(const Duree& d); //redéfinition
     void setPreemptive() { preemptive = true;}
     inline void setNonPreemptive();
+protected:
     TacheU(const QString& id, const QString& t, const Duree& dur, const Date& dispo, const Date& deadline, const bool& pre=false, const bool& prog=false):
     Tache(id,t,dur,dispo,deadline), Event(prog), preemptive(pre), progression(0)
     {

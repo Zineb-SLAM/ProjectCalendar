@@ -191,6 +191,46 @@ bool Horaire::operator==(const Horaire& h) const {
     return true;
 }
 
+Horaire* Horaire::getFin(const Duree& d)const
+{
+    Horaire* h= new Horaire(this->heure,this->minute);
+    unsigned int total=minute+d.getDureeEnMinutes();
+    unsigned int hour = total/60;
+    unsigned int min= total%60;
+    h->heure+=hour;
+    h->minute=min;
+    return h;
+}
+
+Horaire* Horaire::getFin(const Duree& d, bool& sur2Jours)const
+{
+    sur2Jours = false;
+    unsigned int minutes = getMinute() + d.getMinute();
+    unsigned int hour = getHeure() + d.getHeure();
+    if (minutes > 60) {
+        hour += minutes / 60;
+        minutes = minutes % 60;
+    }
+    if (hour > 24) {
+        sur2Jours = true;
+        hour = hour % 24;
+    }
+    Horaire* h= new Horaire(hour,minutes);
+    return h;
+}
+
+Duree *Horaire::entre2(const Horaire& h) {
+    int heures = h.getHeure() - this->getHeure();
+    int minutes = h.getMinute() - this->getMinute();
+    if (minutes < 0) {
+        heures--;
+        minutes = 60 + minutes;
+    }
+    Duree *d = new Duree(heures, minutes);
+    return d;
+}
+
+
 QTextStream& operator<<(QTextStream& f, const Horaire& d)
 {
     d.afficher(f);

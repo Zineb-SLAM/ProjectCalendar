@@ -84,6 +84,7 @@ public:
     void afficher(QTextStream& f) const { f<<"****ProjetManager*****"; }
     void load(const QString& f);
     void save(const QString& f);
+    void saveTxt(const QString &f);
     void afficherTitreProjets(QTextStream& fout) const; // affiche le titre de tous les projets existants
     void afficherProjets(QTextStream& fout) const;
     const QString& afficherTitreProjets() const;
