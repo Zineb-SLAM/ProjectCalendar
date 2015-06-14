@@ -62,15 +62,16 @@ public:
     static void libererInstance();
     vectProg& getTabprogs() { return tabprogs; } //!< Retourne le Tableau de Programmation
     Programmation* trouverProgrammation(const Event* t); //!< Retourne La Programmation de l'Evenement passé en paramètre
+
     //! Appel du Constructeur de Programmation
     void ajouterProgrammation(TacheU* t, const Date& d, const Horaire& h);
     void ajouterProgrammation(TacheU* t, const Date& d, const Horaire& h, const Duree& nb);
     void ajouterProgrammation(Activite* a, const Date& d, const Horaire& h);
     //!< Programme l'objet Tache Unitaire/Evenement en Créant l'objet Programmation correspondant et rennvoie cet objet à la méthode addprog
-
-
     void addprog(Programmation* p); //!< Methode Appelee par ajouterProgrammation qui ajoute la programmation d'un Evenement au Vector de ProgrammationManager
-    Programmation* getProg(const QString& id_evt);//!< Retourne la programmation d'un Evenement ) partir de son Id.
+   //!< Retourne la programmation d'un Evenement ) partir de son Id.
+   Programmation* getProg(const QString& id_evt);
+    void remove_programmation(const QString& id, bool t); //!< 0 si ce qu'il doit etre supprimé est une tache , de manière à ce que l'on ne supprime pas une activité de même id
     QTextStream& afficher(QTextStream& f,const Event* t)
     {
        Programmation* a= trouverProgrammation(t);

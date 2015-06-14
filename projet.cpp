@@ -18,18 +18,53 @@ bool Projet::isTacheDansProjet(Tache* t) {
     return false;
 }
 
-void Projet::removeTache(Tache*t) {
-    unsigned int i;
-    for (i=0 ; i<tachesProjet.size();i++) {
-        if (tachesProjet[i]->getId() == t->getId())
-            tachesProjet.erase(tachesProjet.begin()+i);
+Tache* Projet::Get_Task(const QString& id)
+{
+    for(tabtaches::iterator it=tachesProjet.begin();it!=tachesProjet.end();it++)
+     {
+        if((*it)->getId()==id) return (*it);
     }
+    throw CalendarException("Tache Inexistante");
+}
+
+void Projet::remove_Task(Tache* todelete)
+{
+
+    tabtaches::iterator position = std::find(tachesProjet.begin(), tachesProjet.end(), todelete);
+    if (position != tachesProjet.end()) // == vector.end() means the element was not found
+        tachesProjet.erase(position);
+
+}
+
+void ProjetManager::remove_Task(QString &id)
+{
+    for(tabprojets::iterator it=projets.begin();it!=projets.end();it++)
+    {
+        for(std::vector<Tache*>::iterator it2=(*it)->GetTabProjet().begin(); it2!=(*it)->GetTabProjet().end(); it2++)
+        {
+            if(id==(*it2)->getId())
+            {
+                    (*it)->remove_Task(*it2);
+                    break;// une tache n'existe qu'un fois dans un Projet
+            }
+
+        }
+    }
+
 }
 
 void Projet::addTache(Tache* t)
 {
     if(isTacheDansProjet(t))
         throw CalendarException ("La tache appartient deja au projet");
+    double heures_totales=0;
+    for(tabtaches::const_iterator it= tachesProjet.begin();it!=tachesProjet.end(); it++)
+        heures_totales+=(*it)->getDuree().getDureeEnHeures();
+
+    double duree_projet=(echeance-disponibilite)*24;
+
+    if(duree_projet<heures_totales)
+        throw CalendarException("Vous avez Depassé la Durée Total du Projet");
     tachesProjet.push_back(t);
 }
 

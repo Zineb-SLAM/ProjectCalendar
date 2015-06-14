@@ -43,6 +43,7 @@ Programmation* ProgrammationManager::trouverProgrammation(const Event* e)
 }
 
 
+
 void ProgrammationManager::ajouterProgrammation(TacheU* t, const Date& d, const Horaire& h)
 {
     if(t->estProgrammee()) throw CalendarException ("Cette Tache est deja Programmee");
@@ -201,6 +202,38 @@ Programmation* ProgrammationManager::getProg(const QString& id_evt)
     }
     return 0;
 
+}
+
+void ProgrammationManager::remove_programmation(const QString& id,bool t=0)
+{
+    Programmation* todelete=getProg(id);
+    if(!todelete) throw CalendarException("Cette programmation n'existe pas");
+    if(todelete->getEvent()->cestunetache() && t==0)
+    {
+        vectProg::iterator position = std::find(tabprogs.begin(), tabprogs.end(),todelete);
+        if (position != tabprogs.end()) //!<  ==tabprogs.end veut dire que l'element n'a pas été trouvé
+        {
+            tabprogs.erase(position);
+             return;
+        }
+        else throw CalendarException ("La Tache a supprimer n'existe pas");
+    }
+    else if(!(todelete->getEvent()->cestunetache()) && t==1)
+    {
+
+        vectProg::iterator position = std::find(tabprogs.begin(), tabprogs.end(),todelete);
+        if (position != tabprogs.end())
+          {
+            tabprogs.erase(position);
+            return;
+            }
+
+        else
+            throw CalendarException ("L'Activite a Supprimer n'existe pas");
+    }
+
+        else
+            throw CalendarException("L'Activité n'existe pas");
 }
 
 QTextStream& Programmation::afficher(QTextStream& fout) const

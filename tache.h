@@ -8,6 +8,7 @@
 #include <typeinfo>
 #include "calendar.h"
 #include "evenement.h"
+#include<algorithm>
 
 using namespace std;
 using namespace TIME;
@@ -157,6 +158,14 @@ public:
     Tache* getTache(const QString&);
     TacheU* getTacheU(const QString&); // ne retourne que les taches Unitaires pour pouvoir les programmer
     void ajouterPrecedenceTache(TacheU*,TacheU*);
+    void remove_Task(const QString& id)
+    {
+        Tache* todelete=getTache(id);
+        tabtaches::iterator position = std::find(taches.begin(), taches.end(), todelete);
+        if (position != taches.end()) // == vector.end() means the element was not found
+            taches.erase(position);
+
+        }
     QTextStream& afficherTaches(QTextStream& fout);
     const QString& afficherTachesAProgrammer() const;
 

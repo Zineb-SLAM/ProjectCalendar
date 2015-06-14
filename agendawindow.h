@@ -13,6 +13,7 @@ class AgendaWindow : public QMainWindow
     TacheManager& TM;
     ProjetManager& PM;
     ProgrammationManager& ProgM;
+     static QStandardItemModel* independentTasksModel;
 
     QWidget *widget_central;
     QVBoxLayout *general;
@@ -44,8 +45,8 @@ class AgendaWindow : public QMainWindow
     QAction *Rechercher_Projet;
     QAction *Rechercher_Tache;
     QAction *Rechercher_Programmation;
-
-    //QAction *Rechercher_Programmation;
+    QAction *Afficher_projets;
+    QAction *Supprimer_tache;
 
     //couche jours
     QLabel *lundi;
@@ -103,9 +104,6 @@ class AgendaWindow : public QMainWindow
     QSpinBox *choix_annee;
     QHBoxLayout *semaine;
 
-    //ViewView
-    QStandardItemModel* projectsTreeV;
-
     void createActions();
     void createMenus();
 
@@ -129,10 +127,10 @@ private slots:
     void recherche_projet();
     void recherche_tache();
     void recherche_programmation();
+    void afficher_projets();
+    void supprimer_tache();
 
 
-public slots:
-      void TreeViewProjet();
 };
 
 class ItemActivite : public QGraphicsItem {

@@ -2,9 +2,13 @@
 #include "window.h"
 #include"show_info.h"
 
+
+
 AgendaWindow::AgendaWindow() :
     TM(TacheManager::getInstance()), PM(ProjetManager::getInstance()), ProgM(ProgrammationManager::getInstance())
 {
+
+
     jours = new QHBoxLayout;
     heures = new QVBoxLayout;
     emploi_du_temps = new QVBoxLayout;
@@ -186,6 +190,12 @@ void AgendaWindow::createActions() {
     Rechercher_Programmation=new QAction("Rechercher Un Evenement", this);
     connect(Rechercher_Programmation, SIGNAL(triggered()), this, SLOT(recherche_programmation()));
 
+    Afficher_projets=new QAction("Afficher Projets", this);
+    connect(Afficher_projets, SIGNAL(triggered()), this, SLOT(afficher_projets()));
+
+    Supprimer_tache=new QAction("Supprimer Tache", this);
+    connect(Supprimer_tache, SIGNAL(triggered()), this, SLOT(supprimer_tache()));
+
 
 }
 
@@ -194,12 +204,14 @@ void AgendaWindow::createMenus() {
     menu_options->addAction(charger);
     menu_options->addAction(exporter);
     menu_options->addAction(tout_afficher);
+    menu_options->addAction(Afficher_projets);
 
     menu_tache = menuBar()->addMenu("Tache");
     menu_tache->addAction(creer_tache);
     menu_tache->addAction(programmer_tache);
     menu_tache->addAction(Ajouter_tache_a_composite);
     menu_tache->addAction(Ajouter_Precedence);
+     menu_tache->addAction(Supprimer_tache);
 
 
     menu_projet = menuBar()->addMenu("Projet");
@@ -213,6 +225,7 @@ void AgendaWindow::createMenus() {
     menu_activite->addAction(Rechercher_Projet);
     menu_activite->addAction(Rechercher_Tache);
      menu_activite->addAction(Rechercher_Programmation);
+
 }
 
 //fonctions des slots
@@ -485,6 +498,44 @@ void AgendaWindow::ajouter_activite() {
         }
 }
 
+ void AgendaWindow::supprimer_tache()
+ {
+     bool ok;
+     QString message= "Id :  ";
+     QString id = QInputDialog::getText(this,"Tache","Entrez l'id de la Tache à Supprimer :", QLineEdit::Normal,"valeur", &ok);
+     try
+     {
+         if (ok && !id.isEmpty())
+         {
+             TM.remove_Task(id);
+             QMessageBox msgBox;
+             msgBox.setText("Tache Supprimée ");
+             msgBox.exec();
+
+             PM.remove_Task(id);
+             QMessageBox msgBox2;
+             msgBox2.setText("Tache Supprimée de Projet");
+             msgBox2.exec();
+
+             ProgM.remove_programmation(id,0); // c'est une tache qu'on veut supprimer
+             QMessageBox msgBox3;
+             msgBox3.setText("Tache Supprimée de Programmation");
+             msgBox3.exec();
+
+
+
+        }
+
+     }
+         catch (CalendarException ce) {
+                 QMessageBox::information(0,"Erreur",ce.getInfo(),QMessageBox::Ok);}
+
+             catch (std::exception e) {
+                    QMessageBox::information(0,"Erreur",e.what(),QMessageBox::Ok);}
+
+}
+
+
  void AgendaWindow::recherche_projet()
  {
      bool ok;
@@ -689,6 +740,37 @@ void AgendaWindow::ajouter_activite() {
  }
 
 
+void AgendaWindow::afficher_projets()
+ {
+
+     QStandardItemModel* model = new QStandardItemModel;
+     QStandardItem *parentItem= model->invisibleRootItem();
+     for (std::vector<Projet*>::const_iterator it =PM.getInstance().getTab().begin()  ; it!= PM.getInstance().getTab().end() ;it++ )
+    {
+         // I display a project
+
+      QStandardItem* item=new QStandardItem(QString((*it)->getTitre()));
+      item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+      parentItem->appendRow(item);
+      Projet* p = (*it);
+      // I display every project's tasks
+
+              for (std::vector<Tache*>::const_iterator itp = p->GetTabProjet().begin(); itp != p->GetTabProjet().end() ;itp++)
+              {
+                  QStandardItem* itemp = new QStandardItem((*itp)->getTitre());
+                  //itemp->setFlags(itemp->flags() & ~Qt::ItemIsEditable);
+                  item->appendRow(itemp);
+
+              }
+     }
+
+     QTreeView *treeView=new QTreeView;
+     treeView->setModel(model);
+     treeView->show();
+     //while(1<2);
+
+ }
+
 void AgendaWindow::afficher() {
     //insérer toutes les taches existantes dans l'agenda
 }
@@ -734,25 +816,5 @@ void ItemTache::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     painter->drawText(boundingRect(), Qt::AlignCenter, t->getTitre());
 }
 
-void AgendaWindow::TreeViewProjet()
-{
-    QStandardItem* parent = projectsTreeV->invisibleRootItem();
-
-    for (std::vector<Projet*>::const_iterator it =PM.getInstance().getTab().begin() ; it!= PM.getInstance().getTab().end() ;it++ )
-    {
-        QStandardItem* item = new QStandardItem((*it)->getId());
-        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
-        parent->appendRow(item);
-
-        Projet* p = (*it);
-
-        for (std::vector<Tache*>::const_iterator itp = p->GetTabProjet().begin(); itp != p->GetTabProjet().end() ;itp++)
-        {
-            QStandardItem* itemp = new QStandardItem((*itp)->getId());
-            itemp->setFlags(itemp->flags() & ~Qt::ItemIsEditable);
-            itemp->appendRow(itemp);
 
 
-        }
-    }
-}

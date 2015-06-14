@@ -83,6 +83,21 @@ essite des dates valides au sens commun du terme.
         unsigned int getHeure() const { return nb_minutes/60; }
         unsigned int getJour() const{ double x = getHeure()/24; return floor(x); }//<!Retourne la duree en jours pour les taches prremptv
         void afficher(QTextStream& f) const; //<!Affiche la duree sous le format hhHmm
+        Duree& operator+(const Duree& d)
+        {
+            unsigned int total=this->getDureeEnMinutes()+d.getDureeEnMinutes();
+            this->setDuree(total);
+
+        }
+        Duree& operator =(const Duree& d)
+        {
+            this->setDuree(d.getDureeEnMinutes());
+        }
+        bool operator<(const Duree& d)
+        {
+          return this->nb_minutes<d.getDureeEnMinutes();
+
+        }
     };
 
 
@@ -131,6 +146,7 @@ QTextStream& operator<<(QTextStream& f, const Horaire& d);
             Déclenchement d'exception dans le cas contraire
     */
     class Periode{
+
         unsigned int nb_jours;
         unsigned int nb_mois;
         unsigned int nb_annees;

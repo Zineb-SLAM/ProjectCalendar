@@ -19,7 +19,7 @@ class Projet {
     //amitiés
     friend class ProjetManager;
     //structures
-    typedef std::vector<Tache*> tabtaches; //vecteur de la STL contenant des pointeurs sur des objets Tache
+    typedef std::vector<Tache*> tabtaches ; //vecteur de la STL contenant des pointeurs sur des objets Tache
     //attributs
     QString id;
     QString titre;
@@ -34,7 +34,6 @@ class Projet {
     void setDisponbilite(const Date& d) { disponibilite = d; }
     void setEcheance (const Date& e) { echeance = e; }
     void addTache(Tache* t);
-    void removeTache(Tache*t);
     Projet(const Projet& m);
     Projet& operator=(const Projet& m);
     ~Projet();
@@ -48,6 +47,8 @@ public:
     const Tache* getTache(const QString& id) const;
     const Tache* getIndice(unsigned int i) { return tachesProjet[i];}
     bool isTacheDansProjet(Tache* t);
+    Tache* Get_Task(const QString& id);
+    void remove_Task(Tache*t);
     void afficher(QTextStream& f) const;
 };
 
@@ -81,6 +82,7 @@ public:
     void creerProjet(const QString &id, const QString& t, const Date& disp, const Date& ech); // crée le projet et l'ajoute à la liste des projets existants
     void ajouterTacheAProjet(Projet*  p, Tache* t);
     void removeProject(const QString& id);
+    void remove_Task(QString &id);
     void afficher(QTextStream& f) const { f<<"****ProjetManager*****"; }
     void load(const QString& f);
     void save(const QString& f);
