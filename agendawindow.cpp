@@ -9,6 +9,7 @@ AgendaWindow::AgendaWindow() :
 {
 
 
+
     jours = new QHBoxLayout;
     heures = new QVBoxLayout;
     emploi_du_temps = new QVBoxLayout;
@@ -146,6 +147,11 @@ AgendaWindow::AgendaWindow() :
     createActions();
     createMenus();
 
+   QMessageBox message;
+   message.setText("Hello World Calendar!");
+    message.exec();
+
+
 }
 
 void AgendaWindow::createActions() {
@@ -208,15 +214,12 @@ void AgendaWindow::createActions() {
 }
 
 void AgendaWindow::createMenus() {
-    menu_options = menuBar()->addMenu("Options");
-    menu_options->addAction(Afficher_taches);
-    menu_options->addAction(Afficher_projets);
-    menu_options->addAction(Schedule);
+    menu_options = menuBar()->addMenu("Options");;
     menu_options->addAction(charger);
     menu_options->addAction(exporter);
     //menu_options->addAction(exporter_txt);
-
     menu_options->addAction(exporterTxt);
+
     menu_tache = menuBar()->addMenu("Tache");
     menu_tache->addAction(creer_tache);
     menu_tache->addAction(Ajouter_tache_a_composite);
@@ -242,6 +245,7 @@ void AgendaWindow::createMenus() {
     menu_arbre = menuBar()->addMenu("Arborescence");
     menu_arbre->addAction(Afficher_projets);
     menu_arbre->addAction(Afficher_taches);
+    menu_arbre->addAction(Schedule);
 }
 
 //fonctions des slots
@@ -1061,15 +1065,18 @@ void AgendaWindow::afficher_schedule()
                 unsigned int completed=(t->getDuree().getDureeEnMinutes())*(t->getProgression())/100;
                 unsigned int ce_qui_reste =t->getDuree().getDureeEnMinutes()-completed;
                 Duree d(ce_qui_reste);
-                message+="\n            Il reste :";
+                message+="\n              preemtive:  Il reste :";
                 if(ce_qui_reste>60)
                 {
                     double d2= d.getDureeEnHeures();
                     message+= QString::number(d2);
-                    message+="à programmer \n";
+                    message+=" H à programmer \n";
                 }
-                message+= QString::number(ce_qui_reste);
-                message+="  minutes à programmer \n";
+                else
+                {
+                    message+= QString::number(ce_qui_reste);
+                    message+="  minutes à programmer \n";
+                }
 
             }
 
